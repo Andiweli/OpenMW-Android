@@ -18,8 +18,8 @@
     <string name="gs_turn_to_movement_direction_title">Vänd mot rörelseriktningen</string>
     <string name="gs_turn_to_movement_direction_summary">Påverkar rörelse i sidled och diagonalt. När inställningen är aktiverad blir rörelsen mer realistisk. Om den är avstängd pekar hela figurens kropp i blickriktningen. Diagonal rörelse har ingen särskild animation och gör att figuren glider. När den är aktiverad vrider figuren underkroppen i rörelseriktningen, medan överkroppen bara vrids delvis. Huvudet pekar alltid i blickriktningen. I stridsläge gäller detta bara diagonal rörelse. Utanför strid påverkar det även rörelse rakt åt höger och vänster. Vid simning vrids dessutom hela kroppen uppåt eller nedåt efter rörelseriktningen.</string>
     <string name="l10n_gs_engine_engine_title">Motor</string>
-    <string name="gs_groundcover_handling_title">Hantering av marktäckning</string>
-    <string name="gs_groundcover_handling_summary">%s\nAktiverar särskilda inställningar för marktäckningsmoddar (renderingsavstånd och täthet). Aktiverar även animation och stänger av kollision för marktäckningsmodeller. Marktäckningsmoddar måste läsas in via fliken Marktäckning i moddhanteraren.</string>
+    <string name="gs_groundcover_handling_title">Markvegetation</string>
+    <string name="gs_groundcover_handling_summary">Aktiverar OpenMW 0.51:s inbyggda instansrendering för markvegetationsmoddar som lästs in via fliken för markvegetation.</string>
     <string name="gs_groundcover_handling_dialogtitle">Hantering av marktäckning</string>
     <string name="gs_groundcover_point_lighting_title">Punktbelysning på marktäckning</string>
     <string name="gs_groundcover_point_lighting_summary">OpenMW 0.51: låter närliggande lampor och andra punktljus belysa gräs. Stäng av för att spara lite GPU-prestanda.</string>
@@ -33,7 +33,7 @@
     <string name="gs_physics_threads_title">Fysiktrådar i bakgrunden</string>
     <string name="gs_physics_threads_summary">Antal bakgrundstrådar som används för fysikuppdateringar. Kan ställas från 1 till 8; standard är 1.</string>
     <string name="gs_preload_threads_title">Förinläsningstrådar i bakgrunden</string>
-    <string name="gs_preload_threads_summary">Antal trådar som används för förinläsning. Kan ställas från 1 till 8; standard är 1.</string>
+    <string name="gs_preload_threads_summary">Antal bakgrundstrådar för förinläsning. OpenMW 0.51 rekommenderar 2–3 på flerkärniga system; 4 eller fler rekommenderas inte.</string>
     <string name="l10n_gs_bug_fixes_miscellaneous_title">Diverse</string>
     <string name="gs_merchant_equipping_fix_title">Korrigering av handlarutrustning</string>
     <string name="gs_merchant_equipping_fix_summary">Förhindrar handlare från att utrusta föremål som säljs till dem.</string>
@@ -173,4 +173,8 @@
     <string name="gs_classic_reflected_absorb_spells_behavior_summary">Effekterna av reflekterade Absorb-besvärjelser spegelvänds inte, som i Morrowind.</string>
     <string name="l10n_gs_game_mechanics_saves_title">Sparningar</string>
     <string name="txttitle_text">Moddnamn</string>
+    <string name="gs_groundcover_density_title">Markvegetationens täthet</string>
+    <string name="gs_groundcover_density_summary">Andel markvegetationsinstanser som ritas. 100 % behåller moddarnas fulla täthet; lägre värden förbättrar prestandan.</string>
+    <string name="gs_groundcover_rendering_distance_title">Ritavstånd för markvegetation</string>
+    <string name="gs_groundcover_rendering_distance_summary">Avståndet som markvegetation ritas på. Högre värden ökar renderingskostnaden.</string>
 </resources>

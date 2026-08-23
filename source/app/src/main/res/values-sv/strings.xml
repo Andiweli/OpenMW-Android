@@ -142,11 +142,6 @@
         <item>Endast sikte</item>
         <item>Verktygstips och sikte</item>
     </string-array>
-    <string-array name="gs_groundcover_handling_entries">
-        <item>Av</item>
-        <item>Paging</item>
-        <item>Instansiering</item>
-    </string-array>
     <string-array name="pref_omw051_controller_trigger_sensitivity_entries">
         <item>OpenMW-standard (15/16 tryck, 13/16 släpp)</item>
         <item>Balanserad (12/16 tryck, 10/16 släpp)</item>

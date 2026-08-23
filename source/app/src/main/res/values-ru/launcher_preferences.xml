@@ -18,8 +18,8 @@
     <string name="gs_turn_to_movement_direction_title">Поворачиваться по направлению движения</string>
     <string name="gs_turn_to_movement_direction_summary">Влияет на боковое и диагональное движение. Включение делает движение реалистичнее. Если параметр отключён, всё тело персонажа направлено в сторону взгляда. Для диагонального движения нет отдельной анимации, поэтому персонаж скользит. Если параметр включён, нижняя часть тела поворачивается по направлению движения, верхняя — лишь частично, а голова всегда направлена по взгляду. В бою это действует только при диагональном движении. Вне боя также изменяет движение строго вправо и влево. При плавании всё тело дополнительно наклоняется вверх или вниз по направлению движения.</string>
     <string name="l10n_gs_engine_engine_title">Движок</string>
-    <string name="gs_groundcover_handling_title">Обработка наземной растительности</string>
-    <string name="gs_groundcover_handling_summary">%s\nВключает специальные настройки для модов наземной растительности (дальность отрисовки и плотность). Также включает анимацию и отключает столкновения для её моделей. Моды наземной растительности необходимо загружать через вкладку «Наземная растительность» в менеджере модов.</string>
+    <string name="gs_groundcover_handling_title">Наземная растительность</string>
+    <string name="gs_groundcover_handling_summary">Включает нативный инстансинг OpenMW 0.51 для модов, загруженных через вкладку наземной растительности.</string>
     <string name="gs_groundcover_handling_dialogtitle">Обработка наземной растительности</string>
     <string name="gs_groundcover_point_lighting_title">Точечное освещение наземной растительности</string>
     <string name="gs_groundcover_point_lighting_summary">OpenMW 0.51: позволяет ближайшим лампам и другим точечным источникам света освещать траву. Отключите, чтобы немного снизить нагрузку на GPU.</string>
@@ -33,7 +33,7 @@
     <string name="gs_physics_threads_title">Фоновые потоки физики</string>
     <string name="gs_physics_threads_summary">Количество фоновых потоков для обновления физики. От 1 до 8; по умолчанию 1.</string>
     <string name="gs_preload_threads_title">Фоновые потоки предзагрузки</string>
-    <string name="gs_preload_threads_summary">Количество потоков для операций предзагрузки. От 1 до 8; по умолчанию 1.</string>
+    <string name="gs_preload_threads_summary">Количество фоновых потоков предварительной загрузки. OpenMW 0.51 рекомендует 2–3 на многоядерных системах; 4 и более не рекомендуются.</string>
     <string name="l10n_gs_bug_fixes_miscellaneous_title">Разное</string>
     <string name="gs_merchant_equipping_fix_title">Исправление экипировки торговцев</string>
     <string name="gs_merchant_equipping_fix_summary">Не позволяет торговцам экипировать проданные им предметы.</string>
@@ -173,4 +173,8 @@
     <string name="gs_classic_reflected_absorb_spells_behavior_summary">Эффекты отражённых заклинаний Поглощения не меняются местами, как в Morrowind.</string>
     <string name="l10n_gs_game_mechanics_saves_title">Сохранения</string>
     <string name="txttitle_text">Название мода</string>
+    <string name="gs_groundcover_density_title">Плотность наземной растительности</string>
+    <string name="gs_groundcover_density_summary">Доля отображаемых экземпляров растительности. 100% сохраняет полную плотность мода; меньшие значения повышают производительность.</string>
+    <string name="gs_groundcover_rendering_distance_title">Дальность отрисовки растительности</string>
+    <string name="gs_groundcover_rendering_distance_summary">Расстояние, на котором отображается наземная растительность. Большие значения увеличивают нагрузку на рендеринг.</string>
 </resources>

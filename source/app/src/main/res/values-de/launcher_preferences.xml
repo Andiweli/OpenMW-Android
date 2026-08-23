@@ -18,8 +18,8 @@
     <string name="gs_turn_to_movement_direction_title">In Bewegungsrichtung drehen</string>
     <string name="gs_turn_to_movement_direction_summary">Beeinflusst seitliche und diagonale Bewegung. Aktiviert wirkt die Bewegung realistischer. Ist die Option deaktiviert, zeigt der gesamte Körper in Blickrichtung; diagonale Bewegung besitzt keine eigene Animation und kann gleitend wirken. Ist sie aktiviert, dreht die Figur den Unterkörper in Bewegungsrichtung, während der Oberkörper nur teilweise mitdreht. Der Kopf bleibt in Blickrichtung. Im Kampf wirkt dies nur bei diagonaler Bewegung, außerhalb des Kampfes auch bei direkter Bewegung nach links und rechts. Beim Schwimmen wird außerdem der ganze Körper entsprechend der Bewegungsrichtung nach oben oder unten gedreht.</string>
     <string name="l10n_gs_engine_engine_title">Engine</string>
-    <string name="gs_groundcover_handling_title">Bodenbewuchs-Verarbeitung</string>
-    <string name="gs_groundcover_handling_summary">%s\nAktiviert spezielle Einstellungen für Bodenbewuchs-Mods wie Sichtweite und Dichte. Aktiviert außerdem Animationen und deaktiviert Kollisionen für Bodenbewuchs-Meshes. Bodenbewuchs-Mods müssen über den Reiter „Bodenbewuchs“ im Mod-Manager geladen werden.</string>
+    <string name="gs_groundcover_handling_title">Bodenbewuchs</string>
+    <string name="gs_groundcover_handling_summary">Aktiviert den nativen instanzierten Bodenbewuchs-Renderer von OpenMW 0.51 für Mods aus dem Reiter „Bodenbewuchs“.</string>
     <string name="gs_groundcover_handling_dialogtitle">Bodenbewuchs-Verarbeitung</string>
     <string name="gs_groundcover_point_lighting_title">Punktlicht auf Bodenbewuchs</string>
     <string name="gs_groundcover_point_lighting_summary">OpenMW 0.51: Nahe Lampen und andere Punktlichter können Gras beleuchten. Deaktivieren, um etwas GPU-Leistung zu sparen.</string>
@@ -33,7 +33,7 @@
     <string name="gs_physics_threads_title">Physik-Hintergrundthreads</string>
     <string name="gs_physics_threads_summary">Anzahl der Hintergrundthreads für Physikaktualisierungen. Einstellbar von 1 bis 8; Standard ist 1.</string>
     <string name="gs_preload_threads_title">Preload-Hintergrundthreads</string>
-    <string name="gs_preload_threads_summary">Anzahl der Threads für Vorladevorgänge. Einstellbar von 1 bis 8; Standard ist 1.</string>
+    <string name="gs_preload_threads_summary">Anzahl der Hintergrund-Threads zum Vorladen. OpenMW 0.51 empfiehlt auf Mehrkern-Systemen 2–3; 4 oder mehr werden nicht empfohlen.</string>
     <string name="l10n_gs_bug_fixes_miscellaneous_title">Verschiedenes</string>
     <string name="gs_merchant_equipping_fix_title">Fix für ausrüstende Händler</string>
     <string name="gs_merchant_equipping_fix_summary">Verhindert, dass Händler Gegenstände ausrüsten, die ihnen verkauft wurden.</string>
@@ -173,4 +173,8 @@
     <string name="gs_classic_reflected_absorb_spells_behavior_summary">Die Effekte reflektierter Absorptionszauber werden wie in Morrowind nicht gespiegelt.</string>
     <string name="l10n_gs_game_mechanics_saves_title">Spielstände</string>
     <string name="txttitle_text">Mod-Name</string>
+    <string name="gs_groundcover_density_title">Bodenbewuchs-Dichte</string>
+    <string name="gs_groundcover_density_summary">Anteil der gerenderten Bodenbewuchs-Instanzen. 100 % erhält die vollständige Mod-Dichte; niedrigere Werte verbessern die Leistung.</string>
+    <string name="gs_groundcover_rendering_distance_title">Bodenbewuchs-Sichtweite</string>
+    <string name="gs_groundcover_rendering_distance_summary">Entfernung, bis zu der Bodenbewuchs gerendert wird. Größere Werte erhöhen den Renderaufwand.</string>
 </resources>

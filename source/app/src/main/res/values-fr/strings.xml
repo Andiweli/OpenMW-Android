@@ -142,11 +142,6 @@
         <item>Réticule uniquement</item>
         <item>Infobulle et réticule</item>
     </string-array>
-    <string-array name="gs_groundcover_handling_entries">
-        <item>Désactivé</item>
-        <item>Paging</item>
-        <item>Instanciation</item>
-    </string-array>
     <string-array name="pref_omw051_controller_trigger_sensitivity_entries">
         <item>Valeur OpenMW par défaut (15/16 appui, 13/16 relâchement)</item>
         <item>Équilibré (12/16 appui, 10/16 relâchement)</item>

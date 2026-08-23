@@ -38,6 +38,5 @@
         <CheckBoxPreference android:key="pref_skip_gui" android:title="@string/pref_skip_gui_title" android:summary="@string/pref_skip_gui_summary" android:defaultValue="false" />
         <EditTextPreference android:key="commandLine" android:title="@string/pref_commandLine" />
         <EditTextPreference android:key="envLine" android:title="@string/pref_envLine" />
-        <ListPreference android:key="pref_graphicsLibrary_v2" android:title="@string/pref_graphicsLibrary" android:dialogTitle="@string/pref_graphicsLibrary" android:entries="@array/pref_graphicsLibrary_entries" android:entryValues="@array/pref_graphicsLibrary_values" android:defaultValue="@string/pref_graphicsLibrary_default" android:summary="%s" />
     </PreferenceCategory>
 </PreferenceScreen>

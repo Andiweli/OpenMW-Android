@@ -18,8 +18,8 @@
     <string name="gs_turn_to_movement_direction_title">Tourner vers la direction du mouvement</string>
     <string name="gs_turn_to_movement_direction_summary">Affecte les déplacements latéraux et diagonaux. Activer cette option rend les mouvements plus réalistes. Si elle est désactivée, tout le corps du personnage est orienté dans la direction du regard. Le déplacement diagonal n’a pas d’animation spéciale et provoque un glissement. Si elle est activée, le personnage tourne le bas du corps dans la direction du mouvement. Le haut du corps ne tourne que partiellement. La tête reste toujours orientée dans la direction du regard. En combat, cela ne s’applique qu’aux déplacements diagonaux. Hors combat, cela modifie aussi les déplacements directs vers la droite et la gauche. En nageant, le corps entier s’incline également vers le haut ou le bas selon la direction du mouvement.</string>
     <string name="l10n_gs_engine_engine_title">Moteur</string>
-    <string name="gs_groundcover_handling_title">Gestion du couvre-sol</string>
-    <string name="gs_groundcover_handling_summary">%s\nActive des réglages spéciaux pour les mods de couvre-sol (distance de rendu et densité). Active également les animations et désactive les collisions pour les maillages de couvre-sol. Les mods de couvre-sol doivent être chargés via l’onglet Couvre-sol du gestionnaire de mods.</string>
+    <string name="gs_groundcover_handling_title">Végétation au sol</string>
+    <string name="gs_groundcover_handling_summary">Active le rendu instancié natif d’OpenMW 0.51 pour les mods chargés via l’onglet de végétation au sol.</string>
     <string name="gs_groundcover_handling_dialogtitle">Gestion du couvre-sol</string>
     <string name="gs_groundcover_point_lighting_title">Éclairage ponctuel du couvre-sol</string>
     <string name="gs_groundcover_point_lighting_summary">OpenMW 0.51 : permet aux lampes proches et autres sources de lumière ponctuelles d’éclairer l’herbe. Désactivez cette option pour économiser un peu de performances GPU.</string>
@@ -33,7 +33,7 @@
     <string name="gs_physics_threads_title">Threads de physique en arrière-plan</string>
     <string name="gs_physics_threads_summary">Nombre de threads d’arrière-plan utilisés pour les mises à jour de la physique. Réglable de 1 à 8 ; valeur par défaut : 1.</string>
     <string name="gs_preload_threads_title">Threads de préchargement en arrière-plan</string>
-    <string name="gs_preload_threads_summary">Nombre de threads utilisés pour les opérations de préchargement. Réglable de 1 à 8 ; valeur par défaut : 1.</string>
+    <string name="gs_preload_threads_summary">Nombre de threads d’arrière-plan utilisés pour le préchargement. OpenMW 0.51 recommande 2 à 3 threads sur les systèmes multicœurs ; 4 ou plus ne sont pas recommandés.</string>
     <string name="l10n_gs_bug_fixes_miscellaneous_title">Divers</string>
     <string name="gs_merchant_equipping_fix_title">Correction de l’équipement des marchands</string>
     <string name="gs_merchant_equipping_fix_summary">Empêche les marchands d’équiper les objets qui leur sont vendus.</string>
@@ -173,4 +173,8 @@
     <string name="gs_classic_reflected_absorb_spells_behavior_summary">Les effets des sorts d’Absorption réfléchis ne sont pas inversés, comme dans Morrowind.</string>
     <string name="l10n_gs_game_mechanics_saves_title">Sauvegardes</string>
     <string name="txttitle_text">Nom du mod</string>
+    <string name="gs_groundcover_density_title">Densité de la végétation au sol</string>
+    <string name="gs_groundcover_density_summary">Pourcentage d’instances de végétation affichées. 100 % conserve la densité complète du mod ; des valeurs plus basses améliorent les performances.</string>
+    <string name="gs_groundcover_rendering_distance_title">Distance d’affichage de la végétation</string>
+    <string name="gs_groundcover_rendering_distance_summary">Distance jusqu’à laquelle la végétation au sol est affichée. Des valeurs plus élevées augmentent le coût du rendu.</string>
 </resources>

@@ -8,8 +8,8 @@ apply plugin: 'kotlin-android'
  * calibrated OMWFX chain together behind one build-time verification gate.
  */
 
-def openMwVersionCode = 5104
-def openMwAndroidVersionName = '0.51.0-04'
+def openMwVersionCode = 5105
+def openMwAndroidVersionName = '0.51.0-05'
 def versionFile = new File(
         project.rootDir,
         'app/src/main/assets/libopenmw/resources/version'
@@ -137,9 +137,9 @@ tasks.register('verifyOpenMwPayload') {
             )
         }
 
-        if (openMwVersionCode != 5104 || calculateVersion() != '0.51.0-04') {
+        if (openMwVersionCode != 5105 || calculateVersion() != '0.51.0-05') {
             throw new GradleException(
-                    'OpenMW Android final release identity must be versionName 0.51.0-04 and versionCode 5104.'
+                    'OpenMW Android final release identity must be versionName 0.51.0-05 and versionCode 5104.'
             )
         }
 
@@ -154,6 +154,11 @@ tasks.register('verifyOpenMwPayload') {
                 !launcherMainActivity.contains('"point lighting" to if (groundcoverPointLighting) "true" else "false"') ||
                 !launcherMainActivity.contains('"pref_omw051_controller_trigger_thresholds"') ||
                 !launcherMainActivity.contains('"gs_groundcover_point_lighting"') ||
+                !launcherMainActivity.contains('"gs_groundcover_enabled"') ||
+                !launcherMainActivity.contains('"gs_groundcover_density"') ||
+                !launcherMainActivity.contains('"gs_groundcover_rendering_distance"') ||
+                launcherMainActivity.contains('"paging" to if(prefs.getString("gs_groundcover_handling"') ||
+                launcherMainActivity.contains('"timeplayed" to') ||
                 !launcherMainActivity.contains('text = "ARM64 \\u2022 v${BuildConfig.VERSION_NAME}"') ||
                 !launcherMainActivity.contains('OpenMW 0.51 Android release runtime:') ||
                 !launcherMainActivity.contains('setContentView(createOpaqueLoadingPanel())') ||
@@ -204,17 +209,32 @@ tasks.register('verifyOpenMwPayload') {
                 controllerTooltipsIndex < 0 ||
                 controllerTriggerIndex <= controllerTooltipsIndex ||
                 onScreenControlsIndex <= controllerTriggerIndex ||
-                hideOnScreenButtonsIndex <= onScreenControlsIndex) {
+                hideOnScreenButtonsIndex <= onScreenControlsIndex ||
+                launcherSettingsXml.contains('android:key="pref_graphicsLibrary_v2"')) {
             throw new GradleException(
                     'OpenMW 0.51 launcher order or precision explanation is missing from settings.xml.'
             )
         }
 
+        // OPENMW_ANDROID_051_LAUNCHER_AUDIT_GATE_V1
         def launcherEngineXml = file('src/main/res/xml/gs_engine.xml').getText('UTF-8')
-        if (!launcherEngineXml.contains('android:key="gs_groundcover_point_lighting"') ||
-                !launcherEngineXml.contains('android:defaultValue="true"')) {
+        if (!launcherEngineXml.contains('android:key="gs_groundcover_enabled"') ||
+                !launcherEngineXml.contains('android:key="gs_groundcover_density"') ||
+                !launcherEngineXml.contains('android:key="gs_groundcover_rendering_distance"') ||
+                !launcherEngineXml.contains('android:key="gs_groundcover_point_lighting"') ||
+                launcherEngineXml.contains('android:key="gs_groundcover_handling"')) {
             throw new GradleException(
-                    'OpenMW 0.51 Groundcover point-lighting control is missing.'
+                    'OpenMW 0.51 native Groundcover launcher controls are incomplete or legacy Paging remains.'
+            )
+        }
+
+        def launcherGameActivity = file('src/main/java/ui/activity/GameActivity.kt').getText('UTF-8')
+        if (!launcherGameActivity.contains('OPENMW_ANDROID_051_LAUNCHER_AUDIT_V1') ||
+                !launcherGameActivity.contains('Os.setenv("OPENMW_GLES_VERSION", "2", true)') ||
+                !launcherGameActivity.contains('Os.setenv("LIBGL_ES", "2", true)') ||
+                launcherGameActivity.contains('graphicsLibrary != "gles1"')) {
+            throw new GradleException(
+                    'OpenMW 0.51 Android final runtime must use the GLES2/GL4ES path.'
             )
         }
 
@@ -247,7 +267,6 @@ tasks.register('verifyOpenMwPayload') {
                 'pref_encoding_entries',
                 'gs_factor_strength_into_hand_to_hand_combat_entries',
                 'gs_show_owned_entries',
-                'gs_groundcover_handling_entries',
                 'pref_omw051_controller_trigger_sensitivity_entries',
                 'pref_textureShrinking_entries',
                 'pref_shadersDir_entries',

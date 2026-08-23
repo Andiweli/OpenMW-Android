@@ -26,7 +26,6 @@
         <CheckBoxPreference android:key="gs_trainers_bs" android:title="@string/gs_trainers_bs_title" android:summary="@string/gs_trainers_bs_summary" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/l10n_gs_game_mechanics_saves_title">
-        <CheckBoxPreference android:key="gs_add_time_to_saves" android:title="@string/gs_add_time_to_saves_title" android:summary="@string/gs_add_time_to_saves_summary" />
         <ListPreference android:key="gs_maximum_quicksaves" android:title="@string/gs_maximum_quicksaves_title" android:dialogTitle="@string/gs_maximum_quicksaves_dialogtitle" android:entries="@array/gs_maximum_quicksaves_entries" android:entryValues="@array/gs_maximum_quicksaves_values" android:defaultValue="1" android:summary="%s" />
     </PreferenceCategory>
 </PreferenceScreen>

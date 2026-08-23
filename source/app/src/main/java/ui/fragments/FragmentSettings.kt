@@ -522,12 +522,12 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
     }
 
     /**
-     * @brief Disable gamma preference if GLES1 is selected
+     * Update launcher controls whose availability depends on another option.
+     * GLES1 is no longer exposed by the OpenMW 0.51 Android launcher.
      */
     private fun updateGammaState() {
         val sharedPref = preferenceScreen.sharedPreferences
-        findPreference("pref_gamma").isEnabled =
-                sharedPref.getString("pref_graphicsLibrary_v2", "") != "gles1"
+        findPreference("pref_gamma").isEnabled = true
 
 	var isnohighpenabled = false;
         if(sharedPref.getString("pref_shadersDir_v2", "") == "modified")

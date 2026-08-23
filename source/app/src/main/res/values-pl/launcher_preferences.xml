@@ -18,8 +18,8 @@
     <string name="gs_turn_to_movement_direction_title">Obracaj w kierunku ruchu</string>
     <string name="gs_turn_to_movement_direction_summary">Wpływa na ruch boczny i po skosie. Włączenie tej opcji sprawia, że ruch wygląda bardziej realistycznie. Gdy jest wyłączona, całe ciało postaci jest zwrócone w kierunku patrzenia. Ruch po skosie nie ma specjalnej animacji i powoduje ślizganie. Po włączeniu dolna część ciała obraca się w kierunku ruchu, górna tylko częściowo, a głowa zawsze pozostaje zwrócona w kierunku patrzenia. W trybie walki działa tylko dla ruchu po skosie. Poza walką zmienia także ruch bezpośrednio w prawo i w lewo. Podczas pływania obraca również całe ciało w górę lub w dół zgodnie z kierunkiem ruchu.</string>
     <string name="l10n_gs_engine_engine_title">Silnik</string>
-    <string name="gs_groundcover_handling_title">Obsługa roślinności przyziemnej</string>
-    <string name="gs_groundcover_handling_summary">%s\nWłącza specjalne ustawienia dla modów roślinności przyziemnej (zasięg renderowania i gęstość). Włącza też animacje i wyłącza kolizje dla jej modeli. Mody roślinności przyziemnej muszą być wczytywane z karty Roślinność w menedżerze modów.</string>
+    <string name="gs_groundcover_handling_title">Roślinność podłoża</string>
+    <string name="gs_groundcover_handling_summary">Włącza natywne renderowanie instancjonowane OpenMW 0.51 dla modów wczytanych przez kartę roślinności podłoża.</string>
     <string name="gs_groundcover_handling_dialogtitle">Obsługa roślinności przyziemnej</string>
     <string name="gs_groundcover_point_lighting_title">Oświetlenie punktowe roślinności</string>
     <string name="gs_groundcover_point_lighting_summary">OpenMW 0.51: pozwala pobliskim lampom i innym światłom punktowym oświetlać trawę. Wyłącz, aby nieco zmniejszyć obciążenie GPU.</string>
@@ -33,7 +33,7 @@
     <string name="gs_physics_threads_title">Wątki fizyki w tle</string>
     <string name="gs_physics_threads_summary">Liczba wątków w tle używanych do aktualizacji fizyki. Zakres od 1 do 8; domyślnie 1.</string>
     <string name="gs_preload_threads_title">Wątki wstępnego wczytywania</string>
-    <string name="gs_preload_threads_summary">Liczba wątków używanych do operacji wstępnego wczytywania. Zakres od 1 do 8; domyślnie 1.</string>
+    <string name="gs_preload_threads_summary">Liczba wątków w tle używanych do wstępnego ładowania. OpenMW 0.51 zaleca 2–3 na systemach wielordzeniowych; 4 lub więcej nie jest zalecane.</string>
     <string name="l10n_gs_bug_fixes_miscellaneous_title">Różne</string>
     <string name="gs_merchant_equipping_fix_title">Poprawka wyposażania kupców</string>
     <string name="gs_merchant_equipping_fix_summary">Zapobiega zakładaniu przez kupców przedmiotów, które zostały im sprzedane.</string>
@@ -173,4 +173,8 @@
     <string name="gs_classic_reflected_absorb_spells_behavior_summary">Efekty odbitych zaklęć Absorpcji nie są odwracane, tak jak w Morrowindzie.</string>
     <string name="l10n_gs_game_mechanics_saves_title">Zapisy gry</string>
     <string name="txttitle_text">Nazwa moda</string>
+    <string name="gs_groundcover_density_title">Gęstość roślinności podłoża</string>
+    <string name="gs_groundcover_density_summary">Procent renderowanych instancji roślinności. 100% zachowuje pełną gęstość moda; niższe wartości zwiększają wydajność.</string>
+    <string name="gs_groundcover_rendering_distance_title">Zasięg renderowania roślinności</string>
+    <string name="gs_groundcover_rendering_distance_summary">Odległość, do której renderowana jest roślinność podłoża. Większe wartości zwiększają koszt renderowania.</string>
 </resources>

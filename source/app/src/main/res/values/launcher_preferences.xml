@@ -18,8 +18,8 @@
     <string name="gs_turn_to_movement_direction_title">Turn to Movement Direction</string>
     <string name="gs_turn_to_movement_direction_summary">Affects side and diagonal movement. Enabling this setting makes movement more realistic. If disabled then the whole character\'s body is pointed to the direction of view. Diagonal movement has no special animation and causes sliding. If enabled then the character turns lower body to the direction of movement. Upper body is turned partially. Head is always pointed to the direction of view. In combat mode it works only for diagonal movement. In non-combat mode it changes straight right and straight left movement as well. Also turns the whole body up or down when swimming according to the movement direction.</string>
     <string name="l10n_gs_engine_engine_title">Engine</string>
-    <string name="gs_groundcover_handling_title">Groundcover Handling</string>
-    <string name="gs_groundcover_handling_summary">%s\nEnable special settings for groundcover mods (rendering distance and density). Also enable animation and disable collision for groundcover meshes. Groundcover mods must be loaded through the Groundcovers tab in the mod manager.</string>
+    <string name="gs_groundcover_handling_title">Groundcover</string>
+    <string name="gs_groundcover_handling_summary">Enable OpenMW 0.51 native instanced groundcover rendering for mods loaded through the Groundcovers tab.</string>
     <string name="gs_groundcover_handling_dialogtitle">Groundcover Handling</string>
     <string name="gs_groundcover_point_lighting_title">Point Lighting on Groundcover</string>
     <string name="gs_groundcover_point_lighting_summary">OpenMW 0.51: allow nearby lamps and other point lights to illuminate grass. Disable to save some GPU performance.</string>
@@ -33,7 +33,7 @@
     <string name="gs_physics_threads_title">Background Physics Threads</string>
     <string name="gs_physics_threads_summary">Number of background threads used for physics updates. Adjustable from 1 to 8; default is 1.</string>
     <string name="gs_preload_threads_title">Background Preload Threads</string>
-    <string name="gs_preload_threads_summary">Number of threads used for preloading operations. Adjustable from 1 to 8; default is 1.</string>
+    <string name="gs_preload_threads_summary">Number of background threads used for preloading. OpenMW 0.51 recommends 2–3 on multicore systems; 4 or more is not recommended.</string>
     <string name="l10n_gs_bug_fixes_miscellaneous_title">Miscellaneous</string>
     <string name="gs_merchant_equipping_fix_title">Merchant Equipping Fix</string>
     <string name="gs_merchant_equipping_fix_summary">Prevents merchants from equipping items that are sold to them.</string>
@@ -173,4 +173,8 @@
     <string name="gs_classic_reflected_absorb_spells_behavior_summary">Effects of reflected Absorb spells are not mirrored, as in Morrowind.</string>
     <string name="l10n_gs_game_mechanics_saves_title">Saves</string>
     <string name="txttitle_text">Mod Name</string>
+    <string name="gs_groundcover_density_title">Groundcover Density</string>
+    <string name="gs_groundcover_density_summary">Percentage of groundcover instances to render. 100% keeps the full mod density; lower values improve performance.</string>
+    <string name="gs_groundcover_rendering_distance_title">Groundcover Rendering Distance</string>
+    <string name="gs_groundcover_rendering_distance_summary">Distance at which groundcover is rendered. Larger values increase rendering cost.</string>
 </resources>

@@ -210,15 +210,51 @@ class FragmentGameSettingsPage : PreferenceFragment(), OnSharedPreferenceChangeL
             updatePreference(preferenceScreen.sharedPreferences, "gs_use_additional_animation_sources")
 
         if (pageResource == R.xml.gs_engine) {
+            // OPENMW_ANDROID_051_LAUNCHER_AUDIT_V1
             updatePreference(preferenceScreen.sharedPreferences, "gs_build_navmesh")
+
+            normalizeFloatPreference("gs_groundcover_density", 0.0f, 1.0f, 1.0f, 2)
+            normalizeFloatPreference(
+                "gs_groundcover_rendering_distance",
+                1024.0f,
+                8192.0f,
+                6144.0f,
+                0
+            )
+
+            findPreference("gs_groundcover_density").setOnPreferenceClickListener {
+                showSteppedSliderPreference(
+                    key = "gs_groundcover_density",
+                    title = findPreference("gs_groundcover_density").title.toString(),
+                    minimum = 0.0f,
+                    maximum = 1.0f,
+                    step = 0.05f,
+                    defaultValue = 1.0f,
+                    decimals = 2
+                )
+                true
+            }
+
+            findPreference("gs_groundcover_rendering_distance").setOnPreferenceClickListener {
+                showSteppedSliderPreference(
+                    key = "gs_groundcover_rendering_distance",
+                    title = findPreference("gs_groundcover_rendering_distance").title.toString(),
+                    minimum = 1024.0f,
+                    maximum = 8192.0f,
+                    step = 256.0f,
+                    defaultValue = 6144.0f,
+                    decimals = 0
+                )
+                true
+            }
+
             normalizeIntegerPreference("gs_navmesh_threads", 1, 8, 1)
             normalizeIntegerPreference("gs_physics_threads", 1, 8, 1)
-            normalizeIntegerPreference("gs_preload_threads", 1, 8, 1)
+            normalizeIntegerPreference("gs_preload_threads", 1, 3, 2)
 
             listOf(
                 "gs_navmesh_threads",
-                "gs_physics_threads",
-                "gs_preload_threads"
+                "gs_physics_threads"
             ).forEach { key ->
                 findPreference(key).setOnPreferenceClickListener {
                     showSteppedSliderPreference(
@@ -232,6 +268,19 @@ class FragmentGameSettingsPage : PreferenceFragment(), OnSharedPreferenceChangeL
                     )
                     true
                 }
+            }
+
+            findPreference("gs_preload_threads").setOnPreferenceClickListener {
+                showSteppedSliderPreference(
+                    key = "gs_preload_threads",
+                    title = findPreference("gs_preload_threads").title.toString(),
+                    minimum = 1.0f,
+                    maximum = 3.0f,
+                    step = 1.0f,
+                    defaultValue = 2.0f,
+                    decimals = 0
+                )
+                true
             }
         }
     }

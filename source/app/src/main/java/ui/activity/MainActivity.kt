@@ -144,6 +144,7 @@ class MainActivity : AppCompatActivity() {
         migrateObjectPagingMinSizeDefault()
         migrateOpenMw050SettingsPreferences()
         migrateOpenMw051SettingsPreferences()
+        migrateOpenMw051GroundcoverPreferences()
 
         if(launcherThemePreference == 0) AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         else if(launcherThemePreference == 1) AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -1768,6 +1769,71 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+
+    /**
+     * OPENMW_ANDROID_051_LAUNCHER_AUDIT_V1
+     *
+     * OpenMW 0.51 no longer has the CaveBros Groundcover Paging/Instancing
+     * selector. Groundcover is a native instanced renderer controlled by
+     * [Groundcover] enabled, density and rendering distance.
+     *
+     * Import the old launcher choice once and then retire the legacy string key.
+     */
+    private fun migrateOpenMw051GroundcoverPreferences() {
+        val migrationKey = "migration_openmw051_groundcover_toggle_v1"
+        if (prefs.getBoolean(migrationKey, false)) {
+            return
+        }
+
+        val settingsFile = File(Constants.USER_CONFIG, "settings.cfg")
+        val legacyMode = prefs.getString("gs_groundcover_handling", "0") ?: "0"
+        val configuredEnabled = readOpenMwSetting(
+            settingsFile,
+            "Groundcover",
+            "enabled"
+        )
+
+        val groundcoverEnabled = when {
+            configuredEnabled.equals("true", ignoreCase = true) -> true
+            configuredEnabled.equals("false", ignoreCase = true) -> false
+            else -> legacyMode == "1" || legacyMode == "2"
+        }
+
+        val groundcoverDensity = readOpenMwSetting(
+            settingsFile,
+            "Groundcover",
+            "density"
+        )?.toFloatOrNull()?.coerceIn(0.0f, 1.0f) ?: 1.0f
+
+        val groundcoverRenderingDistance = readOpenMwSetting(
+            settingsFile,
+            "Groundcover",
+            "rendering distance"
+        )?.toFloatOrNull()?.coerceAtLeast(0.0f) ?: 6144.0f
+
+        prefs.edit()
+            .putBoolean("gs_groundcover_enabled", groundcoverEnabled)
+            .putString(
+                "gs_groundcover_density",
+                String.format(Locale.ROOT, "%.2f", groundcoverDensity)
+            )
+            .putString(
+                "gs_groundcover_rendering_distance",
+                String.format(Locale.ROOT, "%.0f", groundcoverRenderingDistance)
+            )
+            .remove("gs_groundcover_handling")
+            .putBoolean(migrationKey, true)
+            .apply()
+
+        Log.i(
+            TAG,
+            "Migrated OpenMW 0.51 Groundcover launcher settings: " +
+                "enabled=$groundcoverEnabled, " +
+                "density=$groundcoverDensity, " +
+                "renderingDistance=$groundcoverRenderingDistance"
+        )
+    }
+
     private fun controllerTriggerThresholds(): Pair<Int, Int> {
         val encoded = prefs.getString(
             "pref_omw051_controller_trigger_thresholds",
@@ -1803,6 +1869,18 @@ class MainActivity : AppCompatActivity() {
         val cameraListener =
             prefs.getBoolean("pref_omw050_camera_listener", false)
         val (triggerPress, triggerRelease) = controllerTriggerThresholds()
+        val groundcoverEnabled =
+            prefs.getBoolean("gs_groundcover_enabled", false)
+        val groundcoverDensity =
+            prefs.getString("gs_groundcover_density", "1.00")
+                ?.toFloatOrNull()
+                ?.coerceIn(0.0f, 1.0f)
+                ?: 1.0f
+        val groundcoverRenderingDistance =
+            prefs.getString("gs_groundcover_rendering_distance", "6144")
+                ?.toFloatOrNull()
+                ?.coerceAtLeast(0.0f)
+                ?: 6144.0f
         val groundcoverPointLighting =
             prefs.getBoolean("gs_groundcover_point_lighting", true)
 
@@ -1830,6 +1908,13 @@ class MainActivity : AppCompatActivity() {
             settingsFile,
             "Groundcover",
             linkedMapOf(
+                "enabled" to if (groundcoverEnabled) "true" else "false",
+                "density" to String.format(Locale.ROOT, "%.2f", groundcoverDensity),
+                "rendering distance" to String.format(
+                    Locale.ROOT,
+                    "%.0f",
+                    groundcoverRenderingDistance
+                ),
                 "point lighting" to if (groundcoverPointLighting) "true" else "false"
             )
         )
@@ -1842,6 +1927,9 @@ class MainActivity : AppCompatActivity() {
                 "controllerTooltips=$controllerTooltips, " +
                 "doppler=${if (dopplerEnabled) "0.25" else "0.0"}, " +
                 "cameraListener=$cameraListener, " +
+                "groundcoverEnabled=$groundcoverEnabled, " +
+                "groundcoverDensity=$groundcoverDensity, " +
+                "groundcoverRenderingDistance=$groundcoverRenderingDistance, " +
                 "groundcoverPointLighting=$groundcoverPointLighting"
         )
     }
@@ -2193,17 +2281,15 @@ class MainActivity : AppCompatActivity() {
                         "trainers training skills based on base skill" to if(prefs.getBoolean("gs_trainers_bs", false)) "true" else "false",
 
 			// Miscellaneous
-                        "timeplayed" to if(prefs.getBoolean("gs_add_time_to_saves", false)) "true" else "false",
                         "max quicksaves" to prefs.getString("gs_maximum_quicksaves", "1").toString(),
 
 			// Engine Settings
-                        "enabled" to if(prefs.getString("gs_groundcover_handling", "0") == "2") "true" else "false",
-                        "paging" to if(prefs.getString("gs_groundcover_handling", "0") == "1") "true" else "false",
                         "enable" to if(prefs.getBoolean("gs_build_navmesh", true)) "true" else "false",
-                        "write to navmeshdb" to if(prefs.getBoolean("gs_write_navmesh", false)) "true" else "false",
+                        "write to navmeshdb" to if(prefs.getBoolean("gs_write_navmesh", true)) "true" else "false",
                         "async nav mesh updater threads" to prefs.getString("gs_navmesh_threads", "1").toString(),
                         "async num threads" to prefs.getString("gs_physics_threads", "1").toString(),
-                        "preload num threads" to prefs.getString("gs_preload_threads", "1").toString()
+                        "preload num threads" to ((prefs.getString("gs_preload_threads", "2")
+                            ?.toIntOrNull() ?: 2).coerceIn(1, 3)).toString()
 
                 ))
 

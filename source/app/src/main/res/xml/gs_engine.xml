@@ -1,10 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="@string/l10n_gs_engine_engine_title">
-        <ListPreference android:key="gs_groundcover_handling" android:summary="@string/gs_groundcover_handling_summary" android:title="@string/gs_groundcover_handling_title" android:dialogTitle="@string/gs_groundcover_handling_dialogtitle" android:entries="@array/gs_groundcover_handling_entries" android:entryValues="@array/gs_groundcover_handling_values" android:defaultValue="0" />
-        <CheckBoxPreference android:key="gs_groundcover_point_lighting" android:title="@string/gs_groundcover_point_lighting_title" android:summary="@string/gs_groundcover_point_lighting_summary" android:defaultValue="true" />
+        <CheckBoxPreference android:key="gs_groundcover_enabled" android:title="@string/gs_groundcover_handling_title" android:summary="@string/gs_groundcover_handling_summary" android:defaultValue="false" />
+        <Preference android:key="gs_groundcover_density" android:title="@string/gs_groundcover_density_title" android:summary="@string/gs_groundcover_density_summary" android:dependency="gs_groundcover_enabled" />
+        <Preference android:key="gs_groundcover_rendering_distance" android:title="@string/gs_groundcover_rendering_distance_title" android:summary="@string/gs_groundcover_rendering_distance_summary" android:dependency="gs_groundcover_enabled" />
+        <CheckBoxPreference android:key="gs_groundcover_point_lighting" android:title="@string/gs_groundcover_point_lighting_title" android:summary="@string/gs_groundcover_point_lighting_summary" android:defaultValue="true" android:dependency="gs_groundcover_enabled" />
         <CheckBoxPreference android:key="gs_build_navmesh" android:title="@string/gs_build_navmesh_title" android:defaultValue="true" android:summary="@string/gs_build_navmesh_summary" />
-        <CheckBoxPreference android:key="gs_write_navmesh" android:title="@string/gs_write_navmesh_title" android:defaultValue="false" android:summary="@string/gs_write_navmesh_summary" />
+        <CheckBoxPreference android:key="gs_write_navmesh" android:title="@string/gs_write_navmesh_title" android:defaultValue="true" android:summary="@string/gs_write_navmesh_summary" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/l10n_gs_engine_threading_title">
         <Preference android:key="gs_navmesh_threads" android:title="@string/gs_navmesh_threads_title" android:summary="@string/gs_navmesh_threads_summary" />

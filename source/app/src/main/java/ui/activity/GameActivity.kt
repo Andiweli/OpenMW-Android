@@ -91,7 +91,6 @@ class GameActivity : SDLActivity() {
 
     override fun loadLibraries() {
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        val graphicsLibrary = prefs!!.getString("pref_graphicsLibrary_v2", "")
         val physicsFPS = prefs!!.getString("pref_physicsFPS2", "")
         if (!physicsFPS!!.isEmpty()) {
             try {
@@ -106,15 +105,17 @@ class GameActivity : SDLActivity() {
         System.loadLibrary("c++_shared")
         System.loadLibrary("openal")
         System.loadLibrary("SDL2")
-        if (graphicsLibrary != "gles1") {
-            try {
-                Os.setenv("OPENMW_GLES_VERSION", "2", true)
-                Os.setenv("LIBGL_ES", "2", true)
-            } catch (e: ErrnoException) {
-                Log.e("OpenMW", "Failed setting environment variables.")
-                e.printStackTrace()
-            }
 
+        // OPENMW_ANDROID_051_LAUNCHER_AUDIT_V1
+        // OpenMW 0.51 final and this port's GL4ES/OMWFX compatibility shaders
+        // use the GLES2 backend. The old GLES1 launcher selector is a CaveBros
+        // legacy path and is no longer exposed.
+        try {
+            Os.setenv("OPENMW_GLES_VERSION", "2", true)
+            Os.setenv("LIBGL_ES", "2", true)
+        } catch (e: ErrnoException) {
+            Log.e("OpenMW", "Failed setting GLES2 environment variables.")
+            e.printStackTrace()
         }
 
         val textureShrinkingOption = prefs!!.getString("pref_textureShrinking_v2", "")

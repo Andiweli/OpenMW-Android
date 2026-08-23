@@ -142,11 +142,6 @@
         <item>Только прицел</item>
         <item>Подсказка и прицел</item>
     </string-array>
-    <string-array name="gs_groundcover_handling_entries">
-        <item>Выкл.</item>
-        <item>Paging</item>
-        <item>Instancing</item>
-    </string-array>
     <string-array name="pref_omw051_controller_trigger_sensitivity_entries">
         <item>По умолчанию OpenMW (15/16 нажатие, 13/16 отпускание)</item>
         <item>Сбалансированная (12/16 нажатие, 10/16 отпускание)</item>

@@ -142,11 +142,6 @@
         <item>Tylko celownik</item>
         <item>Podpowiedź i celownik</item>
     </string-array>
-    <string-array name="gs_groundcover_handling_entries">
-        <item>Wyłączone</item>
-        <item>Paging</item>
-        <item>Instancing</item>
-    </string-array>
     <string-array name="pref_omw051_controller_trigger_sensitivity_entries">
         <item>Domyślne OpenMW (15/16 wciśnięcie, 13/16 zwolnienie)</item>
         <item>Zrównoważone (12/16 wciśnięcie, 10/16 zwolnienie)</item>

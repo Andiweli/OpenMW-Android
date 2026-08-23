@@ -142,11 +142,6 @@
         <item>Nur Fadenkreuz</item>
         <item>Tooltip und Fadenkreuz</item>
     </string-array>
-    <string-array name="gs_groundcover_handling_entries">
-        <item>Aus</item>
-        <item>Paging</item>
-        <item>Instancing</item>
-    </string-array>
     <string-array name="pref_omw051_controller_trigger_sensitivity_entries">
         <item>OpenMW-Standard (15/16 drücken, 13/16 loslassen)</item>
         <item>Ausgewogen (12/16 drücken, 10/16 loslassen)</item>
