@@ -20,13 +20,11 @@
 
 package ui.fragments
 
-import android.Manifest
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.preference.EditTextPreference
@@ -42,18 +40,19 @@ import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat
-
 import com.codekidlabs.storagechooser.Content
 import com.codekidlabs.storagechooser.StorageChooser
+import com.libopenmw.openmw.BuildConfig
 import com.libopenmw.openmw.R
 import file.GameInstaller
+import permission.PermissionHelper
 
 import ui.activity.ConfigureControls
 import ui.activity.MainActivity
 import ui.activity.ModsActivity
 import ui.activity.SettingsActivity
 import utils.MyApp
+import java.io.File
 import java.util.*
 
 class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener {
@@ -148,8 +147,7 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
         }
 
         findPreference("game_files").setOnPreferenceClickListener {
-            if (ContextCompat.checkSelfPermission(activity,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (!PermissionHelper.canOpenLegacyStorageChooser(activity)) {
                 showError(R.string.permissions_error_title, R.string.permissions_error_message)
             } else {
                 val chooserContent = Content().apply {
@@ -180,6 +178,33 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
                 chooser.setOnSelectListener { path -> setupData(path) }
             }
             true
+        }
+
+        // On AAOS, prefer the app-owned shared-media directory. This remains a
+        // normal filesystem path, so the native OpenMW core does not need SAF/VFS
+        // changes and the game data is not copied into Android/data.
+        autoSelectAutomotiveGameFilesIfAvailable()
+    }
+
+    private fun autoSelectAutomotiveGameFilesIfAvailable() {
+        if (!BuildConfig.IS_AUTOMOTIVE_BUILD)
+            return
+
+        val sharedPref = preferenceScreen.sharedPreferences
+        val currentPath = sharedPref.getString("game_files", "") ?: ""
+        if (currentPath.isNotEmpty() && GameInstaller(currentPath).check())
+            return
+
+        val mediaDirs = activity.externalMediaDirs
+        for (mediaRoot in mediaDirs) {
+            if (mediaRoot == null)
+                continue
+
+            val candidate = File(mediaRoot, "Morrowind")
+            if (GameInstaller(candidate.absolutePath).check()) {
+                setupData(candidate.absolutePath)
+                return
+            }
         }
     }
 

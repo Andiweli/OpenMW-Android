@@ -8,8 +8,8 @@ apply plugin: 'kotlin-android'
  * calibrated OMWFX chain together behind one build-time verification gate.
  */
 
-def openMwVersionCode = 5105
-def openMwAndroidVersionName = '0.51.0-05'
+def openMwVersionCode = 5106
+def openMwAndroidVersionName = '0.51.0-06'
 def versionFile = new File(
         project.rootDir,
         'app/src/main/assets/libopenmw/resources/version'
@@ -137,9 +137,9 @@ tasks.register('verifyOpenMwPayload') {
             )
         }
 
-        if (openMwVersionCode != 5105 || calculateVersion() != '0.51.0-05') {
+        if (openMwVersionCode != 5106 || calculateVersion() != '0.51.0-06') {
             throw new GradleException(
-                    'OpenMW Android final release identity must be versionName 0.51.0-05 and versionCode 5104.'
+                    'OpenMW Android final release identity must be versionName 0.51.0-06 and versionCode 5104.'
             )
         }
 
@@ -703,17 +703,15 @@ android {
     }
 
     defaultConfig {
-        // Canonical package/application ID from Phase 1 v8 onward.
+        // Both flavors intentionally use the same installed package name. Google Play
+        // can therefore serve the appropriate artifact per form factor while the
+        // shared OpenMW user-data path remains stable.
         applicationId "com.ast.openmw"
 
         versionCode openMwVersionCode
         versionName calculateVersion()
 
         minSdk 21
-
-        // Keep this at 29 for the final legacy game-file-access release.
-        // Scoped-storage modernization remains a separate post-0.51 step.
-        targetSdk 29
 
         ndk {
             abiFilters "arm64-v8a"
@@ -749,19 +747,44 @@ android {
         }
     }
 
-    // Keep the historical Mainline task name so the existing Android Studio / CLI
-    // workflow stays unchanged, but remove the obsolete Nightly flavor completely.
-    flavorDimensions += "version"
+    // Keep the historical "mainline" flavor as the normal Android flavor.
+    // This preserves the existing Android Studio run variant (mainlineDebug)
+    // instead of replacing it with a newly named mobileDebug variant.
+    // Automotive is an additional release-only target for Google Play AAOS.
+    flavorDimensions += "platform"
 
     productFlavors {
         mainline {
-            dimension "version"
+            dimension "platform"
+            targetSdk 29
+            buildConfigField "boolean", "IS_AUTOMOTIVE_BUILD", "false"
+        }
+
+        automotive {
+            dimension "platform"
+            targetSdk 35
+            // Keep Play version codes unique when Mainline and Automotive artifacts
+            // are uploaded under the same com.ast.openmw application ID.
+            versionCode openMwVersionCode + 100000
+            buildConfigField "boolean", "IS_AUTOMOTIVE_BUILD", "true"
         }
     }
 
     packaging {
         jniLibs {
             useLegacyPackaging = true
+        }
+    }
+}
+
+// There is no useful local Automotive debug deployment for this project:
+// the Renault/AAOS build is delivered through the Google Play Automotive track.
+// Disable automotiveDebug so Android Studio's green Run button can only select
+// the established mainlineDebug variant and cannot accidentally replace it.
+androidComponents {
+    beforeVariants(selector().withBuildType("debug")) { variantBuilder ->
+        if (variantBuilder.productFlavors.any { flavor -> flavor.second == "automotive" }) {
+            variantBuilder.enable = false
         }
     }
 }

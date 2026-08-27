@@ -22,9 +22,17 @@ package utils
 
 import android.app.Activity
 import android.view.View
+import com.libopenmw.openmw.BuildConfig
 
 object Utils {
     fun hideAndroidControls(activity: Activity) {
+        // The Automotive flavor renders inside the app area reserved by AAOS.
+        // The Mobile flavor retains the existing immersive fullscreen behavior.
+        if (BuildConfig.IS_AUTOMOTIVE_BUILD) {
+            activity.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
+            return
+        }
+
         activity.window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
             or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
             or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN

@@ -25,11 +25,35 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.libopenmw.openmw.BuildConfig
 
 object PermissionHelper {
     const val STORAGE_PERMISSION_REQUEST = 23
 
+    /**
+     * The Mobile flavor keeps the port's existing targetSdk 29 legacy-storage
+     * behavior. The Automotive flavor targets API 35, where WRITE_EXTERNAL_STORAGE
+     * can no longer grant broad filesystem access. Android/media/com.ast.openmw is
+     * still directly usable by this app, so the chooser must not be blocked by an
+     * obsolete permission check on AAOS.
+     */
+    fun canOpenLegacyStorageChooser(activity: Activity): Boolean {
+        if (BuildConfig.IS_AUTOMOTIVE_BUILD && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+            return true
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
+            return true
+
+        return ContextCompat.checkSelfPermission(
+            activity,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
     fun getWriteExternalStoragePermission(activity: Activity) {
+        if (BuildConfig.IS_AUTOMOTIVE_BUILD && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+            return
+
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
             return
 
@@ -41,9 +65,6 @@ object PermissionHelper {
             return
         }
 
-        // Request again even when Android recommends showing a rationale.
-        // The previous implementation did nothing in that state, which left
-        // users permanently stuck after a single denial.
         ActivityCompat.requestPermissions(
             activity,
             arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
