@@ -1055,6 +1055,19 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     }
 
     /**
+     * Android Automotive displays can expose their touch panel as an absolute
+     * mouse device. Keep this runtime check here because input routing depends
+     * on the device that is actually running the game, not just on the build
+     * flavor that produced the APK/AAB.
+     */
+    public static boolean isAutomotive() {
+        if (getContext() == null) {
+            return false;
+        }
+        return getContext().getPackageManager().hasSystemFeature("android.hardware.type.automotive");
+    }
+
+    /**
      * This method is called by SDL using JNI.
      */
     public static boolean isDeXMode() {
@@ -1780,6 +1793,28 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
     private int fixedWidth = 0;
     private int fixedHeight = 0;
 
+    private float normalizeTouchCoordinate(float coordinate, int currentViewSize, float measuredFallback) {
+        // MotionEvent coordinates are local to the laid-out View. mWidth/mHeight
+        // are populated during onMeasure(), but AAOS may relayout the app area
+        // after system bars/insets change without those cached values matching
+        // the final SurfaceView bounds. Use the live bounds whenever possible.
+        final float size = currentViewSize > 0 ? currentViewSize : measuredFallback;
+        if (size <= 0.0f) {
+            return 0.0f;
+        }
+
+        final float normalized = coordinate / size;
+        return Math.max(0.0f, Math.min(1.0f, normalized));
+    }
+
+    private float normalizeTouchX(float x) {
+        return normalizeTouchCoordinate(x, getWidth(), mWidth);
+    }
+
+    private float normalizeTouchY(float y) {
+        return normalizeTouchCoordinate(y, getHeight(), mHeight);
+    }
+
     // OPENMW_CHROMEOS_GAMEPLAY_MOUSE_V11
     // OPENMW_CHROMEOS_GAMEPLAY_MOUSE_V12_ACCEL
     // Pointer capture bypasses ChromeOS pointer ballistics. Keep the proven v1.1
@@ -2107,10 +2142,12 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
             y = motionListener.getEventY(event);
 
             boolean relativeMouse = motionListener.inRelativeMode();
-            if (!relativeMouse && SDLActivity.isChromebook()) {
+            if (!relativeMouse && (SDLActivity.isChromebook() || SDLActivity.isAutomotive())) {
                 // OPENMW_CHROMEOS_NATIVE_MOUSE_V1
-                // The OS cursor moves in host View coordinates. Map only absolute GUI
-                // coordinates to OpenMW's logical render size; never scale raw deltas.
+                // OPENMW_AUTOMOTIVE_TOUCH_COORDINATES_V1
+                // ChromeOS cursors and some AAOS touch panels report absolute
+                // coordinates in host View pixels. Map those GUI coordinates to
+                // OpenMW's logical render size; never scale relative mouse deltas.
                 x = SDLActivity.scaleAbsoluteMouseX(x);
                 y = SDLActivity.scaleAbsoluteMouseY(y);
             }
@@ -2121,8 +2158,8 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
                 case MotionEvent.ACTION_MOVE:
                     for (i = 0; i < pointerCount; i++) {
                         pointerFingerId = event.getPointerId(i);
-                        x = event.getX(i) / mWidth;
-                        y = event.getY(i) / mHeight;
+                        x = normalizeTouchX(event.getX(i));
+                        y = normalizeTouchY(event.getY(i));
                         p = event.getPressure(i);
                         if (p > 1.0f) {
                             // may be larger than 1.0f on some devices
@@ -2145,8 +2182,8 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
                     }
 
                     pointerFingerId = event.getPointerId(i);
-                    x = event.getX(i) / mWidth;
-                    y = event.getY(i) / mHeight;
+                    x = normalizeTouchX(event.getX(i));
+                    y = normalizeTouchY(event.getY(i));
                     p = event.getPressure(i);
                     if (p > 1.0f) {
                         // may be larger than 1.0f on some devices
@@ -2159,8 +2196,8 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
                 case MotionEvent.ACTION_CANCEL:
                     for (i = 0; i < pointerCount; i++) {
                         pointerFingerId = event.getPointerId(i);
-                        x = event.getX(i) / mWidth;
-                        y = event.getY(i) / mHeight;
+                        x = normalizeTouchX(event.getX(i));
+                        y = normalizeTouchY(event.getY(i));
                         p = event.getPressure(i);
                         if (p > 1.0f) {
                             // may be larger than 1.0f on some devices
