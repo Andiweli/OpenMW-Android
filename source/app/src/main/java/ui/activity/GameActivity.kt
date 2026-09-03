@@ -21,6 +21,7 @@
 package ui.activity
 
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Process
@@ -433,7 +434,14 @@ class GameActivity : SDLActivity() {
         mouseMode = MouseMode.get((prefs.getString("pref_mouse_mode",
             getString(R.string.pref_mouse_mode_default))!!))
 
-        val pref_hide_controls = prefs.getBoolean(Constants.HIDE_CONTROLS, true)
+        // OPENMW_ANDROID_TOUCH_CONTROLS_FIRST_START_V1
+        // The settings checkbox has no persisted value until the user changes it.
+        // Match the visible unchecked state on real touchscreen Android/AAOS devices,
+        // while ChromeOS keeps the overlay hidden for mouse/keyboard operation.
+        val hasTouchscreen = packageManager.hasSystemFeature(PackageManager.FEATURE_TOUCHSCREEN)
+        val defaultHideControls = !hasTouchscreen || SDLActivity.isChromebook()
+        val pref_hide_controls = prefs.getBoolean(Constants.HIDE_CONTROLS, defaultHideControls)
+
         var osc: Osc? = null
         if (!pref_hide_controls) {
             val layout = layout

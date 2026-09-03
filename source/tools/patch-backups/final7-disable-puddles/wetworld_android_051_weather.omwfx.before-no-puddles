@@ -1,0 +1,213 @@
+uniform_float wet_strength_v35 {
+    default = 0.92;
+    min = 0.0;
+    max = 1.5;
+    step = 0.05;
+    display_name = "Wet surface strength";
+    description = "Overall darkening and sheen applied to rain-wet upward-facing surfaces.";
+}
+
+uniform_float wet_darkening_v35 {
+    default = 0.30;
+    min = 0.0;
+    max = 0.60;
+    step = 0.02;
+    display_name = "Wet darkening";
+    description = "How much roads, paths and other upward-facing surfaces darken in rain.";
+}
+
+uniform_float wet_sheen_v35 {
+    default = 0.34;
+    min = 0.0;
+    max = 0.80;
+    step = 0.02;
+    display_name = "Wet sheen";
+    description = "Strength of the broad sky-coloured wet reflection sheen.";
+}
+
+uniform_float puddle_strength_v35 {
+    default = 0.62;
+    min = 0.0;
+    max = 1.0;
+    step = 0.02;
+    display_name = "Puddle strength";
+    description = "Strength of irregular darker and more reflective puddle patches.";
+}
+
+fragment main {
+    omw_In vec2 omw_TexCoord;
+
+    float rainForWeather051(int weatherId)
+    {
+        if (weatherId == 4)
+            return 1.0;
+        if (weatherId == 5)
+            return 1.0;
+        return 0.0;
+    }
+
+    float rainFactor051()
+    {
+        float currentRain = rainForWeather051(omw.weatherID);
+        float nextRain = rainForWeather051(omw.nextWeatherID);
+        return mix(currentRain, nextRain, clamp(omw.weatherTransition, 0.0, 1.0));
+    }
+
+    float hash21051(vec2 p)
+    {
+        // Arithmetic-only hash for the GLES2 path. It avoids eight expensive
+        // trigonometric calls per pixel while keeping stable world-space pools.
+        vec3 p3 = fract(vec3(p.xyx) * 0.1031);
+        p3 += dot(p3, p3.yzx + 33.33);
+        return fract((p3.x + p3.y) * p3.z);
+    }
+
+    float valueNoise051(vec2 p)
+    {
+        vec2 cell = floor(p);
+        vec2 f = fract(p);
+        f = f * f * (3.0 - 2.0 * f);
+
+        float a = hash21051(cell);
+        float b = hash21051(cell + vec2(1.0, 0.0));
+        float c = hash21051(cell + vec2(0.0, 1.0));
+        float d = hash21051(cell + vec2(1.0, 1.0));
+
+        return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+    }
+
+    // Reconstruct camera-relative view-space positions directly from depth.
+    // This avoids subtracting large absolute world coordinates, which can lose
+    // precision on some Mali/GL4ES paths and turn the wetness normal into
+    // camera-aligned stripes. Android currently runs without reverse-Z, but
+    // keep the generated OpenMW branch correct for completeness.
+    vec3 reconstructedViewPos051(vec2 uv)
+    {
+        float depth = omw_GetDepth(uv);
+#if OMW_REVERSE_Z
+        float clipDepth = 1.0 - depth;
+#else
+        float clipDepth = depth * 2.0 - 1.0;
+#endif
+        vec4 clipPos = vec4(uv * 2.0 - 1.0, clipDepth, 1.0);
+        vec4 viewPos = omw.invProjectionMatrix * clipPos;
+        float safeW = abs(viewPos.w) > 0.000001 ? viewPos.w : 1.0;
+        return viewPos.xyz / safeW;
+    }
+
+    vec3 reconstructedWorldNormal051(vec2 uv)
+    {
+        // Central four-neighbour sampling is less directionally biased than the
+        // old +X/+Y finite difference. For each axis use the shorter one-sided
+        // vector, which naturally rejects most depth discontinuities at object
+        // silhouettes without derivatives or a normals render target.
+        vec2 texel = vec2(1.0) / max(omw.resolution.xy, vec2(1.0));
+        vec2 uvL = clamp(uv - vec2(texel.x, 0.0), vec2(0.001), vec2(0.999));
+        vec2 uvR = clamp(uv + vec2(texel.x, 0.0), vec2(0.001), vec2(0.999));
+        vec2 uvD = clamp(uv - vec2(0.0, texel.y), vec2(0.001), vec2(0.999));
+        vec2 uvU = clamp(uv + vec2(0.0, texel.y), vec2(0.001), vec2(0.999));
+
+        vec3 p = reconstructedViewPos051(uv);
+        vec3 pL = reconstructedViewPos051(uvL);
+        vec3 pR = reconstructedViewPos051(uvR);
+        vec3 pD = reconstructedViewPos051(uvD);
+        vec3 pU = reconstructedViewPos051(uvU);
+
+        vec3 dxForward = pR - p;
+        vec3 dxBackward = p - pL;
+        vec3 dyForward = pU - p;
+        vec3 dyBackward = p - pD;
+        vec3 dx = dot(dxForward, dxForward) <= dot(dxBackward, dxBackward)
+            ? dxForward : dxBackward;
+        vec3 dy = dot(dyForward, dyForward) <= dot(dyBackward, dyBackward)
+            ? dyForward : dyBackward;
+
+        vec3 nView = cross(dx, dy);
+        float len2 = dot(nView, nView);
+        if (len2 < 0.0000001)
+            return vec3(0.0, 0.0, 1.0);
+
+        nView *= inversesqrt(len2);
+        vec3 nWorld = (omw.invViewMatrix * vec4(nView, 0.0)).xyz;
+        float worldLen2 = dot(nWorld, nWorld);
+        if (worldLen2 < 0.0000001)
+            return vec3(0.0, 0.0, 1.0);
+        return nWorld * inversesqrt(worldLen2);
+    }
+
+    void main()
+    {
+        vec4 base = omw_GetLastShader(omw_TexCoord);
+
+        // Patch 35 marks actual water pixels with scene alpha 0. Preserve lakes,
+        // rivers and native rain ripples instead of treating them as wet ground.
+        if (base.a < 0.25)
+        {
+            omw_FragColor = base;
+            return;
+        }
+
+        float rain = rainFactor051();
+        if (rain <= 0.001)
+        {
+            omw_FragColor = base;
+            return;
+        }
+
+        float linearDepth = omw_GetLinearDepth(omw_TexCoord);
+        if (linearDepth >= omw.far * 0.992)
+        {
+            omw_FragColor = base;
+            return;
+        }
+
+        vec3 worldPos = omw_GetWorldPosFromUV(omw_TexCoord);
+        vec3 n = reconstructedWorldNormal051(omw_TexCoord);
+
+        // Roads, paths, flat stone and terrain receive most rain. The absolute
+        // component keeps the result stable if finite-difference winding flips.
+        float upFacing = smoothstep(0.30, 0.76, abs(n.z));
+        float distanceFade = 1.0 - smoothstep(omw.far * 0.48, omw.far * 0.92, linearDepth);
+        float wetMask = clamp(rain * upFacing * distanceFade * wet_strength_v35, 0.0, 1.0);
+
+        // Two low-frequency world-space noise octaves create broad, irregular
+        // puddles without textures, arrays, derivatives or a normals target.
+        float broad = valueNoise051(worldPos.xy * 0.0035);
+        float detail = valueNoise051(worldPos.xy * 0.0090 + vec2(17.0, 31.0));
+        float puddleField = broad * 0.72 + detail * 0.28;
+        float puddleMask = smoothstep(0.56, 0.76, puddleField)
+            * wetMask * puddle_strength_v35;
+
+        float luma = dot(base.rgb, vec3(0.299, 0.587, 0.114));
+        vec3 saturated = mix(vec3(luma), base.rgb, 1.12);
+
+        float darken = wet_darkening_v35 * wetMask + 0.16 * puddleMask;
+        vec3 wetBase = saturated * (1.0 - clamp(darken, 0.0, 0.62));
+
+        vec3 viewDir = normalize(omw.eyePos.xyz - worldPos);
+        float ndv = clamp(abs(dot(n, viewDir)), 0.0, 1.0);
+        float fresnel = pow(1.0 - ndv, 2.0);
+        float broadSheen = 0.20 + fresnel * 0.80;
+
+        vec3 skyTint = mix(omw.skyColor.rgb, omw.fogColor.rgb, 0.28);
+        skyTint = max(skyTint, vec3(0.07));
+
+        vec3 sheen = skyTint * broadSheen * wet_sheen_v35 * wetMask;
+        vec3 puddleReflection = skyTint * (0.20 + fresnel * 0.80)
+            * puddleMask * 0.62;
+
+        vec3 result = wetBase + sheen + puddleReflection;
+        result = mix(result, max(result, skyTint * 0.42), puddleMask * 0.18);
+
+        base.rgb = result;
+        omw_FragColor = base;
+    }
+}
+
+technique {
+    passes = main;
+    description = "Android/GL4ES rain wetness with Mali-safe view-space normals, exact water exclusion and procedural puddles.";
+    author = "OpenMW Android project";
+    version = "5.1-051-weather-puddles-mali-safe";
+    flags = Disable_Interiors, Disable_Underwater;
+}
