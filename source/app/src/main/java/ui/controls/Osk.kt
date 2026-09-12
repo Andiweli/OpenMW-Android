@@ -20,7 +20,6 @@
 package ui.controls
 
 import android.view.KeyEvent
-import android.view.KeyCharacterMap
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
@@ -89,6 +88,12 @@ abstract class OskButton(
         v.alpha = 0.5f
         v.visibility = View.GONE
 
+        // The on-screen keyboard is touch-only. Keep Android's hardware/gamepad
+        // focus navigation on the SDL surface instead of allowing a connected
+        // controller to move View focus onto these overlay buttons.
+        v.isFocusable = false
+        v.isFocusableInTouchMode = false
+
         // TODO: this doesn't take soft keys into account
         val realScreenWidth = v.context.resources.displayMetrics.widthPixels
         val realScreenHeight = v.context.resources.displayMetrics.heightPixels
@@ -134,25 +139,19 @@ abstract class OskButton(
  * @param key key sent when in normal state
  * @param shiftKey key sent when shift is pressed
  */
-class OskSimpleButton(val key: Char, val shiftKey: Char, positionX: Int, positionY: Int, sizeW: Int, sizeH: Int, isRussian: Boolean):
+class OskSimpleButton(val key: Char, val shiftKey: Char, positionX: Int, positionY: Int, sizeW: Int, sizeH: Int):
     OskButton(key.toString(), positionX, positionY, sizeW, sizeH) {
 
     private val keyStr = key.toString()
     private val shiftKeyStr = shiftKey.toString()
     private var curKeyStr = keyStr
 
-    val russian = isRussian
-
-    val mKeyCharacterMap = KeyCharacterMap.load(KeyCharacterMap.VIRTUAL_KEYBOARD)
-    val keyEvent = mKeyCharacterMap.getEvents(key.toString().toCharArray())
-
-    override fun pressed() {
-        if(russian == false) SDLActivity.onNativeKeyDown(keyEvent[0].getKeyCode())
-    }
-
     override fun released() {
+        // Printable characters belong to SDL's text-input path. Do not also
+        // synthesize hardware key down/up events: with an active gamepad those
+        // events can participate in controller/keyboard GUI navigation and
+        // interfere with the EditBox that owns text input.
         SDLActivity.nativeCommitText(curKeyStr, 0)
-        if(russian == false) SDLActivity.onNativeKeyUp(keyEvent[0].getKeyCode())
     }
 
     fun shift(on: Boolean) {
@@ -271,7 +270,7 @@ class Osk {
             curX = lineOffset[i]
 
             for (j in 0..(line.length - 1) step 2) {
-                simpleButtons.add(OskSimpleButton(line[j], line[j + 1], curX, curY, buttonWidth, buttonHeight, isRussian))
+                simpleButtons.add(OskSimpleButton(line[j], line[j + 1], curX, curY, buttonWidth, buttonHeight))
                 curX += buttonWidth + buttonMarginX
             }
             curY += buttonHeight + buttonMarginY
@@ -308,7 +307,7 @@ class Osk {
         elements.add(OskLanguage(this, offsetX, curY, (buttonWidth * 1.5).toInt(), buttonHeight))
 
         // Spacebar
-        elements.add(OskSimpleButton(' ', ' ', offsetX + buttonWidth * 3, curY, buttonWidth * 7, buttonHeight, isRussian))
+        elements.add(OskSimpleButton(' ', ' ', offsetX + buttonWidth * 3, curY, buttonWidth * 7, buttonHeight))
 
         // Arrows
         var arrowsCurX = lineOffset[3] + (buttonWidth + buttonMarginX) * keyboardLayout[3].length / 2 + buttonWidth
