@@ -8,4 +8,13 @@
     <string name="text_freespace">%1$s ledigt</string>
     <string name="toast_threshold_breached">%1$s räcker inte för den aktuella åtgärden. Frigör lite lagringsutrymme.</string>
     <string name="toast_not_readable">Den valda lagringen går inte att komma åt.</string>
+
+    <!-- Storage overview states (OpenMW port) -->
+    <string name="sc_sd_card">SD-kort</string>
+    <string name="sc_volume_unavailable">Inte tillgänglig</string>
+    <string name="sc_volume_read_only">skrivskyddad</string>
+    <string name="sc_volume_problem_title">Lagringen går inte att komma åt</string>
+    <string name="sc_volume_not_available_message">”%1$s” hittades men är inte monterad just nu eller har tagits bort. Sätt i kortet eller vänta tills Android har monterat det och försök sedan igen.</string>
+    <string name="sc_volume_no_path_message">”%1$s” hittades, men den här Android-versionen anger ingen mappsökväg för den. Starta om enheten med kortet isatt och försök igen.</string>
+    <string name="sc_volume_not_readable_message">”%1$s” hittades, men Android tillåter inte OpenMW att läsa den. Kontrollera i appens inställningar att lagringsbehörigheten är beviljad. Om den är det tillåter den här enheten inte direkt åtkomst till den här lagringen; kopiera då spelfilerna till den interna lagringen.</string>
 </resources>

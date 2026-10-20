@@ -182,4 +182,17 @@
     <string name="sdl_exit">Zakończ</string>
     <string name="sdl_start_error">Wystąpił błąd podczas uruchamiania aplikacji. Spróbuj ponownie i/lub zainstaluj aplikację ponownie.\n\nBłąd: %1$s</string>
     <string name="navmesh_generating_cache">TWORZENIE PAMIĘCI PODRĘCZNEJ NAVMESH</string>
+
+    <!-- Game folder validation -->
+    <string name="game_files_checking">Sprawdzanie plików gry…</string>
+    <string name="game_files_selection_unchanged">Poprzedni wybór nie został zmieniony.</string>
+    <string name="game_files_storage_unavailable_title">Lokalizacja pamięci niedostępna</string>
+    <string name="game_files_storage_unavailable_message">Pamięć zawierająca folder gry jest obecnie niedostępna:\n%1$s\n\nWłóż kartę SD lub poczekaj, aż Android ją zamontuje. Zapisany wybór zostaje zachowany.</string>
+    <string name="game_files_folder_not_found_title">Nie znaleziono folderu</string>
+    <string name="game_files_folder_not_found_message">Nie znaleziono folderu gry:\n%1$s\n\nCzy został przeniesiony lub zmienił nazwę? Jeśli znajduje się na karcie SD, sprawdź, czy karta jest włożona.</string>
+    <string name="game_files_access_denied_title">Brak dostępu do odczytu</string>
+    <string name="game_files_access_denied_message">OpenMW nie ma uprawnień do odczytu tego pliku lub folderu:\n%1$s\n\nSprawdź w ustawieniach aplikacji, czy przyznano uprawnienie do pamięci. Jeśli tak, to urządzenie nie pozwala na bezpośredni dostęp do tej lokalizacji; skopiuj wtedy pliki gry do pamięci wewnętrznej.</string>
+    <string name="game_files_missing_message">W wybranym folderze brakuje:\n%1$s\n\nWybierz folder zawierający plik „Morrowind.ini” i katalog „Data Files”.</string>
+    <string name="game_files_read_failed_title">Błąd odczytu</string>
+    <string name="game_files_read_failed_message">Nie udało się odczytać pliku:\n%1$s\n(%2$s)</string>
 </resources>

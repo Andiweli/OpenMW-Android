@@ -8,4 +8,13 @@
     <string name="text_freespace">%1$s wolne</string>
     <string name="toast_threshold_breached">%1$s nie wystarczy do wykonania bieżącej operacji. Zwolnij trochę miejsca.</string>
     <string name="toast_not_readable">Wybrana pamięć jest niedostępna.</string>
+
+    <!-- Storage overview states (OpenMW port) -->
+    <string name="sc_sd_card">Karta SD</string>
+    <string name="sc_volume_unavailable">Niedostępna</string>
+    <string name="sc_volume_read_only">tylko do odczytu</string>
+    <string name="sc_volume_problem_title">Pamięć niedostępna</string>
+    <string name="sc_volume_not_available_message">Wykryto pamięć „%1$s”, ale nie jest ona obecnie zamontowana lub została wyjęta. Włóż kartę lub poczekaj, aż Android ją zamontuje, a następnie spróbuj ponownie.</string>
+    <string name="sc_volume_no_path_message">Wykryto pamięć „%1$s”, ale ta wersja Androida nie podaje dla niej ścieżki folderu. Uruchom ponownie urządzenie z włożoną kartą i spróbuj ponownie.</string>
+    <string name="sc_volume_not_readable_message">Wykryto pamięć „%1$s”, ale Android nie pozwala OpenMW na jej odczyt. Sprawdź w ustawieniach aplikacji, czy przyznano uprawnienie do pamięci. Jeśli tak, to urządzenie nie pozwala na bezpośredni dostęp do tej pamięci; skopiuj wtedy pliki gry do pamięci wewnętrznej.</string>
 </resources>

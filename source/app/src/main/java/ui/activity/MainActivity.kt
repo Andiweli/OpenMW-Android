@@ -44,6 +44,7 @@ import com.bugsnag.android.Bugsnag
 import com.libopenmw.openmw.BuildConfig
 import com.libopenmw.openmw.R
 import constants.Constants
+import file.GameFilesLocation
 import file.GameInstaller
 
 import java.io.BufferedReader
@@ -397,6 +398,21 @@ class MainActivity : AppCompatActivity() {
         val inst = GameInstaller(prefs.getString("game_files", "")!!)
         if (!inst.check()) {
             revealLauncherAfterSkipGui("game files need configuration")
+
+            // A removed SD card or a denied folder gets its own explanation. The stored
+            // path is kept, so the same card works again once it is reinserted.
+            val problem = GameFilesLocation.locateConfigured(prefs)
+            if (problem != null) {
+                val (title, message) = GameFilesLocation.describe(this, problem)
+                Log.w(TAG, "Configured game folder unusable: $problem")
+                AlertDialog.Builder(this)
+                    .setTitle(title)
+                    .setMessage(message)
+                    .setPositiveButton(android.R.string.ok) { _: DialogInterface, _: Int -> }
+                    .show()
+                return
+            }
+
             AlertDialog.Builder(this)
                 .setTitle(R.string.no_data_files_title)
                 .setMessage(R.string.no_data_files_message)

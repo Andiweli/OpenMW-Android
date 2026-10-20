@@ -182,4 +182,17 @@
     <string name="sdl_exit">Avsluta</string>
     <string name="sdl_start_error">Ett fel inträffade när appen skulle startas. Försök igen och/eller installera om appen.\n\nFel: %1$s</string>
     <string name="navmesh_generating_cache">SKAPAR NAVMESH-CACHE</string>
+
+    <!-- Game folder validation -->
+    <string name="game_files_checking">Kontrollerar spelfiler…</string>
+    <string name="game_files_selection_unchanged">Det tidigare valet har inte ändrats.</string>
+    <string name="game_files_storage_unavailable_title">Lagringsplatsen är inte tillgänglig</string>
+    <string name="game_files_storage_unavailable_message">Lagringen som innehåller spelmappen är inte tillgänglig just nu:\n%1$s\n\nSätt i SD-kortet eller vänta tills Android har monterat det. Det sparade valet behålls.</string>
+    <string name="game_files_folder_not_found_title">Mappen hittades inte</string>
+    <string name="game_files_folder_not_found_message">Spelmappen hittades inte:\n%1$s\n\nHar den flyttats eller bytt namn? Om den ligger på ett SD-kort, kontrollera att kortet är isatt.</string>
+    <string name="game_files_access_denied_title">Ingen läsbehörighet</string>
+    <string name="game_files_access_denied_message">OpenMW får inte läsa den här filen eller mappen:\n%1$s\n\nKontrollera i appens inställningar att lagringsbehörigheten är beviljad. Om den är det tillåter den här enheten inte direkt åtkomst till den här platsen; kopiera då spelfilerna till den interna lagringen.</string>
+    <string name="game_files_missing_message">I den valda mappen saknas:\n%1$s\n\nVälj mappen som innehåller filen ”Morrowind.ini” och katalogen ”Data Files”.</string>
+    <string name="game_files_read_failed_title">Läsfel</string>
+    <string name="game_files_read_failed_message">Filen kunde inte läsas:\n%1$s\n(%2$s)</string>
 </resources>

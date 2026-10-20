@@ -182,4 +182,17 @@
     <string name="sdl_exit">Quitter</string>
     <string name="sdl_start_error">Une erreur est survenue lors du démarrage de l’application. Veuillez réessayer et/ou réinstaller l’application.\n\nErreur : %1$s</string>
     <string name="navmesh_generating_cache">GÉNÉRATION DU CACHE NAVMESH</string>
+
+    <!-- Game folder validation -->
+    <string name="game_files_checking">Vérification des fichiers du jeu…</string>
+    <string name="game_files_selection_unchanged">La sélection précédente n’a pas été modifiée.</string>
+    <string name="game_files_storage_unavailable_title">Emplacement de stockage indisponible</string>
+    <string name="game_files_storage_unavailable_message">Le stockage contenant le dossier du jeu n’est pas disponible pour le moment :\n%1$s\n\nInsérez la carte SD ou attendez qu’Android l’ait montée. La sélection enregistrée est conservée.</string>
+    <string name="game_files_folder_not_found_title">Dossier introuvable</string>
+    <string name="game_files_folder_not_found_message">Le dossier du jeu est introuvable :\n%1$s\n\nA-t-il été déplacé ou renommé ? S’il se trouve sur une carte SD, vérifiez que la carte est insérée.</string>
+    <string name="game_files_access_denied_title">Accès en lecture refusé</string>
+    <string name="game_files_access_denied_message">OpenMW n’est pas autorisé à lire ce fichier ou ce dossier :\n%1$s\n\nVérifiez que l’autorisation d’accès au stockage est accordée dans les paramètres de l’application. Si c’est le cas, cet appareil n’autorise pas l’accès direct à cet emplacement ; copiez alors les fichiers du jeu dans le stockage interne.</string>
+    <string name="game_files_missing_message">Il manque dans le dossier sélectionné :\n%1$s\n\nVeuillez sélectionner le dossier contenant le fichier « Morrowind.ini » et le répertoire « Data Files ».</string>
+    <string name="game_files_read_failed_title">Erreur de lecture</string>
+    <string name="game_files_read_failed_message">Impossible de lire le fichier :\n%1$s\n(%2$s)</string>
 </resources>

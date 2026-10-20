@@ -90,10 +90,27 @@ public class StorageChooserListAdapter extends BaseAdapter {
         memoryBar.setScaleY(memorybarHeight);
 
         Storages storages = storagesList.get(i);
-        final SpannableStringBuilder str = new SpannableStringBuilder(storages.getStorageTitle() + " (" + storages.getMemoryTotalSize() + ")");
+        boolean sizeKnown = storages.isAvailable() && storages.getMemoryTotalSize() != null;
+        final SpannableStringBuilder str = new SpannableStringBuilder(sizeKnown
+                ? storages.getStorageTitle() + " (" + storages.getMemoryTotalSize() + ")"
+                : storages.getStorageTitle());
 
-        str.setSpan(new StyleSpan(Typeface.ITALIC), getSpannableIndex(str), str.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        String availableText = String.format(mContent.getFreeSpaceText(), storages.getMemoryAvailableSize());
+        if (sizeKnown) {
+            str.setSpan(new StyleSpan(Typeface.ITALIC), getSpannableIndex(str), str.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        String availableText;
+        if (!storages.isAvailable()) {
+            availableText = mContext.getString(R.string.sc_volume_unavailable);
+        } else if (storages.getMemoryAvailableSize() != null) {
+            availableText = String.format(mContent.getFreeSpaceText(), storages.getMemoryAvailableSize());
+        } else {
+            availableText = "";
+        }
+        if (storages.isAvailable() && storages.isReadOnly()) {
+            String readOnly = mContext.getString(R.string.sc_volume_read_only);
+            availableText = availableText.isEmpty() ? readOnly : availableText + " · " + readOnly;
+        }
         storageName.setText(str);
 
         storageName.setTextColor(scheme[OVERVIEW_STORAGE_TEXT_INDEX]);
@@ -109,10 +126,13 @@ public class StorageChooserListAdapter extends BaseAdapter {
         memoryStatus.setTextColor(scheme[OVERVIEW_INDICATOR_INDEX]);
         DrawableCompat.setTint(memoryBar.getProgressDrawable(), scheme[OVERVIEW_MEMORYBAR_INDEX]);
 
-        try {
-            memoryPercentile = getPercentile(storages.getStoragePath());
-        } catch (MemoryNotAccessibleException e) {
-            e.printStackTrace();
+        if (sizeKnown) {
+            try {
+                memoryPercentile = getPercentile(storages.getStoragePath());
+            } catch (MemoryNotAccessibleException | IllegalArgumentException | SecurityException e) {
+                // StatFs can fail for volumes this app may not access.
+                memoryPercentile = -1;
+            }
         }
         // THE ONE AND ONLY MEMORY BAR
         if (shouldShowMemoryBar && memoryPercentile != -1) {
@@ -151,7 +171,8 @@ public class StorageChooserListAdapter extends BaseAdapter {
      * @return index of '('
      */
     private int getSpannableIndex(SpannableStringBuilder str) {
-        return str.toString().indexOf("(") + 1;
+        // The size is appended last; volume descriptions may contain '(' themselves.
+        return str.toString().lastIndexOf("(") + 1;
     }
 
     /**

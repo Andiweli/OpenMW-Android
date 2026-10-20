@@ -182,4 +182,17 @@
     <string name="sdl_exit">Beenden</string>
     <string name="sdl_start_error">Beim Starten der Anwendung ist ein Fehler aufgetreten. Bitte versuche es erneut und/oder installiere die Anwendung neu.\n\nFehler: %1$s</string>
     <string name="navmesh_generating_cache">NAVMESH-CACHE WIRD ERSTELLT</string>
+
+    <!-- Prüfung des Spieleordners -->
+    <string name="game_files_checking">Spieldateien werden geprüft …</string>
+    <string name="game_files_selection_unchanged">Die bisherige Auswahl wurde nicht geändert.</string>
+    <string name="game_files_storage_unavailable_title">Speicherort nicht verfügbar</string>
+    <string name="game_files_storage_unavailable_message">Der Speicher mit dem Spieleordner ist derzeit nicht verfügbar:\n%1$s\n\nSetze die SD-Karte ein oder warte, bis Android sie eingebunden hat. Die gespeicherte Auswahl bleibt erhalten.</string>
+    <string name="game_files_folder_not_found_title">Ordner nicht gefunden</string>
+    <string name="game_files_folder_not_found_message">Der Spieleordner wurde nicht gefunden:\n%1$s\n\nWurde er verschoben oder umbenannt? Liegt er auf einer SD-Karte, prüfe, ob sie eingesetzt ist.</string>
+    <string name="game_files_access_denied_title">Kein Lesezugriff</string>
+    <string name="game_files_access_denied_message">OpenMW darf diese Datei bzw. diesen Ordner nicht lesen:\n%1$s\n\nPrüfe in den App-Einstellungen, ob die Speicherberechtigung erteilt ist. Ist sie erteilt, erlaubt dieses Gerät keinen direkten Zugriff auf diesen Speicherort; kopiere die Spieldateien dann in den internen Speicher.</string>
+    <string name="game_files_missing_message">Im gewählten Ordner fehlt:\n%1$s\n\nBitte wähle den Ordner, der die Datei „Morrowind.ini“ und das Verzeichnis „Data Files“ enthält.</string>
+    <string name="game_files_read_failed_title">Lesefehler</string>
+    <string name="game_files_read_failed_message">Die Datei konnte nicht gelesen werden:\n%1$s\n(%2$s)</string>
 </resources>

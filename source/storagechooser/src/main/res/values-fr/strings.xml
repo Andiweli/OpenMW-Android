@@ -8,4 +8,13 @@
     <string name="text_freespace">%1$s libres</string>
     <string name="toast_threshold_breached">%1$s ne suffisent pas pour l’opération en cours. Veuillez libérer de l’espace.</string>
     <string name="toast_not_readable">Le stockage sélectionné n’est pas accessible.</string>
+
+    <!-- Storage overview states (OpenMW port) -->
+    <string name="sc_sd_card">Carte SD</string>
+    <string name="sc_volume_unavailable">Non disponible</string>
+    <string name="sc_volume_read_only">lecture seule</string>
+    <string name="sc_volume_problem_title">Stockage inaccessible</string>
+    <string name="sc_volume_not_available_message">« %1$s » a été détecté, mais n’est actuellement pas monté ou a été retiré. Insérez la carte ou attendez qu’Android l’ait montée, puis réessayez.</string>
+    <string name="sc_volume_no_path_message">« %1$s » a été détecté, mais cette version d’Android n’indique pas de chemin de dossier pour ce stockage. Redémarrez l’appareil avec la carte insérée, puis réessayez.</string>
+    <string name="sc_volume_not_readable_message">« %1$s » a été détecté, mais Android n’autorise pas OpenMW à le lire. Vérifiez que l’autorisation d’accès au stockage est accordée dans les paramètres de l’application. Si c’est le cas, cet appareil n’autorise pas l’accès direct à ce stockage ; copiez alors les fichiers du jeu dans le stockage interne.</string>
 </resources>

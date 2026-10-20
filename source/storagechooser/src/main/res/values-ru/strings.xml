@@ -8,4 +8,13 @@
     <string name="text_freespace">Свободно %1$s</string>
     <string name="toast_threshold_breached">%1$s недостаточно для текущей операции. Освободите немного места.</string>
     <string name="toast_not_readable">Выбранное хранилище недоступно.</string>
+
+    <!-- Storage overview states (OpenMW port) -->
+    <string name="sc_sd_card">SD-карта</string>
+    <string name="sc_volume_unavailable">Недоступно</string>
+    <string name="sc_volume_read_only">только чтение</string>
+    <string name="sc_volume_problem_title">Хранилище недоступно</string>
+    <string name="sc_volume_not_available_message">Хранилище «%1$s» обнаружено, но сейчас не подключено или было извлечено. Вставьте карту или дождитесь, пока Android её подключит, и повторите попытку.</string>
+    <string name="sc_volume_no_path_message">Хранилище «%1$s» обнаружено, но эта версия Android не сообщает путь к нему. Перезапустите устройство со вставленной картой и повторите попытку.</string>
+    <string name="sc_volume_not_readable_message">Хранилище «%1$s» обнаружено, но Android не разрешает OpenMW читать его. Проверьте в настройках приложения, предоставлен ли доступ к хранилищу. Если да, это устройство не разрешает прямой доступ к этому хранилищу; в этом случае скопируйте файлы игры во внутреннюю память.</string>
 </resources>

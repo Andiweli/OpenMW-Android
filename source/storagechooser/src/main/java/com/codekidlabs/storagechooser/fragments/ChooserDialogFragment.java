@@ -1,11 +1,11 @@
 package com.codekidlabs.storagechooser.fragments;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,9 +26,9 @@ import com.codekidlabs.storagechooser.models.Storages;
 import com.codekidlabs.storagechooser.utils.DiskUtil;
 import com.codekidlabs.storagechooser.utils.FileUtil;
 import com.codekidlabs.storagechooser.utils.MemoryUtil;
+import com.codekidlabs.storagechooser.utils.StorageVolumeUtil;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -123,9 +123,17 @@ public class ChooserDialogFragment extends android.app.DialogFragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Storages storage = storagesList.get(i);
+
+                // "Detected" is not "readable": explain both cases instead of failing silently.
+                if (!storage.isAvailable()) {
+                    showStorageProblem(storage);
+                    return;
+                }
+
                 final String dirPath = evaluatePath(i);
 
-                if (new File(dirPath).canRead()) {
+                if (StorageVolumeUtil.isListable(new File(dirPath))) {
                     // if allowCustomPath is called then directory chooser will be the default secondary dialog
                     if (mConfig.isAllowCustomPath()) {
                         // if developer wants to apply threshold
@@ -175,12 +183,38 @@ public class ChooserDialogFragment extends android.app.DialogFragment {
                     }
                     ChooserDialogFragment.this.dismiss();
                 } else {
-                    Toast.makeText(getActivity(), R.string.toast_not_readable, Toast.LENGTH_SHORT)
-                            .show();
+                    Log.w(TAG, "Storage detected but not listable: " + dirPath);
+                    showStorageProblem(storage);
                 }
             }
         });
 
+    }
+
+    /**
+     * Explains why a detected storage cannot be opened. The overview stays open so that
+     * another storage can be chosen.
+     */
+    private void showStorageProblem(Storages storage) {
+        if (getActivity() == null) {
+            return;
+        }
+
+        String message;
+        if (storage.isAvailable()) {
+            message = getString(R.string.sc_volume_not_readable_message, storage.getStorageTitle());
+        } else if (storage.getStoragePath() == null
+                && StorageVolumeUtil.isReadableState(storage.getStorageState())) {
+            message = getString(R.string.sc_volume_no_path_message, storage.getStorageTitle());
+        } else {
+            message = getString(R.string.sc_volume_not_available_message, storage.getStorageTitle());
+        }
+
+        new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.sc_volume_problem_title)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, null)
+                .show();
     }
 
     /**
@@ -218,11 +252,8 @@ public class ChooserDialogFragment extends android.app.DialogFragment {
      * @return String with the required path for developers
      */
     private String evaluatePath(int i) {
-        if (i == 0) {
-            return Environment.getExternalStorageDirectory().getAbsolutePath();
-        } else {
-            return "/storage/" + storagesList.get(i).getStorageTitle();
-        }
+        // Always the mount path reported by Android; the display title is never used as a path.
+        return storagesList.get(i).getStoragePath();
     }
 
     /**
@@ -241,43 +272,24 @@ public class ChooserDialogFragment extends android.app.DialogFragment {
      * populate storageList with necessary storages with filter applied
      */
     private void populateList() {
-        storagesList = new ArrayList<>();
+        // The "/storage" listing used before is null on Android 11 and newer, which hid
+        // SD cards. StorageVolumeUtil asks Android for the volumes instead.
+        storagesList = StorageVolumeUtil.getStorages(getActivity(), mContent.getInternalStorageText());
 
-        File storageDir = new File("/storage");
-        String internalStoragePath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        for (Storages storage : storagesList) {
+            if (!storage.isAvailable()) {
+                continue;
+            }
 
-        File[] volumeList = storageDir.listFiles();
-
-        Storages storages = new Storages();
-
-        // just add the internal storage and avoid adding emulated henceforth
-        storages.setStorageTitle(mContent.getInternalStorageText());
-
-        storages.setStoragePath(internalStoragePath);
-        storages.setMemoryTotalSize(memoryUtil.formatSize(memoryUtil.getTotalMemorySize(internalStoragePath)));
-        storages.setMemoryAvailableSize(memoryUtil.formatSize(memoryUtil.getAvailableMemorySize(internalStoragePath)));
-        storagesList.add(storages);
-
-        /* This is null on Android 11. Let's not crash here. */
-        if (volumeList == null)
-            return;
-
-        for (File f : volumeList) {
-            if (!f.getName().equals(MemoryUtil.SELF_DIR_NAME)
-                    && !f.getName().equals(MemoryUtil.EMULATED_DIR_KNOX)
-                    && !f.getName().equals(MemoryUtil.EMULATED_DIR_NAME)
-                    && !f.getName().equals(MemoryUtil.SDCARD0_DIR_NAME)
-                    && !f.getName().equals(MemoryUtil.CONTAINER)) {
-                Storages sharedStorage = new Storages();
-                String fPath = f.getAbsolutePath();
-                sharedStorage.setStorageTitle(f.getName());
-                sharedStorage.setMemoryTotalSize(memoryUtil.formatSize(memoryUtil.getTotalMemorySize(fPath)));
-                sharedStorage.setMemoryAvailableSize(memoryUtil.formatSize(memoryUtil.getAvailableMemorySize(fPath)));
-                sharedStorage.setStoragePath(fPath);
-                storagesList.add(sharedStorage);
+            String path = storage.getStoragePath();
+            try {
+                storage.setMemoryTotalSize(memoryUtil.formatSize(memoryUtil.getTotalMemorySize(path)));
+                storage.setMemoryAvailableSize(memoryUtil.formatSize(memoryUtil.getAvailableMemorySize(path)));
+            } catch (IllegalArgumentException | SecurityException e) {
+                // StatFs fails on paths this app may not access; the sizes stay unknown.
+                Log.w(TAG, "Cannot read storage size of " + path, e);
             }
         }
-
     }
 
     // Convinience methods

@@ -27,12 +27,15 @@ import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.preference.EditTextPreference
 import android.preference.ListPreference
 import android.preference.Preference
 import android.preference.PreferenceFragment
 import android.preference.PreferenceGroup
 import android.text.InputType
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.EditText
@@ -42,8 +45,11 @@ import android.widget.TextView
 import android.widget.Toast
 import com.codekidlabs.storagechooser.Content
 import com.codekidlabs.storagechooser.StorageChooser
+import com.codekidlabs.storagechooser.utils.StorageVolumeUtil
 import com.libopenmw.openmw.BuildConfig
 import com.libopenmw.openmw.R
+import file.GameDataCheck
+import file.GameFilesLocation
 import file.GameInstaller
 import permission.PermissionHelper
 
@@ -130,11 +136,19 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
             val sharedPref = preferenceScreen.sharedPreferences
             val inst = GameInstaller(sharedPref.getString("game_files", "")!!)
             if (!inst.check()) {
-            AlertDialog.Builder(getActivity())
-                .setTitle(R.string.no_data_files_title)
-                .setMessage(R.string.no_data_files_message)
-                .setPositiveButton(android.R.string.ok) { _: DialogInterface, _: Int -> }
-                .show()
+                // A removed SD card or a denied folder is explained as such; the
+                // stored selection stays untouched either way.
+                val problem = GameFilesLocation.locateConfigured(sharedPref)
+                if (problem != null) {
+                    val (title, message) = GameFilesLocation.describe(activity, problem)
+                    showMessage(title, message)
+                } else {
+                    AlertDialog.Builder(getActivity())
+                        .setTitle(R.string.no_data_files_title)
+                        .setMessage(R.string.no_data_files_message)
+                        .setPositiveButton(android.R.string.ok) { _: DialogInterface, _: Int -> }
+                        .show()
+                }
 
                 false
             }
@@ -202,7 +216,7 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
 
             val candidate = File(mediaRoot, "Morrowind")
             if (GameInstaller(candidate.absolutePath).check()) {
-                setupData(candidate.absolutePath)
+                setupData(candidate.absolutePath, showProgress = false)
                 return
             }
         }
@@ -442,34 +456,76 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
     }
 
     /**
-     * Checks the specified path for a valid morrowind installation, generates config files
-     * and saves the path to shared prefs if it's valid.
-     * If it isn't, an error is displayed to the user.
+     * Checks the specified path for a valid morrowind installation by actually reading
+     * the required files, generates config files and only then saves the path.
+     *
+     * The check runs off the UI thread. An invalid or unreadable selection never changes
+     * the stored game folder or its openmw.fallback.cfg; the reason is shown instead.
      */
-    private fun setupData(path: String) {
+    private fun setupData(path: String, showProgress: Boolean = true) {
+        val hostActivity = activity ?: return
         val sharedPref = preferenceScreen.sharedPreferences
+        val encoding = sharedPref.getString("pref_encoding", GameInstaller.DEFAULT_CHARSET_PREF)!!
+        val hadSelection = sharedPref.getString(GameFilesLocation.PREF_GAME_FILES, "").orEmpty().isNotEmpty()
+        val gameDir = File(path).absoluteFile
 
-        // reset the setting so that it's erased on error instead of keeping
-        // possibly stale value
-        var gameFiles = ""
+        // Remember which volume holds the folder, so that a removed SD card can later be
+        // reported as such instead of as a missing folder.
+        val storage = StorageVolumeUtil.findStorageContaining(hostActivity, gameDir.path)
+        val storageRoot = storage?.storagePath
+        val storageId = storage?.storageId
 
-        val inst = GameInstaller(path)
-        if (inst.check()) {
-            inst.setNomedia()
-            if (!inst.convertIni(sharedPref.getString("pref_encoding", GameInstaller.DEFAULT_CHARSET_PREF)!!)) {
-                showError(R.string.data_error_title, R.string.ini_error_message)
-            } else {
-                gameFiles = path
-            }
+        val progress = if (showProgress) {
+            AlertDialog.Builder(hostActivity)
+                .setMessage(R.string.game_files_checking)
+                .setCancelable(false)
+                .show()
         } else {
-            showError(R.string.data_error_title, R.string.data_error_message,
-                    "https://omw.xyz.is/game.html")
+            null
         }
+        val mainHandler = Handler(Looper.getMainLooper())
 
-        with(sharedPref.edit()) {
-            putString("game_files", gameFiles)
-            apply()
-        }
+        Thread({
+            val check = GameFilesLocation.validator(storageRoot).validate(gameDir)
+
+            var configReady = false
+            if (check is GameDataCheck.Valid) {
+                val inst = GameInstaller(gameDir.path)
+                val output = inst.convertIniToString(encoding)
+                configReady = output != null && GameInstaller.writeFallbackConfig(output)
+
+                if (configReady) {
+                    inst.setNomedia()
+                    sharedPref.edit()
+                        .putString(GameFilesLocation.PREF_GAME_FILES, gameDir.path)
+                        .putString(GameFilesLocation.PREF_STORAGE_ROOT, storageRoot)
+                        .putString(GameFilesLocation.PREF_STORAGE_ID, storageId)
+                        .commit()
+                }
+            }
+
+            Log.i(TAG, "Game folder check: path=${gameDir.path}; storage=$storageId at $storageRoot; " +
+                "result=$check; configReady=$configReady")
+
+            mainHandler.post {
+                progress?.dismiss()
+                if (!isAdded)
+                    return@post
+
+                val unchanged = if (hadSelection) "\n\n" + getString(R.string.game_files_selection_unchanged) else ""
+                when {
+                    check is GameDataCheck.Valid && configReady -> Unit
+                    check is GameDataCheck.Valid ->
+                        showMessage(getString(R.string.data_error_title),
+                            getString(R.string.ini_error_message) + unchanged)
+                    else -> {
+                        val (title, message) = GameFilesLocation.describe(hostActivity, check)
+                        val url = if (check is GameDataCheck.MissingGameFiles) "https://omw.xyz.is/game.html" else null
+                        showMessage(title, message + unchanged, url)
+                    }
+                }
+            }
+        }, "OpenMW-game-files-check").start()
     }
 
     /**
@@ -478,6 +534,10 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
      * @param message Message string resource
      */
     private fun showError(title: Int, message: Int, url: String? = null) {
+        showMessage(getString(title), getString(message), url)
+    }
+
+    private fun showMessage(title: String, message: String, url: String? = null) {
         val dialog = AlertDialog.Builder(activity)
             .setTitle(title)
             .setMessage(message)
@@ -564,6 +624,10 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
         findPreference("gs_weapon_sheating").isEnabled = isAdditionalAnimSourcesEnabled
         findPreference("gs_shield_sheating").isEnabled = isAdditionalAnimSourcesEnabled
 */
+    }
+
+    companion object {
+        private const val TAG = "OpenMW-Storage"
     }
 
 }

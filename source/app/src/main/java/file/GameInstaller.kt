@@ -80,7 +80,8 @@ class GameInstaller(path: String) {
 
     /**
      * Adds a .nomedia file to the game folder so media scanners do not index
-     * all game assets. Failure is intentionally non-fatal.
+     * all game assets. Failure is intentionally non-fatal: game data may be on
+     * storage this app can only read, such as an SD card.
      */
     fun setNomedia() {
         try {
@@ -89,18 +90,19 @@ class GameInstaller(path: String) {
                 file.createNewFile()
         } catch (_: IOException) {
             // Non-critical convenience file.
+        } catch (_: SecurityException) {
+            // Non-critical convenience file.
         }
     }
 
     /**
-     * Converts Morrowind.ini into OpenMW format and writes the result into
-     * the application configuration directory.
+     * Converts Morrowind.ini into OpenMW format without writing anything.
      *
      * @param encoding game encoding selected by the user
-     * @return true when the conversion and write completed successfully
+     * @return the converted configuration, or null if the conversion failed
      */
-    fun convertIni(encoding: String): Boolean {
-        val file = findCaseInsensitive(INI_NAME)?.takeIf { it.isFile } ?: return false
+    fun convertIniToString(encoding: String): String? {
+        val file = findCaseInsensitive(INI_NAME)?.takeIf { it.isFile } ?: return null
 
         val charset = when (encoding) {
             "win1250" -> Charset.forName("windows-1250")
@@ -111,25 +113,31 @@ class GameInstaller(path: String) {
         return try {
             val contents = file.readText(charset)
             if (contents.isEmpty())
-                return false
+                return null
 
-            val output = IniConverter(contents).convert()
-            if (output.isEmpty())
-                return false
-
-            val target = File(Constants.OPENMW_FALLBACK_CFG)
-            target.parentFile?.mkdirs()
-            target.writeText(output)
-            target.isFile && target.length() > 0
+            IniConverter(contents).convert().takeIf { it.isNotEmpty() }
         } catch (_: IOException) {
-            false
+            null
         } catch (_: SecurityException) {
-            false
+            null
         } catch (_: RuntimeException) {
             // Malformed input should be reported as a failed conversion, not
             // terminate the launcher process.
-            false
+            null
         }
+    }
+
+    /**
+     * Converts Morrowind.ini into OpenMW format and writes the result into
+     * the application configuration directory. The previous file is only
+     * replaced once the new one has been written completely.
+     *
+     * @param encoding game encoding selected by the user
+     * @return true when the conversion and write completed successfully
+     */
+    fun convertIni(encoding: String): Boolean {
+        val output = convertIniToString(encoding) ?: return false
+        return writeFallbackConfig(output)
     }
 
     companion object {
@@ -147,5 +155,33 @@ class GameInstaller(path: String) {
 
         /** Returns the absolute path of the configured Data Files directory. */
         fun getDataFiles(ctx: Context): String = getDataFilesFile(ctx).absolutePath
+
+        /** Writes openmw.fallback.cfg, keeping the previous file if writing fails. */
+        fun writeFallbackConfig(output: String): Boolean =
+            writeAtomically(File(Constants.OPENMW_FALLBACK_CFG), output)
+
+        /**
+         * Writes [text] to a temporary file next to [target] and renames it over
+         * [target], so an interrupted or failed write never leaves a truncated file.
+         */
+        fun writeAtomically(target: File, text: String): Boolean {
+            val temporary = File(target.parentFile, target.name + ".tmp")
+            return try {
+                target.parentFile?.mkdirs()
+                temporary.writeText(text)
+                if (!temporary.renameTo(target)) {
+                    temporary.delete()
+                    false
+                } else {
+                    target.isFile && target.length() > 0
+                }
+            } catch (_: IOException) {
+                temporary.delete()
+                false
+            } catch (_: SecurityException) {
+                temporary.delete()
+                false
+            }
+        }
     }
 }

@@ -9,4 +9,13 @@
     <string name="text_freespace">%1$s free</string>
     <string name="toast_threshold_breached">%1$s is not sufficient for current operation. Please clear out some space.</string>
     <string name="toast_not_readable">The storage you have chosen is not accessible.</string>
+
+    <!-- Storage overview states (OpenMW port) -->
+    <string name="sc_sd_card">SD card</string>
+    <string name="sc_volume_unavailable">Not available</string>
+    <string name="sc_volume_read_only">read-only</string>
+    <string name="sc_volume_problem_title">Storage not accessible</string>
+    <string name="sc_volume_not_available_message">\"%1$s\" was detected but is currently not mounted or has been removed. Insert the card or wait until Android has mounted it, then try again.</string>
+    <string name="sc_volume_no_path_message">\"%1$s\" was detected, but this Android version does not report a folder path for it. Restart the device with the card inserted and try again.</string>
+    <string name="sc_volume_not_readable_message">\"%1$s\" was detected, but Android does not allow OpenMW to read it. Check that the storage permission is granted in the app settings. If it is, this device does not allow direct access to this storage; copy the game files to the internal storage instead.</string>
 </resources>

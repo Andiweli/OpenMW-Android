@@ -182,4 +182,17 @@
     <string name="sdl_exit">Выйти</string>
     <string name="sdl_start_error">При запуске приложения произошла ошибка. Повторите попытку и/или переустановите приложение.\n\nОшибка: %1$s</string>
     <string name="navmesh_generating_cache">СОЗДАНИЕ КЭША NAVMESH</string>
+
+    <!-- Game folder validation -->
+    <string name="game_files_checking">Проверка файлов игры…</string>
+    <string name="game_files_selection_unchanged">Предыдущий выбор не изменён.</string>
+    <string name="game_files_storage_unavailable_title">Хранилище недоступно</string>
+    <string name="game_files_storage_unavailable_message">Хранилище с папкой игры сейчас недоступно:\n%1$s\n\nВставьте SD-карту или дождитесь, пока Android её подключит. Сохранённый выбор не удаляется.</string>
+    <string name="game_files_folder_not_found_title">Папка не найдена</string>
+    <string name="game_files_folder_not_found_message">Папка игры не найдена:\n%1$s\n\nВозможно, она была перемещена или переименована. Если она находится на SD-карте, проверьте, вставлена ли карта.</string>
+    <string name="game_files_access_denied_title">Нет доступа на чтение</string>
+    <string name="game_files_access_denied_message">OpenMW не может прочитать этот файл или папку:\n%1$s\n\nПроверьте в настройках приложения, предоставлен ли доступ к хранилищу. Если доступ предоставлен, это устройство не разрешает прямой доступ к этому расположению; в этом случае скопируйте файлы игры во внутреннюю память.</string>
+    <string name="game_files_missing_message">В выбранной папке отсутствует:\n%1$s\n\nВыберите папку, содержащую файл «Morrowind.ini» и каталог «Data Files».</string>
+    <string name="game_files_read_failed_title">Ошибка чтения</string>
+    <string name="game_files_read_failed_message">Не удалось прочитать файл:\n%1$s\n(%2$s)</string>
 </resources>

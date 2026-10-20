@@ -8,4 +8,13 @@
     <string name="text_freespace">%1$s frei</string>
     <string name="toast_threshold_breached">%1$s reichen für den aktuellen Vorgang nicht aus. Bitte gib etwas Speicherplatz frei.</string>
     <string name="toast_not_readable">Auf den ausgewählten Speicher kann nicht zugegriffen werden.</string>
+
+    <!-- Zustände der Speicherübersicht (OpenMW-Port) -->
+    <string name="sc_sd_card">SD-Karte</string>
+    <string name="sc_volume_unavailable">Nicht verfügbar</string>
+    <string name="sc_volume_read_only">nur lesbar</string>
+    <string name="sc_volume_problem_title">Speicher nicht zugänglich</string>
+    <string name="sc_volume_not_available_message">„%1$s“ wurde erkannt, ist aber derzeit nicht eingehängt oder wurde entfernt. Setze die Karte ein oder warte, bis Android sie eingebunden hat, und versuche es dann erneut.</string>
+    <string name="sc_volume_no_path_message">„%1$s“ wurde erkannt, aber diese Android-Version nennt keinen Ordnerpfad dafür. Starte das Gerät mit eingesetzter Karte neu und versuche es erneut.</string>
+    <string name="sc_volume_not_readable_message">„%1$s“ wurde erkannt, aber Android erlaubt OpenMW nicht, darauf zu lesen. Prüfe in den App-Einstellungen, ob die Speicherberechtigung erteilt ist. Falls ja, erlaubt dieses Gerät keinen direkten Zugriff auf diesen Speicher; kopiere die Spieldateien dann in den internen Speicher.</string>
 </resources>
