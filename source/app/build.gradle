@@ -794,6 +794,10 @@ android {
 
         automotive {
             dimension "platform"
+            // Google Play's automatic protection requires minSdk 24. Android
+            // Automotive OS starts at API 28, so no AAOS device is excluded; the
+            // Mainline flavor keeps minSdk 21.
+            minSdk 24
             targetSdk 35
             // Keep Play version codes unique when Mainline and Automotive artifacts
             // are uploaded under the same com.ast.openmw application ID.
