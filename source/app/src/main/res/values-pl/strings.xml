@@ -195,4 +195,12 @@
     <string name="game_files_missing_message">W wybranym folderze brakuje:\n%1$s\n\nWybierz folder zawierający plik „Morrowind.ini” i katalog „Data Files”.</string>
     <string name="game_files_read_failed_title">Błąd odczytu</string>
     <string name="game_files_read_failed_message">Nie udało się odczytać pliku:\n%1$s\n(%2$s)</string>
+
+    <!-- Przenoszenie starej lokalizacji -->
+    <string name="legacy_storage_migration_progress">Przenoszenie zapisów gry i ustawień do nowej lokalizacji…</string>
+    <string name="legacy_storage_migration_done_title">Zapisy gry przeniesione</string>
+    <string name="legacy_storage_migration_conflicts_message">Niektóre pliki istniały zarówno w starej, jak i w nowej lokalizacji. Zachowano pliki z nowej lokalizacji; różniące się stare wersje zapisano tutaj:\n%1$s</string>
+    <string name="legacy_storage_migration_failed_title">Zapisy gry nie zostały przeniesione</string>
+    <string name="legacy_storage_migration_no_space_message">Nie można było przenieść zapisów gry i ustawień z\n%1$s\nponieważ potrzeba %2$s wolnego miejsca. Stary folder nie został zmieniony. Zwolnij miejsce i uruchom ponownie OpenMW, aby spróbować jeszcze raz.</string>
+    <string name="legacy_storage_migration_failed_message">Nie można było przenieść zapisów gry i ustawień z\n%1$s\n(%2$s). Stary folder nie został zmieniony. Uruchom ponownie OpenMW, aby spróbować jeszcze raz.</string>
 </resources>

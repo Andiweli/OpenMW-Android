@@ -1336,6 +1336,9 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
                 messageboxSelection[0] = buttonIds[0];
                 dialog.dismiss();
             });
+        else
+            // Without any button the dialog could never be dismissed.
+            builder.setPositiveButton(android.R.string.ok, null);
 
         AlertDialog dialog = builder.create();
         dialog.setTitle(args.getString("title"));
@@ -1351,8 +1354,13 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     }
 
     protected void messageboxCreateAndShow(Bundle args) {
-        if (args.getIntArray("buttonIds").length <= 1)
+        // Messages with a single button (SDL_ShowSimpleMessageBox, which OpenMW uses
+        // for fatal errors) must be shown as well: the SDL thread waits in
+        // messageboxShowMessageBox() until the dialog is dismissed.
+        if (args.getIntArray("buttonIds").length <= 1) {
+            showModernDialog(args).show();
             return;
+        }
 
         // TODO set values from "flags" to messagebox dialog
 

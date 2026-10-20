@@ -195,4 +195,12 @@
     <string name="game_files_missing_message">В выбранной папке отсутствует:\n%1$s\n\nВыберите папку, содержащую файл «Morrowind.ini» и каталог «Data Files».</string>
     <string name="game_files_read_failed_title">Ошибка чтения</string>
     <string name="game_files_read_failed_message">Не удалось прочитать файл:\n%1$s\n(%2$s)</string>
+
+    <!-- Перенос старого места хранения -->
+    <string name="legacy_storage_migration_progress">Перенос сохранений и настроек в новое место хранения…</string>
+    <string name="legacy_storage_migration_done_title">Сохранения перенесены</string>
+    <string name="legacy_storage_migration_conflicts_message">Некоторые файлы были и в старом, и в новом месте. Файлы в новом месте сохранены; отличающиеся старые версии сохранены здесь:\n%1$s</string>
+    <string name="legacy_storage_migration_failed_title">Сохранения не перенесены</string>
+    <string name="legacy_storage_migration_no_space_message">Не удалось перенести сохранения и настройки из\n%1$s\nтак как требуется %2$s свободного места. Старая папка не изменена. Освободите место и перезапустите OpenMW, чтобы повторить попытку.</string>
+    <string name="legacy_storage_migration_failed_message">Не удалось перенести сохранения и настройки из\n%1$s\n(%2$s). Старая папка не изменена. Перезапустите OpenMW, чтобы повторить попытку.</string>
 </resources>

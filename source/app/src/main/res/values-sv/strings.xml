@@ -195,4 +195,12 @@
     <string name="game_files_missing_message">I den valda mappen saknas:\n%1$s\n\nVälj mappen som innehåller filen ”Morrowind.ini” och katalogen ”Data Files”.</string>
     <string name="game_files_read_failed_title">Läsfel</string>
     <string name="game_files_read_failed_message">Filen kunde inte läsas:\n%1$s\n(%2$s)</string>
+
+    <!-- Flytt av den gamla lagringsplatsen -->
+    <string name="legacy_storage_migration_progress">Flyttar sparfiler och inställningar till den nya lagringsplatsen…</string>
+    <string name="legacy_storage_migration_done_title">Sparfiler flyttade</string>
+    <string name="legacy_storage_migration_conflicts_message">Vissa filer fanns både på den gamla och den nya platsen. Filerna på den nya platsen behölls; de avvikande gamla versionerna sparades här:\n%1$s</string>
+    <string name="legacy_storage_migration_failed_title">Sparfiler inte flyttade</string>
+    <string name="legacy_storage_migration_no_space_message">Dina sparfiler och inställningar i\n%1$s\nkunde inte flyttas eftersom %2$s ledigt utrymme behövs. Den gamla mappen ändrades inte. Frigör utrymme och starta om OpenMW för att försöka igen.</string>
+    <string name="legacy_storage_migration_failed_message">Dina sparfiler och inställningar i\n%1$s\nkunde inte flyttas (%2$s). Den gamla mappen ändrades inte. Starta om OpenMW för att försöka igen.</string>
 </resources>

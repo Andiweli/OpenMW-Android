@@ -1,20 +1,47 @@
 package utils
 
+import android.Manifest
 import android.app.Application
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.preference.PreferenceManager
 import android.util.Base64
 import android.util.Log
+import androidx.core.content.ContextCompat
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import constants.Constants
+import file.LegacyStorageMigrator
 import java.io.File
+import java.io.IOException
 import java.security.MessageDigest
+import java.util.concurrent.CountDownLatch
 
 class MyApp : Application() {
 
     var defaultScaling = 0f
+
+    /** Outcome of the one-time move of the legacy /storage/emulated/0/omw tree. */
+    sealed class LegacyStorageMigrationResult {
+        object NotNeeded : LegacyStorageMigrationResult()
+
+        /** [conflictDirectory] holds legacy files that differed from newer ones, if any. */
+        data class Migrated(val conflictDirectory: File?) : LegacyStorageMigrationResult()
+
+        data class NotEnoughSpace(val legacyDirectory: File, val requiredBytes: Long) :
+            LegacyStorageMigrationResult()
+
+        data class Failed(val legacyDirectory: File, val reason: String) :
+            LegacyStorageMigrationResult()
+    }
+
+    private val legacyMigrationLock = Any()
+    private var legacyMigrationLatch: CountDownLatch? = null
+    private val legacyMigrationListeners = mutableListOf<(LegacyStorageMigrationResult) -> Unit>()
+    private var legacyMigrationAttemptFailed = false
 
     override fun onCreate() {
         app = this
@@ -71,97 +98,148 @@ class MyApp : Application() {
     }
 
     /**
-     * One-time migration of the old public /storage/emulated/0/omw tree.
+     * Starts the one-time move of the old public /storage/emulated/0/omw tree
+     * (saves, screenshots, config, icons, resources, navmesh.db) on a background
+     * thread, if it is needed.
      *
      * This is intentionally called from MainActivity.onResume(), rather than
      * Application.onCreate(), because an existing installation may still need
      * to grant legacy shared-storage permission before the old tree is readable.
      *
-     * The migration includes saves, screenshots, config, icons, resources and
-     * navmesh.db. The old tree is deleted only after a verified successful copy.
+     * Must be called on the main thread. [listener] is called on the main thread
+     * once the migration has finished.
+     *
+     * @return true if a migration is running and [listener] was registered
      */
-    @Synchronized
-    fun migrateLegacyUserStorageIfPossible() {
-        val target = File(Constants.USER_FILE_STORAGE)
-
-        try {
-            val legacy = File(Environment.getExternalStorageDirectory(), LEGACY_USER_STORAGE_DIRECTORY)
-
-            if (!legacy.isDirectory) {
-                target.mkdirs()
-                return
+    fun startLegacyUserStorageMigrationIfNeeded(
+        listener: (LegacyStorageMigrationResult) -> Unit
+    ): Boolean {
+        synchronized(legacyMigrationLock) {
+            if (legacyMigrationLatch != null) {
+                legacyMigrationListeners += listener
+                return true
             }
 
-            // Never attempt to migrate if paths unexpectedly resolve to the same place.
-            if (legacy.canonicalFile == target.canonicalFile) {
-                target.mkdirs()
-                return
-            }
+            if (!legacyUserStorageMigrationNeeded())
+                return false
 
-            target.parentFile?.mkdirs()
+            legacyMigrationLatch = CountDownLatch(1)
+            legacyMigrationListeners += listener
+        }
 
-            // Fast path: a rename preserves timestamps and avoids copying large saves/resources.
-            if (!target.exists() && legacy.renameTo(target)) {
-                Log.i(TAG, "Migrated legacy OpenMW storage by rename: ${legacy.absolutePath} -> ${target.absolutePath}")
-                return
-            }
+        Thread({
+            val result = migrateLegacyUserStorage()
 
-            // Fallback for FUSE/scoped-storage implementations where rename across
-            // directory classes is rejected. Legacy data wins during this one-time
-            // migration; the launcher will refresh generated resources afterwards.
-            if (!target.exists() && !target.mkdirs()) {
-                Log.w(TAG, "Could not create OpenMW user storage at ${target.absolutePath}")
-                return
-            }
-
-            val copied = legacy.copyRecursively(
-                target = target,
-                overwrite = true,
-                onError = { file, exception ->
-                    Log.e(TAG, "Failed migrating ${file.absolutePath}", exception)
-                    kotlin.io.OnErrorAction.TERMINATE
+            val listeners = synchronized(legacyMigrationLock) {
+                // A failed attempt is retried on the next app start, not on every onResume().
+                if (result is LegacyStorageMigrationResult.Failed ||
+                    result is LegacyStorageMigrationResult.NotEnoughSpace) {
+                    legacyMigrationAttemptFailed = true
                 }
-            )
 
-            if (!copied || !verifyMigration(legacy, target)) {
-                Log.w(
-                    TAG,
-                    "Legacy OpenMW storage migration was incomplete; keeping ${legacy.absolutePath} as a safety copy."
-                )
-                return
+                legacyMigrationLatch?.countDown()
+                legacyMigrationLatch = null
+                legacyMigrationListeners.toList().also { legacyMigrationListeners.clear() }
             }
 
-            if (legacy.deleteRecursively()) {
-                Log.i(TAG, "Legacy OpenMW storage migrated and removed: ${legacy.absolutePath}")
-            } else {
-                Log.w(
-                    TAG,
-                    "Migration succeeded, but the old directory could not be removed: ${legacy.absolutePath}"
-                )
+            Handler(Looper.getMainLooper()).post {
+                listeners.forEach { it(result) }
             }
-        } catch (e: SecurityException) {
-            // Expected on a first launch before legacy storage permission is granted.
-            Log.w(TAG, "Legacy /omw migration is not permitted yet; it will be retried.", e)
-            target.mkdirs()
-        } catch (e: Exception) {
-            Log.e(TAG, "Legacy /omw migration failed; keeping the old directory untouched.", e)
-            target.mkdirs()
+        }, "OpenMW-storage-migration").start()
+
+        return true
+    }
+
+    fun removeLegacyUserStorageMigrationListener(listener: (LegacyStorageMigrationResult) -> Unit) {
+        synchronized(legacyMigrationLock) {
+            legacyMigrationListeners.remove(listener)
         }
     }
 
-    private fun verifyMigration(source: File, target: File): Boolean {
+    /** True while the legacy tree is being moved; the game must not start meanwhile. */
+    fun isLegacyUserStorageMigrationRunning(): Boolean =
+        synchronized(legacyMigrationLock) { legacyMigrationLatch != null }
+
+    /** Blocks until a running migration has finished. Not for the main thread. */
+    fun awaitLegacyUserStorageMigration() {
+        val latch = synchronized(legacyMigrationLock) { legacyMigrationLatch }
+        latch?.await()
+    }
+
+    /** Cheap check (a few stat calls) whether the legacy tree still has to be moved. */
+    private fun legacyUserStorageMigrationNeeded(): Boolean {
+        if (legacyMigrationAttemptFailed)
+            return false
+
+        // The API 35 Automotive flavor has scoped storage and no legacy tree to read.
+        if (com.libopenmw.openmw.BuildConfig.IS_AUTOMOTIVE_BUILD &&
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+            return false
+
+        if (PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(PREF_LEGACY_MIGRATION_DONE, false))
+            return false
+
+        // Without the storage permission the legacy tree can look empty instead of
+        // unreadable; it must not be "migrated" in that state.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+                PackageManager.PERMISSION_GRANTED)
+            return false
+
         return try {
-            source.walkTopDown()
-                .filter { it.isFile }
-                .all { sourceFile ->
-                    val relative = sourceFile.relativeTo(source).path
-                    val targetFile = File(target, relative)
-                    targetFile.isFile && targetFile.length() == sourceFile.length()
-                }
-        } catch (e: Exception) {
-            Log.e(TAG, "Could not verify legacy OpenMW storage migration.", e)
+            val legacy = legacyUserStorageDirectory()
+            // Never attempt to migrate if paths unexpectedly resolve to the same place.
+            legacy.isDirectory &&
+                legacy.canonicalFile != File(Constants.USER_FILE_STORAGE).canonicalFile
+        } catch (e: IOException) {
+            false
+        } catch (e: SecurityException) {
+            // Expected before legacy storage permission is granted.
             false
         }
+    }
+
+    private fun legacyUserStorageDirectory(): File =
+        File(Environment.getExternalStorageDirectory(), LEGACY_USER_STORAGE_DIRECTORY)
+
+    private fun migrateLegacyUserStorage(): LegacyStorageMigrationResult {
+        val legacy = legacyUserStorageDirectory()
+        val target = File(Constants.USER_FILE_STORAGE)
+
+        return try {
+            if (!legacy.isDirectory)
+                return LegacyStorageMigrationResult.NotNeeded
+
+            when (val result = LegacyStorageMigrator().migrate(legacy, target) { markLegacyUserStorageMigrated() }) {
+                is LegacyStorageMigrator.Result.Migrated -> {
+                    Log.i(TAG, "Legacy OpenMW storage migrated: ${legacy.absolutePath} -> ${target.absolutePath}")
+                    if (legacy.exists())
+                        Log.w(TAG, "Migration succeeded, but the old directory could not be removed: ${legacy.absolutePath}")
+                    result.conflictDirectory?.let {
+                        Log.w(TAG, "Differing legacy files were kept in ${it.absolutePath}")
+                    }
+                    LegacyStorageMigrationResult.Migrated(result.conflictDirectory)
+                }
+                is LegacyStorageMigrator.Result.NotEnoughSpace -> {
+                    Log.w(TAG, "Not enough space to migrate legacy OpenMW storage; ${result.requiredBytes} bytes needed.")
+                    LegacyStorageMigrationResult.NotEnoughSpace(legacy, result.requiredBytes)
+                }
+            }
+        } catch (e: IOException) {
+            Log.e(TAG, "Legacy /omw migration failed; keeping the old directory untouched.", e)
+            LegacyStorageMigrationResult.Failed(legacy, e.message ?: e.javaClass.simpleName)
+        } catch (e: SecurityException) {
+            Log.e(TAG, "Legacy /omw migration is not permitted; keeping the old directory untouched.", e)
+            LegacyStorageMigrationResult.Failed(legacy, e.message ?: e.javaClass.simpleName)
+        }
+    }
+
+    private fun markLegacyUserStorageMigrated() {
+        PreferenceManager.getDefaultSharedPreferences(this)
+            .edit()
+            .putBoolean(PREF_LEGACY_MIGRATION_DONE, true)
+            .commit()
     }
 
     private fun isProductionBuild(): Boolean {
@@ -180,6 +258,7 @@ class MyApp : Application() {
         private const val TAG = "OpenMW-Storage"
         private const val USER_STORAGE_DIRECTORY = "OpenMW"
         private const val LEGACY_USER_STORAGE_DIRECTORY = "omw"
+        private const val PREF_LEGACY_MIGRATION_DONE = "legacy_omw_storage_migrated"
 
         var reportCrashes = false
         var haveBugsnagApiKey = false

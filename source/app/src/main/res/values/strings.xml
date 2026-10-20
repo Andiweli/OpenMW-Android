@@ -285,4 +285,12 @@ OpenMW by the OpenMW Team since 2008</string>
     <string name="game_files_missing_message">The selected folder is missing:\n%1$s\n\nPlease select the folder that contains the \"Morrowind.ini\" file and the \"Data Files\" directory.</string>
     <string name="game_files_read_failed_title">Read error</string>
     <string name="game_files_read_failed_message">The file could not be read:\n%1$s\n(%2$s)</string>
+
+    <!-- Legacy storage migration -->
+    <string name="legacy_storage_migration_progress">Moving saves and settings to the new storage location…</string>
+    <string name="legacy_storage_migration_done_title">Saves moved</string>
+    <string name="legacy_storage_migration_conflicts_message">Some files existed in both the old and the new location. The files in the new location were kept; the differing old versions were saved to:\n%1$s</string>
+    <string name="legacy_storage_migration_failed_title">Saves not moved</string>
+    <string name="legacy_storage_migration_no_space_message">Your saves and settings in\n%1$s\ncould not be moved because %2$s of free storage is needed. The old folder was not changed. Free some storage and restart OpenMW to try again.</string>
+    <string name="legacy_storage_migration_failed_message">Your saves and settings in\n%1$s\ncould not be moved (%2$s). The old folder was not changed. Restart OpenMW to try again.</string>
 </resources>

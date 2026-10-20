@@ -79,6 +79,14 @@ class MainActivity : AppCompatActivity() {
     private var skipGuiVolumeOverrideHeld = false
     private var skipGuiDirectLaunchActive = false
 
+    // Set while startGame() prepares a launch, so a second Play tap or the Skip GUI
+    // timer cannot run a second preparation that rewrites the same config files.
+    private var launchInProgress = false
+
+    private var legacyMigrationDialog: ProgressDialog? = null
+    private val legacyMigrationListener: (MyApp.LegacyStorageMigrationResult) -> Unit =
+        { result -> onLegacyStorageMigrationFinished(result) }
+
     private val skipGuiAutoLaunchRunnable = java.lang.Runnable {
         if (!skipGuiAutoLaunchPending || skipGuiOverrideRequested || isFinishing) {
             return@Runnable
@@ -273,6 +281,9 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         skipGuiHandler.removeCallbacks(skipGuiAutoLaunchRunnable)
         skipGuiAutoLaunchPending = false
+        MyApp.app.removeLegacyUserStorageMigrationListener(legacyMigrationListener)
+        legacyMigrationDialog?.dismiss()
+        legacyMigrationDialog = null
         super.onDestroy()
     }
 
@@ -293,8 +304,59 @@ class MainActivity : AppCompatActivity() {
 
         // Migrate the legacy /storage/emulated/0/omw user tree after the
         // Activity has had a chance to request legacy game-file storage
-        // permission. On modern Android this is a no-op after migration.
-        MyApp.app.migrateLegacyUserStorageIfPossible()
+        // permission. The copy runs in the background; the dialog keeps the
+        // game from being started meanwhile. After migration this is a no-op.
+        if (legacyMigrationDialog == null &&
+            MyApp.app.startLegacyUserStorageMigrationIfNeeded(legacyMigrationListener)) {
+            legacyMigrationDialog = ProgressDialog.show(
+                this,
+                "",
+                getString(R.string.legacy_storage_migration_progress),
+                true,
+                false
+            )
+        }
+    }
+
+    private fun onLegacyStorageMigrationFinished(result: MyApp.LegacyStorageMigrationResult) {
+        legacyMigrationDialog?.dismiss()
+        legacyMigrationDialog = null
+
+        if (isFinishing || isDestroyed)
+            return
+
+        val (title, message) = when (result) {
+            is MyApp.LegacyStorageMigrationResult.Migrated -> {
+                val conflicts = result.conflictDirectory ?: return
+                Pair(
+                    R.string.legacy_storage_migration_done_title,
+                    getString(R.string.legacy_storage_migration_conflicts_message, conflicts.absolutePath)
+                )
+            }
+            is MyApp.LegacyStorageMigrationResult.NotEnoughSpace -> Pair(
+                R.string.legacy_storage_migration_failed_title,
+                getString(
+                    R.string.legacy_storage_migration_no_space_message,
+                    result.legacyDirectory.absolutePath,
+                    android.text.format.Formatter.formatShortFileSize(this, result.requiredBytes)
+                )
+            )
+            is MyApp.LegacyStorageMigrationResult.Failed -> Pair(
+                R.string.legacy_storage_migration_failed_title,
+                getString(
+                    R.string.legacy_storage_migration_failed_message,
+                    result.legacyDirectory.absolutePath,
+                    result.reason
+                )
+            )
+            MyApp.LegacyStorageMigrationResult.NotNeeded -> return
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(android.R.string.ok) { _: DialogInterface, _: Int -> }
+            .show()
     }
 
     private fun migrateObjectPagingMinSizeDefault() {
@@ -394,6 +456,17 @@ class MainActivity : AppCompatActivity() {
      * - there must be at least 1 activated mod (user can ignore this warning)
      */
     private fun checkStartGame() {
+        // Ignore further Play taps or the Skip GUI timer while a launch is prepared.
+        if (launchInProgress)
+            return
+
+        // Saves and settings are still being moved from the legacy /omw folder;
+        // its progress dialog is visible, the user can start the game afterwards.
+        if (MyApp.app.isLegacyUserStorageMigrationRunning()) {
+            revealLauncherAfterSkipGui("legacy storage migration running")
+            return
+        }
+
         // First, check that there are game files present
         val inst = GameInstaller(prefs.getString("game_files", "")!!)
         if (!inst.check()) {
@@ -2074,6 +2147,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startGame() {
+        if (launchInProgress)
+            return
+        launchInProgress = true
+
+        // A manual launch replaces a still pending Skip GUI auto-launch.
+        skipGuiHandler.removeCallbacks(skipGuiAutoLaunchRunnable)
+        skipGuiAutoLaunchPending = false
+
         // Get scaling factor from config; if invalid or not provided, generate one
         var scaling = 0f
 
@@ -2135,6 +2216,10 @@ class MainActivity : AppCompatActivity() {
 
         val th = Thread {
             try {
+                // Never write into the user storage while the legacy tree is moved there.
+                MyApp.app.awaitLegacyUserStorageMigration()
+                File(Constants.USER_FILE_STORAGE).mkdirs()
+
                 // Reinstall static files if their version mismatches OR if an older
                 // launcher-only APK left a valid-looking stamp without the runtime payload.
                 val staticFilesCurrent = try {
@@ -2374,6 +2459,7 @@ class MainActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to prepare OpenMW launch.", e)
                 runOnUiThread {
+                    launchInProgress = false
                     revealLauncherAfterSkipGui("launch preparation failed")
                     dialog?.dismiss()
                     AlertDialog.Builder(activity)

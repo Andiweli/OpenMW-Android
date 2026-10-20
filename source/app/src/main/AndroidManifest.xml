@@ -32,15 +32,18 @@
             </intent-filter>
         </activity>
 
+        <!-- GameActivity kills the process in onDestroy(), so it must handle every
+             configuration change itself; a recreation would end the running game
+             without saving (e.g. keyboard connected, dark mode, split screen). -->
         <activity
             android:name="ui.activity.GameActivity"
-            android:configChanges="keyboardHidden|orientation"
+            android:configChanges="layoutDirection|locale|orientation|uiMode|screenLayout|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation|density|fontScale"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/Theme.AppCompat.FullScreen" />
 
         <activity
             android:name="ui.activity.ConfigureControls"
-            android:configChanges="keyboardHidden|orientation"
+            android:configChanges="layoutDirection|locale|orientation|uiMode|screenLayout|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation|density|fontScale"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/Theme.AppCompat.FullScreen" />
 

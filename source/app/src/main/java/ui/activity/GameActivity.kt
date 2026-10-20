@@ -241,7 +241,8 @@ class GameActivity : SDLActivity() {
         super.onCreate(savedInstanceState)
 
         val displayInCutoutArea = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("pref_display_cutout_area", false)
-        if (displayInCutoutArea) {
+        // layoutInDisplayCutoutMode only exists on Android 9 (API 28) and newer.
+        if (displayInCutoutArea && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             window.attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
         }
 
