@@ -360,6 +360,8 @@ ExternalProject_Add(gl4es
         #URL_HASH ${GL4ES_HASH}
         DOWNLOAD_DIR ${download_dir}
 
+        PATCH_COMMAND python3 ${CMAKE_SOURCE_DIR}/patches/gl4es/apply-powervr-packed-depth-stencil.py <SOURCE_DIR>
+
         BUILD_COMMAND ${wrapper_command} ndk-build
         ${COMMON_NDK_BUILD_FLAGS}
 
