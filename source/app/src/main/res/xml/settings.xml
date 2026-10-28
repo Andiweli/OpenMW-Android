@@ -7,11 +7,11 @@
         <Preference android:key="pref_game_settings" android:title="@string/pref_game_settings_title" android:summary="@string/pref_game_settings_summary" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_ui">
-        <Preference android:key="pref_uiScaling" android:title="@string/pref_uiScaling" />
-        <ListPreference android:key="pref_mouse_mode" android:title="@string/pref_mouse_mode" android:dialogTitle="@string/pref_mouse_mode" android:entries="@array/pref_mouse_mode_entries" android:entryValues="@array/pref_mouse_mode_values" android:defaultValue="@string/pref_mouse_mode_default" android:summary="%s" />
+        <Preference android:key="pref_uiScaling" android:title="@string/pref_uiScaling" />        <ListPreference android:key="pref_mouse_mode" android:title="@string/pref_mouse_mode" android:dialogTitle="@string/pref_mouse_mode" android:entries="@array/pref_mouse_mode_entries" android:entryValues="@array/pref_mouse_mode_values" android:defaultValue="@string/pref_mouse_mode_default" android:summary="%s" />
         <CheckBoxPreference android:key="pref_omw050_controller_menus" android:title="@string/pref_omw050_controller_menus_title" android:summary="@string/pref_omw050_controller_menus_summary" android:defaultValue="false" />
         <CheckBoxPreference android:key="pref_omw050_controller_tooltips" android:title="@string/pref_omw050_controller_tooltips_title" android:summary="@string/pref_omw050_controller_tooltips_summary" android:dependency="pref_omw050_controller_menus" android:defaultValue="false" />
         <ListPreference android:key="pref_omw051_controller_trigger_thresholds" android:title="@string/pref_omw051_controller_trigger_thresholds_title" android:dialogTitle="@string/pref_omw051_controller_trigger_thresholds_dialogtitle" android:entries="@array/pref_omw051_controller_trigger_sensitivity_entries" android:entryValues="@array/pref_omw051_controller_trigger_sensitivity_values" android:defaultValue="30720,26624" android:dependency="pref_omw050_controller_menus" android:summary="%s" />
+        <CheckBoxPreference android:key="pref_handheld_mode" android:title="@string/pref_handheld_mode_title" android:summary="@string/pref_handheld_mode_summary" android:defaultValue="false" />
         <Preference android:title="@string/action_show_screen_controls" android:key="pref_controls" android:summary="@string/pref_controls_summary" />
         <CheckBoxPreference android:key="pref_hide_controls" android:title="@string/pref_hide_controls" />
         <CheckBoxPreference android:key="pref_always_show_top_bar" android:title="@string/pref_always_show_top_bar" />

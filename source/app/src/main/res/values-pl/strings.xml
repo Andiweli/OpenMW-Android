@@ -21,6 +21,9 @@
     <string name="pref_shadersDir_default">none</string>
     <string name="pref_gamma">Gamma</string>
     <string name="pref_uiScaling">Skalowanie interfejsu</string>
+    <string name="pref_font_size">Rozmiar czcionki</string>
+    <string name="pref_truetype_fonts_title">Ostre czcionki</string>
+    <string name="pref_truetype_fonts_summary">Używaj czcionek TrueType OpenMW zamiast oryginalnych czcionek bitmapowych. Pozostają ostre przy każdym rozmiarze czcionki i skali interfejsu i są wymagane dla rozmiarów powyżej 18.</string>
     <string name="uiScaling_auto">Auto (%1$.2f)</string>
     <string name="pref_screen_keeper">Nie wyłączaj ekranu</string>
     <string name="pref_touchpadSensitivity">Czułość wirtualnego touchpada</string>
@@ -30,6 +33,8 @@
     <string name="action_reset_screen_controls">Zresetuj sterowanie ekranowe</string>
     <string name="action_show_screen_controls">Sterowanie ekranowe</string>
     <string name="pref_hide_controls">Ukryj przyciski ekranowe</string>
+    <string name="pref_handheld_mode_title">Tryb przenośny</string>
+    <string name="pref_handheld_mode_summary">Dla urządzeń z wbudowanymi kontrolkami. Ukrywa przyciski ekranowe. Przytrzymaj L1, aby otworzyć menu kołowe. R1 otwiera dziennik. Select to odpoczynek, a w polu tekstowym otwiera klawiaturę Androida. L3 pokazuje kursor w menu. Przytrzymaj Select i naciśnij L3 albo R3, aby otworzyć podgląd wydajności.</string>
     <string name="config_was_reset">Statyczna konfiguracja została przywrócona do wartości domyślnych</string>
     <string name="user_config_was_reset">Konfiguracja użytkownika została przywrócona do wartości domyślnych</string>
     <string name="user_resources_was_reset">Zasoby użytkownika zostały przywrócone do wartości domyślnych</string>

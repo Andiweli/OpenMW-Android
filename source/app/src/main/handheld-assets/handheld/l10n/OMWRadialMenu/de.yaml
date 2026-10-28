@@ -1,0 +1,32 @@
+Page: "Radialmenü"
+PageDescription: "Schnellauswahlrad für das Gamepad mit 4 Seiten zu je 8 selbst belegten Plätzen."
+
+Group: "Radialmenü"
+
+enabled: "Radialmenü aktivieren"
+enabledDescription: |
+  L1 gedrückt halten, um das Rad zu öffnen. Steuerkreuz links / rechts wechselt
+  die Seite. Steuerkreuz oben / unten benutzt den oberen und unteren Favoriten der
+  aktuellen Seite. Y öffnet eine Liste, um dem gewählten Platz eine Waffe, einen
+  Trank, einen Gegenstand, einen Zauber oder einen verzauberten Gegenstand zuzuweisen.
+
+openBinding: "Radialmenü öffnen"
+openBindingDescription: "Diese Taste im Spiel gedrückt halten, um das Rad zu öffnen. Standard ist L1."
+
+empty: "Leer"
+missing: "Nicht gefunden"
+handToHand: "Faustkampf"
+unarmed: "Unbewaffnet"
+power: "Kraft"
+potion: "Trank"
+ingredient: "Zutat"
+pageLabel: "Seite {page} / {count}"
+assignTitle: "Platz {index} belegen"
+hint: "Loslassen zum Benutzen  ·  Steuerkreuz links/rechts Seite  ·  Oben/unten Favoriten  ·  Y belegen  ·  X leeren  ·  B abbrechen"
+pickerHint: "A belegen  ·  L1/R1 Seite  ·  B zurück"
+clearSlot: "Platz leeren"
+assigned: "{name} auf Seite {page} Platz {index} gelegt"
+assignFull: "Das Rad ist voll"
+assignNothing: "Nichts zum Belegen"
+open_name: "Radialmenü"
+open_description: "Gedrückt halten, um das Rad für Waffen, Zauber und Tränke zu öffnen."

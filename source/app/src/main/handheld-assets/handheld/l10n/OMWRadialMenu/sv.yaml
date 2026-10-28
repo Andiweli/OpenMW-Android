@@ -1,0 +1,32 @@
+Page: "Radialmeny"
+PageDescription: "Snabbvalshjul för handkontroll med 4 sidor om 8 platser som du själv tilldelar."
+
+Group: "Radialmeny"
+
+enabled: "Aktivera radialmenyn"
+enabledDescription: |
+  Håll in L1 för att öppna hjulet. Styrkors vänster / höger byter sida. Styrkors
+  upp / ned använder den övre och nedre favoriten på den aktuella sidan. Y öppnar
+  en lista för att tilldela den valda platsen ett vapen, en dryck, ett föremål,
+  en besvärjelse eller ett förtrollat föremål.
+
+openBinding: "Öppna radialmenyn"
+openBindingDescription: "Håll in den här knappen i spelet för att öppna hjulet. Standard är L1."
+
+empty: "Tom"
+missing: "Hittades inte"
+handToHand: "Obeväpnad strid"
+unarmed: "Obeväpnad"
+power: "Kraft"
+potion: "Dryck"
+ingredient: "Ingrediens"
+pageLabel: "Sida {page} / {count}"
+assignTitle: "Tilldela plats {index}"
+hint: "Släpp för att använda  ·  Styrkors vänster/höger sida  ·  Upp/ned favoriter  ·  Y tilldela  ·  X töm  ·  B avbryt"
+pickerHint: "A tilldela  ·  L1/R1 sida  ·  B tillbaka"
+clearSlot: "Töm plats"
+assigned: "{name} tilldelad sida {page}, plats {index}"
+assignFull: "Hjulet är fullt"
+assignNothing: "Inget att tilldela"
+open_name: "Radialmeny"
+open_description: "Håll in för att öppna hjulet för vapen, besvärjelser och drycker."

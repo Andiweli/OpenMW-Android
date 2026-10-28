@@ -1,0 +1,32 @@
+Page: "Menu kołowe"
+PageDescription: "Koło szybkiego wyboru dla kontrolera: 4 strony po 8 miejsc, które przypisujesz samodzielnie."
+
+Group: "Menu kołowe"
+
+enabled: "Włącz menu kołowe"
+enabledDescription: |
+  Przytrzymaj L1, aby otworzyć koło. Krzyżak w lewo / w prawo zmienia stronę.
+  Krzyżak w górę / w dół używa górnego i dolnego ulubionego miejsca na bieżącej
+  stronie. Y otwiera listę, z której można przypisać do wybranego miejsca broń,
+  miksturę, przedmiot, zaklęcie lub zaczarowany przedmiot.
+
+openBinding: "Otwórz menu kołowe"
+openBindingDescription: "Przytrzymaj ten przycisk w grze, aby otworzyć koło. Domyślnie L1."
+
+empty: "Puste"
+missing: "Nie znaleziono"
+handToHand: "Walka wręcz"
+unarmed: "Bez broni"
+power: "Moc"
+potion: "Mikstura"
+ingredient: "Składnik"
+pageLabel: "Strona {page} / {count}"
+assignTitle: "Przypisz miejsce {index}"
+hint: "Puść, aby użyć  ·  Krzyżak lewo/prawo strona  ·  Góra/dół ulubione  ·  Y przypisz  ·  X wyczyść  ·  B anuluj"
+pickerHint: "A przypisz  ·  L1/R1 strona  ·  B wstecz"
+clearSlot: "Wyczyść miejsce"
+assigned: "Przypisano {name} do strony {page}, miejsce {index}"
+assignFull: "Koło jest pełne"
+assignNothing: "Nie ma czego przypisać"
+open_name: "Menu kołowe"
+open_description: "Przytrzymaj, aby otworzyć koło broni, zaklęć i mikstur."

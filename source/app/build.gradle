@@ -728,6 +728,11 @@ android {
                 srcDir "wrap/res"
             }
 
+            // Handheld mode scripts. Kept outside src/main/assets, which is generated and ignored.
+            assets {
+                srcDir "src/main/handheld-assets"
+            }
+
             // Do not merge the generated upstream OMWFX VFS overlay.
             // MainActivity exposes only the calibrated
             // WetWorld, Godrays, Lensflare, Bloom and RainLens assets at runtime.
@@ -809,6 +814,12 @@ android {
     packaging {
         jniLibs {
             useLegacyPackaging = true
+        }
+    }
+
+    externalNativeBuild {
+        ndkBuild {
+            path 'src/main/cpp/Android.mk'
         }
     }
 }

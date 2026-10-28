@@ -1,0 +1,32 @@
+Page: "Menu radial"
+PageDescription: "Roue de sélection rapide à la manette, avec 4 pages de 8 emplacements que vous attribuez vous-même."
+
+Group: "Menu radial"
+
+enabled: "Activer le menu radial"
+enabledDescription: |
+  Maintenez L1 pour ouvrir la roue. Croix gauche / droite change de page. Croix
+  haut / bas utilise les favoris du haut et du bas de la page actuelle. Y ouvre
+  une liste pour attribuer une arme, une potion, un objet, un sort ou un objet
+  enchanté à l’emplacement sélectionné.
+
+openBinding: "Ouvrir le menu radial"
+openBindingDescription: "Maintenez cette touche en jeu pour ouvrir la roue. Par défaut : L1."
+
+empty: "Vide"
+missing: "Introuvable"
+handToHand: "Combat à mains nues"
+unarmed: "Mains nues"
+power: "Pouvoir"
+potion: "Potion"
+ingredient: "Ingrédient"
+pageLabel: "Page {page} / {count}"
+assignTitle: "Attribuer l’emplacement {index}"
+hint: "Relâcher pour utiliser  ·  Croix gauche/droite page  ·  Haut/bas favoris  ·  Y attribuer  ·  X vider  ·  B annuler"
+pickerHint: "A attribuer  ·  L1/R1 page  ·  B retour"
+clearSlot: "Vider l’emplacement"
+assigned: "{name} attribué à la page {page}, emplacement {index}"
+assignFull: "La roue est pleine"
+assignNothing: "Rien à attribuer"
+open_name: "Menu radial"
+open_description: "Maintenir pour ouvrir la roue des armes, sorts et potions."

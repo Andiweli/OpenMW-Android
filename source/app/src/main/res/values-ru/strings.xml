@@ -21,6 +21,9 @@
     <string name="pref_shadersDir_default">none</string>
     <string name="pref_gamma">Гамма</string>
     <string name="pref_uiScaling">Масштаб интерфейса</string>
+    <string name="pref_font_size">Размер шрифта</string>
+    <string name="pref_truetype_fonts_title">Чёткие шрифты</string>
+    <string name="pref_truetype_fonts_summary">Использовать шрифты TrueType из OpenMW вместо оригинальных растровых. Они остаются чёткими при любом размере шрифта и масштабе интерфейса и нужны для размеров больше 18.</string>
     <string name="uiScaling_auto">Авто (%1$.2f)</string>
     <string name="pref_screen_keeper">Не выключать экран</string>
     <string name="pref_touchpadSensitivity">Чувствительность виртуальной сенсорной панели</string>
@@ -30,6 +33,8 @@
     <string name="action_reset_screen_controls">Сбросить экранное управление</string>
     <string name="action_show_screen_controls">Экранное управление</string>
     <string name="pref_hide_controls">Скрыть экранные кнопки</string>
+    <string name="pref_handheld_mode_title">Портативный режим</string>
+    <string name="pref_handheld_mode_summary">Для устройств со встроенным управлением. Скрывает экранные кнопки. Удерживайте L1 для радиального меню. R1 открывает дневник. Select — отдых, а в текстовом поле открывает клавиатуру Android. L3 показывает курсор в меню. Удерживайте Select и нажмите L3 или R3 для оверлея производительности.</string>
     <string name="config_was_reset">Статическая конфигурация сброшена к значениям по умолчанию</string>
     <string name="user_config_was_reset">Конфигурация пользователя сброшена к значениям по умолчанию</string>
     <string name="user_resources_was_reset">Пользовательские ресурсы сброшены к значениям по умолчанию</string>

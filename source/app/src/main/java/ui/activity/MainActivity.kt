@@ -618,7 +618,16 @@ class MainActivity : AppCompatActivity() {
                 .filterNot { it.trim() == "data=\"specify-me!\"" }
                 .joinToString("\n", postfix = "\n")
             // TODO: support user custom options
-            fallback = File(Constants.OPENMW_FALLBACK_CFG).readText()
+            val fallbackText = File(Constants.OPENMW_FALLBACK_CFG).readText()
+            // Morrowind.ini names the bitmap fonts, which blur at sizes other than 16.
+            // Without those lines the TrueType fonts from openmw.base.cfg apply.
+            fallback = if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("pref_truetype_fonts", false)) {
+                fallbackText.lines()
+                    .filterNot { it.trim().startsWith("fallback=Fonts_Font_") }
+                    .joinToString("\n")
+            } else {
+                fallbackText
+            }
         } catch (e: IOException) {
             Log.e(TAG, "Failed to read openmw.base.cfg or openmw.fallback.cfg", e)
             return false
@@ -663,6 +672,25 @@ class MainActivity : AppCompatActivity() {
                 groundcovers.mods
                     .filter { it.enabled && ModsPaths.fileExistsIn(it.filename, activeDataFilesList) }
                     .forEach { append("groundcover=${it.filename}\n") }
+
+                // Last, so it is not the data= line startGame() rewrites.
+                val handheldMode = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
+                    .getBoolean(Constants.HANDHELD_MODE, false)
+                val handheld = HandheldController.install(this@MainActivity, handheldMode)
+                if (handheld != null) {
+                    append("data=\"${handheld.absolutePath}\"\n")
+                    append("content=${HandheldController.CONTENT_FILE}\n")
+                }
+
+                val fontPrefs = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
+                val fontSize = FontSizeOverride.install(
+                    this@MainActivity,
+                    fontPrefs.getString("pref_font_size", "16")?.toIntOrNull() ?: 16,
+                    fontPrefs.getBoolean("pref_truetype_fonts", false)
+                )
+                if (fontSize != null) {
+                    append("data=\"${fontSize.absolutePath}\"\n")
+                }
             }
 
             // Write only the real launcher configuration. Keep unrelated
@@ -2312,6 +2340,15 @@ class MainActivity : AppCompatActivity() {
                     TAG,
                     "OpenMW Android launcher resolution synced to settings.cfg: " +
                         "${displayWidth}x${displayHeight}"
+                )
+
+                // Written to settings.cfg so an older value there cannot override the launcher.
+                updateSettingsSection(
+                    File(Constants.USER_CONFIG, "settings.cfg"),
+                    "GUI",
+                    linkedMapOf("font size" to FontSizeOverride.engineSize(
+                        prefs.getString("pref_font_size", "16")?.toIntOrNull() ?: 16
+                    ).toString())
                 )
 
                 configureDefaultsBin(mapOf(

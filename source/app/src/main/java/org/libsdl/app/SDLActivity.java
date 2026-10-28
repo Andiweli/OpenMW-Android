@@ -15,12 +15,15 @@ import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseArray;
+import android.util.TypedValue;
 import android.view.*;
 import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
+import android.view.inputmethod.InputConnectionWrapper;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -29,6 +32,7 @@ import android.widget.Toast;
 import java.util.Hashtable;
 import java.util.Locale;
 
+import cursor.EngineCursor;
 import ui.activity.GameActivity;
 import ui.activity.MainActivity;
 import ui.activity.MouseMode;
@@ -83,6 +87,25 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     protected static SDLSurface mSurface;
     protected static View mTextEdit;
     protected static boolean mScreenKeyboardShown;
+    private static boolean mImeListenerInstalled;
+    private static int mTextBarImeOffset;
+    /** An edit box is focused. This does not open the keyboard. */
+    private static boolean mGameTextInput;
+    /** Close should write the text line back into that edit box. */
+    private static boolean mCommitOnClose;
+    /** Ctrl+C read the edit box, so close can replace it instead of appending. */
+    private static boolean mFieldCaptured;
+    private static String mFieldText = "";
+    private static boolean mTextBarReady;
+    private static int mTextSession;
+    private static int mLastPadDevice = -1;
+    private static final String FIELD_SENTINEL = "\u0001omw";
+    // Select is held. A following L3/R3 press opens the profiler instead of toggling the pointer.
+    private static boolean mSelectHeld;
+    // Select was used as a modifier, so releasing it must not also open the keyboard.
+    private static boolean mSelectUsedChord;
+    // Stick click that was consumed as part of a Select chord, so its release is consumed too.
+    private static int mProfilerStick;
     protected static ViewGroup mLayout;
     protected static SDLClipboardHandler mClipboardHandler;
     protected static Hashtable<Integer, PointerIcon> mCursors;
@@ -660,6 +683,13 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
                 break;
  */
             case COMMAND_TEXTEDIT_HIDE:
+                mGameTextInput = false;
+                if (sHandheldMode) {
+                    // The player closes the keyboard with Select. Focusing the
+                    // text line makes the game stop text input; hiding here would
+                    // dismiss it immediately.
+                    break;
+                }
                 if (mTextEdit != null) {
                     // Note: On some devices setting view to GONE creates a flicker in landscape.
                     // Setting the View's sizes to 0 is similar to GONE but without the flicker.
@@ -1155,26 +1185,406 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
 
         @Override
         public void run() {
-//            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(w, h + HEIGHT_PADDING);
-//            params.leftMargin = x;
-//            params.topMargin = y;
-//
-//            if (mTextEdit == null) {
-//                mTextEdit = new DummyEdit(SDL.getContext());
-//
-//                mLayout.addView(mTextEdit, params);
-//            } else {
-//                mTextEdit.setLayoutParams(params);
-//            }
-//
-//            mTextEdit.setVisibility(View.VISIBLE);
-//            mTextEdit.requestFocus();
-//
-//            InputMethodManager imm = (InputMethodManager) SDL.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-//            imm.showSoftInput(mTextEdit, 0);
-//
-//            mScreenKeyboardShown = true;
+            // Focusing an edit box must not pop the keyboard. Select and the
+            // on-screen keyboard button open it.
+            mGameTextInput = true;
         }
+    }
+
+    /**
+     * Show the Android IME above a text line. Select and the on-screen keyboard
+     * button call this. An edit box taking focus does not.
+     */
+    public static void showSystemKeyboard() {
+        if (mSingleton == null || mLayout == null || mScreenKeyboardShown) {
+            return;
+        }
+        final int session = ++mTextSession;
+        mScreenKeyboardShown = true;
+        mTextBarReady = false;
+        mCommitOnClose = mGameTextInput;
+        mFieldCaptured = false;
+        mFieldText = "";
+        if (mCommitOnClose) {
+            captureFieldThenShow(session);
+        } else {
+            presentTextBar(session, "");
+        }
+    }
+
+    /**
+     * Copy the focused edit box (Ctrl+A, Ctrl+C) before the text line takes
+     * focus, so the line starts as the text already in the game.
+     */
+    private static void captureFieldThenShow(final int session) {
+        if (mClipboardHandler != null) {
+            mClipboardHandler.clipboardSetText(FIELD_SENTINEL);
+        }
+        sendCtrlKey(KeyEvent.KEYCODE_A);
+        sendCtrlKey(KeyEvent.KEYCODE_C);
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (session != mTextSession) {
+                    return;
+                }
+                String clip = mClipboardHandler != null ? mClipboardHandler.clipboardGetText() : null;
+                String initial = "";
+                if (clip != null && !FIELD_SENTINEL.equals(clip)) {
+                    mFieldCaptured = true;
+                    initial = clip.replace("\r", "").replace("\n", "");
+                    mFieldText = initial;
+                }
+                presentTextBar(session, initial);
+            }
+        }, 250);
+    }
+
+    private static void sendCtrlKey(int keyCode) {
+        onNativeKeyDown(KeyEvent.KEYCODE_CTRL_LEFT);
+        onNativeKeyDown(keyCode);
+        onNativeKeyUp(keyCode);
+        onNativeKeyUp(KeyEvent.KEYCODE_CTRL_LEFT);
+    }
+
+    private static void presentTextBar(final int session, final String initial) {
+        if (mSingleton == null) {
+            return;
+        }
+        Runnable show = new Runnable() {
+            @Override
+            public void run() {
+                if (session != mTextSession || mLayout == null || mSingleton == null) {
+                    return;
+                }
+                installImeListener();
+                if (!(mTextEdit instanceof TextInputBar)) {
+                    if (mTextEdit != null) {
+                        mLayout.removeView(mTextEdit);
+                    }
+                    mTextEdit = new TextInputBar(mSingleton);
+                    mLayout.addView(mTextEdit);
+                }
+                if (mTextEdit instanceof TextView) {
+                    TextView line = (TextView) mTextEdit;
+                    line.setText(initial != null ? initial : "");
+                    if (line instanceof EditText) {
+                        ((EditText) line).setSelection(line.getText().length());
+                    }
+                }
+                placeTextBar();
+                mTextEdit.setVisibility(View.VISIBLE);
+                mTextEdit.setFocusable(true);
+                mTextEdit.setFocusableInTouchMode(true);
+                mTextEdit.requestFocus();
+                mTextEdit.bringToFront();
+                mTextBarReady = true;
+
+                InputMethodManager imm = (InputMethodManager) mSingleton.getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    boolean shown = imm.showSoftInput(mTextEdit, InputMethodManager.SHOW_IMPLICIT);
+                    if (!shown) {
+                        imm.showSoftInput(mTextEdit, InputMethodManager.SHOW_FORCED);
+                    }
+                }
+                mLayout.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshImeOffset();
+                    }
+                });
+                mLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshImeOffset();
+                    }
+                }, 200);
+            }
+        };
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            show.run();
+        } else {
+            mSingleton.runOnUiThread(show);
+        }
+    }
+
+    public static void hideSystemKeyboard() {
+        if (mSingleton == null) {
+            return;
+        }
+        // Drop a capture that has not shown the line yet, so closing during
+        // that wait cannot wipe the game field. Clear the shown flag now so
+        // Select can open the keyboard again before the view is removed.
+        mTextSession++;
+        final boolean commit = mCommitOnClose && mTextBarReady;
+        final boolean captured = mFieldCaptured;
+        final String initial = mFieldText != null ? mFieldText : "";
+        mScreenKeyboardShown = false;
+        mTextBarReady = false;
+        mCommitOnClose = false;
+        Runnable hide = new Runnable() {
+            @Override
+            public void run() {
+                String desired = "";
+                if (mTextEdit instanceof TextView) {
+                    CharSequence current = ((TextView) mTextEdit).getText();
+                    if (current != null) {
+                        desired = current.toString().replace("\r", "").replace("\n", "");
+                    }
+                }
+                if (mTextEdit != null) {
+                    mTextEdit.setFocusable(false);
+                    mTextEdit.setFocusableInTouchMode(false);
+                    mTextEdit.clearFocus();
+
+                    Context context = SDL.getContext();
+                    if (context != null) {
+                        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        if (imm != null) {
+                            imm.hideSoftInputFromWindow(mTextEdit.getWindowToken(), 0);
+                        }
+                    }
+                    if (mTextEdit instanceof TextView) {
+                        ((TextView) mTextEdit).setText("");
+                    }
+                    mTextEdit.setVisibility(View.GONE);
+                }
+                if (mSurface != null) {
+                    mSurface.requestFocus();
+                }
+                if (commit) {
+                    final String replacement = desired;
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            writeTextBack(replacement, captured, initial);
+                        }
+                    }, 120);
+                }
+            }
+        };
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            hide.run();
+        } else if (mSingleton != null) {
+            mSingleton.runOnUiThread(hide);
+        }
+    }
+
+    /**
+     * Replace the focused edit box with the text line. A failed copy must not
+     * erase a field the player did not clear.
+     */
+    private static void writeTextBack(String desired, boolean captured, String initial) {
+        if (desired == null) {
+            desired = "";
+        }
+        if (!captured) {
+            if (desired.length() > 0) {
+                SDLInputConnection.nativeCommitText(desired, 1);
+            }
+            return;
+        }
+        if (desired.equals(initial)) {
+            return;
+        }
+        sendCtrlKey(KeyEvent.KEYCODE_A);
+        // One backspace clears a selection. The rest clear the old line when
+        // the cursor is at the end and select-all did not land.
+        int clears = Math.max(initial.length(), 1);
+        for (int i = 0; i < clears; i++) {
+            onNativeKeyDown(KeyEvent.KEYCODE_DEL);
+            onNativeKeyUp(KeyEvent.KEYCODE_DEL);
+        }
+        if (desired.length() > 0) {
+            SDLInputConnection.nativeCommitText(desired, 1);
+        }
+    }
+
+    private static void installImeListener() {
+        if (mImeListenerInstalled || mLayout == null) {
+            return;
+        }
+        mImeListenerInstalled = true;
+        mLayout.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+            @Override
+            public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    int ime = insets.getInsets(WindowInsets.Type.ime()).bottom;
+                    if (ime > 0 && ime != mTextBarImeOffset) {
+                        mTextBarImeOffset = ime;
+                        placeTextBar();
+                    }
+                }
+                return v.onApplyWindowInsets(insets);
+            }
+        });
+    }
+
+    private static void refreshImeOffset() {
+        if (mLayout == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            return;
+        }
+        WindowInsets insets = mLayout.getRootWindowInsets();
+        if (insets == null) {
+            return;
+        }
+        int ime = insets.getInsets(WindowInsets.Type.ime()).bottom;
+        if (ime > 0 && ime != mTextBarImeOffset) {
+            mTextBarImeOffset = ime;
+            placeTextBar();
+        }
+    }
+
+    private static void placeTextBar() {
+        if (mTextEdit == null || mSingleton == null) {
+            return;
+        }
+        int offset = mTextBarImeOffset;
+        if (offset <= 0) {
+            DisplayMetrics metrics = mSingleton.getResources().getDisplayMetrics();
+            offset = (int) (metrics.heightPixels * 0.45f);
+        }
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        params.bottomMargin = offset;
+        mTextEdit.setLayoutParams(params);
+        mTextEdit.bringToFront();
+    }
+
+    public static void toggleSystemKeyboard() {
+        if (mScreenKeyboardShown) {
+            hideSystemKeyboard();
+        } else {
+            showSystemKeyboard();
+        }
+    }
+
+    /**
+     * Controller chords that must work with the touch overlay hidden.
+     * Select opens the Android keyboard in text fields and is the game's Back
+     * button elsewhere. Select+L3 and Select+R3 open the
+     * OpenMW performance overlays (F3 and F4), same as the Switch port.
+     *
+     * @return true when the event was consumed
+     */
+    private static int padDevice(int hinted) {
+        if (SDLControllerManager.isDeviceSDLJoystick(hinted)) {
+            return hinted;
+        }
+        if (mLastPadDevice >= 0 && SDLControllerManager.isDeviceSDLJoystick(mLastPadDevice)) {
+            return mLastPadDevice;
+        }
+        int[] ids = InputDevice.getDeviceIds();
+        if (ids != null) {
+            for (int id : ids) {
+                if (SDLControllerManager.isDeviceSDLJoystick(id)) {
+                    return id;
+                }
+            }
+        }
+        return -1;
+    }
+
+    /** Launcher Handheld mode: controller-first input, no touch overlay. */
+    public static volatile boolean sHandheldMode = false;
+    /** Whether the overlay pointer is drawn while the engine cursor is up. */
+    public static volatile boolean sPointerShown = false;
+    /** L3 showed the pointer; the engine reports its cursor a frame later. */
+    public static volatile long sPointerPendingUntil = 0;
+
+    public static boolean routeGamepadKey(KeyEvent event) {
+        if (event == null || !sHandheldMode) {
+            return false;
+        }
+        int keyCode = event.getKeyCode();
+        int deviceId = event.getDeviceId();
+        boolean stick = keyCode == KeyEvent.KEYCODE_BUTTON_THUMBL
+                || keyCode == KeyEvent.KEYCODE_BUTTON_THUMBR;
+        boolean joystick = SDLControllerManager.isDeviceSDLJoystick(deviceId);
+        // Stick clicks on some pads arrive from a device SDL did not open.
+        // Face buttons still have to come from a real joystick.
+        if (!joystick && !stick) {
+            return false;
+        }
+        if (joystick) {
+            mLastPadDevice = deviceId;
+        }
+
+        int action = event.getAction();
+        boolean down = action == KeyEvent.ACTION_DOWN;
+        boolean up = action == KeyEvent.ACTION_UP;
+        if (!down && !up) {
+            return false;
+        }
+
+        boolean select = keyCode == KeyEvent.KEYCODE_BUTTON_SELECT || keyCode == KeyEvent.KEYCODE_BACK;
+        if (select) {
+            if (down) {
+                // Key-repeat must not clear a Select+stick chord that already started.
+                if (!mSelectHeld) {
+                    mSelectUsedChord = false;
+                }
+                mSelectHeld = true;
+            } else {
+                mSelectHeld = false;
+                if (!mSelectUsedChord) {
+                    // Outside text fields Select is the game's Back button (Rest), like Minus on the Switch.
+                    int pad = padDevice(deviceId);
+                    if (mGameTextInput || mScreenKeyboardShown || pad < 0) {
+                        toggleSystemKeyboard();
+                    } else {
+                        SDLControllerManager.onNativePadDown(pad, KeyEvent.KEYCODE_BUTTON_SELECT);
+                        SDLControllerManager.onNativePadUp(pad, KeyEvent.KEYCODE_BUTTON_SELECT);
+                    }
+                }
+                mSelectUsedChord = false;
+            }
+            return true;
+        }
+
+        if (stick && (mSelectHeld || mProfilerStick == keyCode)) {
+            if (down && mSelectHeld && event.getRepeatCount() == 0) {
+                mSelectUsedChord = true;
+                mProfilerStick = keyCode;
+                int functionKey = keyCode == KeyEvent.KEYCODE_BUTTON_THUMBL
+                        ? KeyEvent.KEYCODE_F3 : KeyEvent.KEYCODE_F4;
+                onNativeKeyDown(functionKey);
+                onNativeKeyUp(functionKey);
+            } else if (up && mProfilerStick == keyCode) {
+                mProfilerStick = 0;
+            }
+            return true;
+        }
+
+        int pad = padDevice(deviceId);
+        if (pad < 0) {
+            return stick;
+        }
+
+        // The 0.51 engine shows its cursor in every menu, its own L3 toggle
+        // does not hide it, and A clicks at the cursor while it is shown.
+        // The flag is set here before the button reaches the engine.
+        if (down && event.getRepeatCount() == 0 && EngineCursor.isMenuOpen()) {
+            if (keyCode == KeyEvent.KEYCODE_BUTTON_THUMBL) {
+                sPointerShown = !sPointerShown;
+                if (sPointerShown) {
+                    sPointerPendingUntil = SystemClock.uptimeMillis() + 500;
+                }
+                EngineCursor.setVisible(sPointerShown);
+            } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode == KeyEvent.KEYCODE_DPAD_DOWN
+                    || keyCode == KeyEvent.KEYCODE_DPAD_LEFT || keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                sPointerShown = false;
+                EngineCursor.setVisible(false);
+            } else if (keyCode == KeyEvent.KEYCODE_BUTTON_A && !sPointerShown) {
+                EngineCursor.setVisible(false);
+            }
+        }
+        if (down) {
+            return SDLControllerManager.onNativePadDown(pad, keyCode) == 0 || stick;
+        }
+        return SDLControllerManager.onNativePadUp(pad, keyCode) == 0 || stick;
     }
 
     /**
@@ -2059,7 +2469,11 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
         // Furthermore, it's possible a game controller has SOURCE_KEYBOARD and
         // SOURCE_JOYSTICK, while its key events arrive from the keyboard source
         // So, retrieve the device itself and check all of its sources
-        if (SDLControllerManager.isDeviceSDLJoystick(deviceId)) {
+        if (SDLActivity.sHandheldMode) {
+            if (SDLActivity.routeGamepadKey(event)) {
+                return true;
+            }
+        } else if (SDLControllerManager.isDeviceSDLJoystick(deviceId)) {
             // Note that we process events with specific key codes here
             if (event.getAction() == KeyEvent.ACTION_DOWN) {
                 if (SDLControllerManager.onNativePadDown(deviceId, keyCode) == 0) {
@@ -2458,6 +2872,89 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
 /* This is a fake invisible editor view that receives the input and defines the
  * pan&scan region
  */
+/**
+ * The line of text that sits above the Android keyboard. OpenMW's own edit box
+ * stays under the keys, so this is the field the player actually reads.
+ */
+class TextInputBar extends EditText {
+    TextInputBar(Context context) {
+        super(context);
+        setSingleLine(true);
+        setHint("Enter text");
+        setTextColor(0xFFF4E8C8);
+        setHintTextColor(0xFF8A7A62);
+        setBackgroundColor(0xF014100C);
+        int padH = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16,
+                context.getResources().getDisplayMetrics());
+        int padV = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12,
+                context.getResources().getDisplayMetrics());
+        setPadding(padH, padV, padH, padV);
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+        setImeOptions(EditorInfo.IME_ACTION_DONE | EditorInfo.IME_FLAG_NO_EXTRACT_UI
+                | EditorInfo.IME_FLAG_NO_FULLSCREEN);
+        setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        setFocusable(true);
+        setFocusableInTouchMode(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            setImportantForAutofill(IMPORTANT_FOR_AUTOFILL_NO);
+        }
+        setOnKeyListener(new OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                return SDLActivity.routeGamepadKey(event);
+            }
+        });
+        setOnEditorActionListener(new OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    SDLActivity.hideSystemKeyboard();
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
+        InputConnection base = super.onCreateInputConnection(outAttrs);
+        if (base == null) {
+            return null;
+        }
+        outAttrs.imeOptions |= EditorInfo.IME_ACTION_DONE | EditorInfo.IME_FLAG_NO_EXTRACT_UI
+                | EditorInfo.IME_FLAG_NO_FULLSCREEN;
+        outAttrs.inputType = InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS;
+        return new GameInputConnection(base);
+    }
+}
+
+/**
+ * Edits the text line. The game field is updated when the keyboard closes.
+ */
+class GameInputConnection extends InputConnectionWrapper {
+    GameInputConnection(InputConnection target) {
+        super(target, true);
+    }
+
+    @Override
+    public boolean commitText(CharSequence text, int newCursorPosition) {
+        // The line is committed into the game when the keyboard closes.
+        // Live commits drop composing text and never see the original field.
+        return super.commitText(text, newCursorPosition);
+    }
+
+    @Override
+    public boolean deleteSurroundingText(int beforeLength, int afterLength) {
+        return super.deleteSurroundingText(beforeLength, afterLength);
+    }
+
+    @Override
+    public boolean deleteSurroundingTextInCodePoints(int beforeLength, int afterLength) {
+        return super.deleteSurroundingTextInCodePoints(beforeLength, afterLength);
+    }
+}
+
 class DummyEdit extends View implements View.OnKeyListener {
     InputConnection ic;
 
@@ -2475,6 +2972,12 @@ class DummyEdit extends View implements View.OnKeyListener {
 
     @Override
     public boolean onKey(View v, int keyCode, KeyEvent event) {
+        // The IME focuses this view. Keep controller buttons on the gamepad path
+        // so Select, L3 and the face buttons still reach OpenMW.
+        if (SDLActivity.routeGamepadKey(event)) {
+            return true;
+        }
+
         /*
          * This handles the hardware keyboard input
          */

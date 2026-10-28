@@ -21,6 +21,9 @@
     <string name="pref_shadersDir_default">none</string>
     <string name="pref_gamma">Gamma</string>
     <string name="pref_uiScaling">UI-Skalierungsfaktor</string>
+    <string name="pref_font_size">Schriftgröße</string>
+    <string name="pref_truetype_fonts_title">Scharfe Schriften</string>
+    <string name="pref_truetype_fonts_summary">Die TrueType-Schriften von OpenMW statt der originalen Bitmap-Schriften verwenden. Sie bleiben bei jeder Schriftgröße und UI-Skalierung scharf und sind für Schriftgrößen über 18 nötig.</string>
     <string name="uiScaling_auto">Automatisch (%1$.2f)</string>
     <string name="pref_screen_keeper">Bildschirm immer eingeschaltet lassen</string>
     <string name="pref_touchpadSensitivity">Empfindlichkeit des virtuellen Touchpads</string>
@@ -30,6 +33,8 @@
     <string name="action_reset_screen_controls">Bildschirmsteuerung zurücksetzen</string>
     <string name="action_show_screen_controls">Bildschirmsteuerung</string>
     <string name="pref_hide_controls">Bildschirmtasten ausblenden</string>
+    <string name="pref_handheld_mode_title">Handheld-Modus</string>
+    <string name="pref_handheld_mode_summary">Für Geräte mit eingebauten Bedienelementen. Blendet die Bildschirmtasten aus. L1 gedrückt halten für das Radialmenü. R1 öffnet das Tagebuch. Select rastet, oder öffnet in einem Textfeld die Android-Tastatur. L3 zeigt den Zeiger in Menüs. Select gedrückt halten und L3 oder R3 für die Leistungsanzeige.</string>
     <string name="config_was_reset">Statische Konfiguration wurde auf Standardwerte zurückgesetzt</string>
     <string name="user_config_was_reset">Benutzerkonfiguration wurde auf Standardwerte zurückgesetzt</string>
     <string name="user_resources_was_reset">Benutzerressourcen wurden auf Standardwerte zurückgesetzt</string>

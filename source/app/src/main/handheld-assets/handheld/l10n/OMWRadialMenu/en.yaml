@@ -1,0 +1,31 @@
+Page: "Radial Menu"
+PageDescription: "Gamepad quick-select wheel with 4 pages of 8 slots you assign yourself."
+
+Group: "Radial Menu"
+
+enabled: "Enable radial menu"
+enabledDescription: |
+  Hold L1 to open the wheel. D-pad Left / Right changes page. D-pad Up / Down
+  uses the top and bottom favorites on the current page. Y opens a list to
+  assign a weapon, potion, item, spell or enchanted item to the selected slot.
+
+openBinding: "Open radial menu"
+openBindingDescription: "Hold this button in gameplay to open the wheel. Default is L1."
+
+empty: "Empty"
+missing: "Not found"
+handToHand: "Hand-to-Hand"
+unarmed: "Unarmed"
+power: "Power"
+potion: "Potion"
+ingredient: "Ingredient"
+pageLabel: "Page {page} / {count}"
+assignTitle: "Assign slot {index}"
+hint: "Release to use  ·  D-pad Left/Right page  ·  Up/Down favorites  ·  Y assign  ·  X clear  ·  B cancel"
+pickerHint: "A assign  ·  L1/R1 page  ·  B back"
+clearSlot: "Clear slot"
+assigned: "Assigned {name} to page {page} slot {index}"
+assignFull: "Wheel is full"
+assignNothing: "Nothing to assign"
+open_name: "Radial Menu"
+open_description: "Hold to open the weapon, spell, and potion wheel."

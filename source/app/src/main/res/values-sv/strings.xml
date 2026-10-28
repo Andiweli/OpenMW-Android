@@ -21,6 +21,9 @@
     <string name="pref_shadersDir_default">none</string>
     <string name="pref_gamma">Gamma</string>
     <string name="pref_uiScaling">Skalningsfaktor för gränssnitt</string>
+    <string name="pref_font_size">Teckenstorlek</string>
+    <string name="pref_truetype_fonts_title">Skarpa typsnitt</string>
+    <string name="pref_truetype_fonts_summary">Använd OpenMW:s TrueType-typsnitt i stället för de ursprungliga bitmappstypsnitten. De förblir skarpa i alla teckenstorlekar och gränssnittsskalor och behövs för storlekar över 18.</string>
     <string name="uiScaling_auto">Auto (%1$.2f)</string>
     <string name="pref_screen_keeper">Håll skärmen alltid på</string>
     <string name="pref_touchpadSensitivity">Känslighet för virtuell pekplatta</string>
@@ -30,6 +33,8 @@
     <string name="action_reset_screen_controls">Återställ skärmkontroller</string>
     <string name="action_show_screen_controls">Skärmkontroller</string>
     <string name="pref_hide_controls">Dölj skärmknappar</string>
+    <string name="pref_handheld_mode_title">Handhållet läge</string>
+    <string name="pref_handheld_mode_summary">För enheter med inbyggda kontroller. Döljer skärmknapparna. Håll L1 för radialmenyn. R1 öppnar dagboken. Select vilar, eller öppnar Android-tangentbordet i ett textfält. L3 visar pekaren i menyer. Håll Select och tryck L3 eller R3 för prestandaöverlägget.</string>
     <string name="config_was_reset">Den statiska konfigurationen återställdes till standardvärden</string>
     <string name="user_config_was_reset">Användarkonfigurationen återställdes till standardvärden</string>
     <string name="user_resources_was_reset">Användarresurserna återställdes till standardvärden</string>

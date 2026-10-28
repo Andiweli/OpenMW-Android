@@ -238,7 +238,14 @@ class GameActivity : SDLActivity() {
     }
 
     public override fun onCreate(savedInstanceState: Bundle?) {
+        // Before SDL starts, so the first controller event already sees it.
+        SDLActivity.sHandheldMode = PreferenceManager.getDefaultSharedPreferences(this)
+            .getBoolean(Constants.HANDHELD_MODE, false)
         super.onCreate(savedInstanceState)
+
+        // The Android keyboard overlays the game. Resizing the surface for the
+        // IME would restart the frame and drop the current session.
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
         val displayInCutoutArea = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("pref_display_cutout_area", false)
         // layoutInDisplayCutoutMode only exists on Android 9 (API 28) and newer.
@@ -441,7 +448,8 @@ class GameActivity : SDLActivity() {
         // while ChromeOS keeps the overlay hidden for mouse/keyboard operation.
         val hasTouchscreen = packageManager.hasSystemFeature(PackageManager.FEATURE_TOUCHSCREEN)
         val defaultHideControls = !hasTouchscreen || SDLActivity.isChromebook()
-        val pref_hide_controls = prefs.getBoolean(Constants.HIDE_CONTROLS, defaultHideControls)
+        val pref_hide_controls = SDLActivity.sHandheldMode
+            || prefs.getBoolean(Constants.HIDE_CONTROLS, defaultHideControls)
 
         var osc: Osc? = null
         if (!pref_hide_controls) {
