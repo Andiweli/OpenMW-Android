@@ -23,6 +23,7 @@ package constants
 object Constants {
     const val APP_PREFERENCES = "settings"
     const val HIDE_CONTROLS = "pref_hide_controls"
+    const val HANDHELD_MODE = "pref_handheld_mode"
 
     // User-owned OpenMW data root.
     //

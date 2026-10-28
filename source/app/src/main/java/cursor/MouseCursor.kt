@@ -21,10 +21,12 @@ package cursor
 
 import android.content.Context
 import android.os.Build
+import android.os.SystemClock
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.Choreographer
 import android.view.View
+import android.widget.ImageView
 import android.widget.RelativeLayout
 
 import com.libopenmw.openmw.R
@@ -75,15 +77,23 @@ class MouseCursor(activity: GameActivity, private val osc: Osc?) : Choreographer
     private val choreographer: Choreographer
     private val cursor: FixedSizeImageView
     private var prevMouseShown = -1
+    private var shownFrames = 0
+    private var lastMouseX = 0
+    private var lastMouseY = 0
     private val useChromeOsSystemCursor =
         Build.VERSION.SDK_INT >= 24 && SDLActivity.isChromebook() // OPENMW_CHROMEOS_NATIVE_MOUSE_V1
 
     init {
-        val height = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30f,
+        // Handheld screens are small and close to the eye, so the arrow is half
+        // size there. The bitmap is 30x45 and the view keeps that aspect, so the
+        // tip stays the hotspot.
+        val arrowDp = if (SDLActivity.sHandheldMode) 15f else 30f
+        val height = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, arrowDp,
             activity.resources.displayMetrics).toInt()
         val width = Math.round(height / 1.5).toInt()
 
         cursor = FixedSizeImageView(activity, width, height)
+        cursor.scaleType = ImageView.ScaleType.FIT_XY
 
         if (!useChromeOsSystemCursor) {
             if (File(Constants.USER_FILE_STORAGE + "/icons/pointer_arrow.png").exists())
@@ -118,7 +128,30 @@ class MouseCursor(activity: GameActivity, private val osc: Osc?) : Choreographer
             return
         }
 
-        if (GameActivity.mouseMode == MouseMode.Touch || mouseShown == 0 || (osc != null && osc.keyboardVisible)) {
+        val mouseX = SDLActivity.getMouseX()
+        val mouseY = SDLActivity.getMouseY()
+        val now = SystemClock.uptimeMillis()
+        val pending = now < SDLActivity.sPointerPendingUntil
+        if (!SDLActivity.sHandheldMode) {
+            SDLActivity.sPointerShown = true
+        } else if (mouseShown == 0) {
+            // Each menu, and each controller focus jump, starts with the pointer hidden.
+            if (!pending) SDLActivity.sPointerShown = false
+            shownFrames = 0
+        } else {
+            if (pending) SDLActivity.sPointerPendingUntil = 0
+            // Skip the first frames so a menu opening does not count as motion.
+            val moved = Math.abs(mouseX - lastMouseX) > 1 || Math.abs(mouseY - lastMouseY) > 1
+            if (shownFrames >= 5 && moved) {
+                SDLActivity.sPointerShown = true
+            }
+            if (shownFrames < 5) shownFrames++
+        }
+        lastMouseX = mouseX
+        lastMouseY = mouseY
+
+        if (GameActivity.mouseMode == MouseMode.Touch || mouseShown == 0 || !SDLActivity.sPointerShown
+                || (osc != null && osc.keyboardVisible)) {
             cursor.visibility = View.GONE
         } else {
             cursor.visibility = View.VISIBLE
@@ -132,9 +165,6 @@ class MouseCursor(activity: GameActivity, private val osc: Osc?) : Choreographer
                 translateX = 1.0f * surface.width / MainActivity.resolutionX
                 translateY = 1.0f * surface.height / MainActivity.resolutionY
             }
-
-            val mouseX = SDLActivity.getMouseX()
-            val mouseY = SDLActivity.getMouseY()
 
             // calling setX/setY here results in a bug cropping part of the mouse cursor
             // changing LayoutParams works as expected...

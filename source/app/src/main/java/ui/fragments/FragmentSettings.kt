@@ -29,6 +29,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.preference.CheckBoxPreference
 import android.preference.EditTextPreference
 import android.preference.ListPreference
 import android.preference.Preference
@@ -48,6 +49,7 @@ import com.codekidlabs.storagechooser.StorageChooser
 import com.codekidlabs.storagechooser.utils.StorageVolumeUtil
 import com.libopenmw.openmw.BuildConfig
 import com.libopenmw.openmw.R
+import constants.Constants
 import file.GameDataCheck
 import file.GameFilesLocation
 import file.GameInstaller
@@ -83,6 +85,7 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
 
         prepareControllerTriggerPreference()
         updateGammaState()
+        updateHandheldState()
 
         // Make launcher entries that open another screen visually distinct.
         listOf("pref_game_settings", "pref_mods", "pref_controls").forEach { key ->
@@ -572,6 +575,20 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
             return
         updatePreference(findPreference(key), key)
         updateGammaState()
+        if (key == Constants.HANDHELD_MODE) {
+            // The handheld controls rely on controller menus; they can still be turned off.
+            if (sharedPreferences.getBoolean(key, false)) {
+                (findPreference("pref_omw050_controller_menus") as? CheckBoxPreference)?.isChecked = true
+            }
+            updateHandheldState()
+        }
+    }
+
+    /** Handheld mode never shows the touch overlay, so its options do not apply. */
+    private fun updateHandheldState() {
+        val handheld = preferenceScreen.sharedPreferences.getBoolean(Constants.HANDHELD_MODE, false)
+        listOf("pref_controls", Constants.HIDE_CONTROLS, "pref_always_show_top_bar", "pref_show_qp", "pref_show_fn")
+            .forEach { findPreference(it)?.isEnabled = !handheld }
     }
 
     private fun updatePreference(preference: Preference?, key: String) {

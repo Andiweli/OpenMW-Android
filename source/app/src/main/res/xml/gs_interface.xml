@@ -1,6 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="@string/l10n_gs_interface_ui_title">
+        <CheckBoxPreference android:key="pref_truetype_fonts" android:title="@string/pref_truetype_fonts_title" android:summary="@string/pref_truetype_fonts_summary" android:defaultValue="false" />
+        <ListPreference android:key="pref_font_size" android:title="@string/pref_font_size" android:dialogTitle="@string/pref_font_size" android:entries="@array/pref_font_size_values" android:entryValues="@array/pref_font_size_values" android:defaultValue="16" android:summary="%s" />
         <ListPreference android:key="gs_show_owned" android:summary="%s" android:title="@string/gs_show_owned_title" android:dialogTitle="@string/gs_show_owned_dialogtitle" android:entries="@array/gs_show_owned_entries" android:entryValues="@array/gs_show_owned_values" android:defaultValue="0" />
         <CheckBoxPreference android:key="gs_show_effect_duration" android:title="@string/gs_show_effect_duration_title" android:summary="@string/gs_show_effect_duration_summary" />
         <CheckBoxPreference android:key="gs_show_enchant_chance" android:title="@string/gs_show_enchant_chance_title" android:summary="@string/gs_show_enchant_chance_summary" />
