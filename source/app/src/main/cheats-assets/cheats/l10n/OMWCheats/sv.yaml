@@ -1,0 +1,13 @@
+Page: "Fusk"
+PageDescription: "Hjälpmedel för enspelarläget. Använd på egen risk."
+
+Group: "Guld"
+
+amount: "Mängd"
+amountDescription: "Hur mycket guld som läggs till när du slår på \"Ge guld\" nedan."
+
+giveGold: "Ge guld"
+giveGoldDescription: "Slår du på detta läggs mängden ovan till i ditt inventarie, sedan slås det av igen."
+
+goldAdded: "+{amount} guld"
+cheatError: "Fusk: {error}"
