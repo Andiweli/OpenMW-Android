@@ -1,0 +1,13 @@
+Page: "Triches"
+PageDescription: "Facilités pour le jeu solo. À utiliser à vos risques."
+
+Group: "Or"
+
+amount: "Montant"
+amountDescription: "Quantité d'or ajoutée quand vous activez « Donner de l'or » ci-dessous."
+
+giveGold: "Donner de l'or"
+giveGoldDescription: "L'activer ajoute le montant ci-dessus à votre inventaire, puis se désactive de lui-même."
+
+goldAdded: "+{amount} pièces d'or"
+cheatError: "Triches : {error}"

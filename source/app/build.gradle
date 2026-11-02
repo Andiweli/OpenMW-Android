@@ -728,9 +728,10 @@ android {
                 srcDir "wrap/res"
             }
 
-            // Handheld mode scripts. Kept outside src/main/assets, which is generated and ignored.
+            // Handheld mode and cheats scripts. Kept outside src/main/assets, which is generated and ignored.
             assets {
                 srcDir "src/main/handheld-assets"
+                srcDir "src/main/cheats-assets"
             }
 
             // Do not merge the generated upstream OMWFX VFS overlay.

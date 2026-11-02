@@ -682,6 +682,13 @@ class MainActivity : AppCompatActivity() {
                     append("content=${HandheldController.CONTENT_FILE}\n")
                 }
 
+                // Adds Settings > Scripts > Cheats in-game; inert until the player uses it there.
+                val cheats = CheatsController.install(this@MainActivity)
+                if (cheats != null) {
+                    append("data=\"${cheats.absolutePath}\"\n")
+                    append("content=${CheatsController.CONTENT_FILE}\n")
+                }
+
                 val fontPrefs = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
                 val fontSize = FontSizeOverride.install(
                     this@MainActivity,

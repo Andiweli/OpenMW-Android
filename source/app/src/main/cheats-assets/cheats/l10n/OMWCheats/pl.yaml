@@ -1,0 +1,13 @@
+Page: "Kody"
+PageDescription: "Ułatwienia do gry jednoosobowej. Używasz na własne ryzyko."
+
+Group: "Złoto"
+
+amount: "Ilość"
+amountDescription: "Ile złota dodać po włączeniu opcji „Daj złoto” poniżej."
+
+giveGold: "Daj złoto"
+giveGoldDescription: "Włączenie dodaje powyższą ilość do ekwipunku, po czym opcja sama się wyłącza."
+
+goldAdded: "+{amount} sztuk złota"
+cheatError: "Kody: {error}"
