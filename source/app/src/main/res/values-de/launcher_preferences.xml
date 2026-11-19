@@ -103,8 +103,8 @@
     <string name="pref_omw050_controller_menus_summary">Für Gamepads optimierte Menüs.</string>
     <string name="pref_omw050_controller_tooltips_title">Controller-Tooltips</string>
     <string name="pref_omw050_controller_tooltips_summary">Tooltips ohne R3-Druck.</string>
-    <string name="pref_omw051_controller_trigger_thresholds_title">Controller-Trigger-Empfindlichkeit</string>
-    <string name="pref_omw051_controller_trigger_thresholds_dialogtitle">Controller-Trigger-Empfindlichkeit</string>
+    <string name="pref_omw051_controller_trigger_thresholds_title">Trigger-Empfindlichkeit</string>
+    <string name="pref_omw051_controller_trigger_thresholds_dialogtitle">Trigger-Empfindlichkeit</string>
     <string name="pref_controls_summary">Position, Größe und Deckkraft der Tasten.</string>
     <string name="gs_framerate_limit_summary">%s FPS</string>
     <string name="l10n_settings_audio_title">Audio</string>
@@ -153,8 +153,8 @@
     <string name="gs_only_weapon_bs_summary">Nur besondere Munition umgeht die Waffenresistenz.</string>
     <string name="gs_swim_upward_correction_title">Aufwärtskorrektur beim Schwimmen</string>
     <string name="gs_swim_upward_correction_summary">In der Außenansicht leicht nach oben schwimmen.</string>
-    <string name="gs_factor_strength_into_hand_to_hand_combat_title">Stärke im waffenlosen Kampf berücksichtigen</string>
-    <string name="gs_factor_strength_into_hand_to_hand_combat_dialogtitle">Stärke im waffenlosen Kampf berücksichtigen</string>
+    <string name="gs_factor_strength_into_hand_to_hand_combat_title">Rücksicht auf Stärke im waffenlosen Kampf</string>
+    <string name="gs_factor_strength_into_hand_to_hand_combat_dialogtitle">Rücksicht auf Stärke im waffenlosen Kampf</string>
     <string name="l10n_gs_game_mechanics_npc_followers_title">NPCs &amp; Begleiter</string>
     <string name="gs_followers_defend_immediately_title">Begleiter verteidigen sofort</string>
     <string name="gs_followers_defend_immediately_summary">Begleiter wehren sich sofort, statt abzuwarten.</string>

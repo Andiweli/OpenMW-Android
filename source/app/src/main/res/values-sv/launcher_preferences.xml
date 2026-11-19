@@ -103,8 +103,8 @@
     <string name="pref_omw050_controller_menus_summary">Menyer anpassade för handkontroll.</string>
     <string name="pref_omw050_controller_tooltips_title">Handkontrollens verktygstips</string>
     <string name="pref_omw050_controller_tooltips_summary">Verktygstips utan att trycka R3.</string>
-    <string name="pref_omw051_controller_trigger_thresholds_title">Känslighet för handkontrollens avtryckare</string>
-    <string name="pref_omw051_controller_trigger_thresholds_dialogtitle">Känslighet för handkontrollens avtryckare</string>
+    <string name="pref_omw051_controller_trigger_thresholds_title">Avtryckarkänslighet</string>
+    <string name="pref_omw051_controller_trigger_thresholds_dialogtitle">Avtryckarkänslighet</string>
     <string name="pref_controls_summary">Position, storlek och opacitet för knapparna.</string>
     <string name="gs_framerate_limit_summary">%s FPS</string>
     <string name="l10n_settings_audio_title">Ljud</string>

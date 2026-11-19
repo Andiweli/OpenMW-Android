@@ -238,14 +238,20 @@ class PreferencePageView(
      * Label on the left, the control on the right; stacked on narrow screens. A short
      * [explanation] is a small second line under the label, the control keeps its height.
      */
+    private companion object {
+        /** Width of the label column next to a control, in dp. */
+        const val LABEL_WIDTH = 260
+    }
+
     private fun row(title: CharSequence, control: View, explanation: CharSequence? = null): LinearLayout {
         val wide = context.resources.configuration.screenWidthDp >= 600
         return LinearLayout(context).apply {
             setPadding(0, dp(4), 0, dp(4))
+            val titleView = LauncherStyle.text(context, title, 18f, true)
             val label = LinearLayout(context).apply {
                 orientation = LinearLayout.VERTICAL
                 gravity = Gravity.CENTER_VERTICAL
-                addView(LauncherStyle.text(context, title, 18f, true))
+                addView(titleView)
                 if (!explanation.isNullOrBlank())
                     addView(LauncherStyle.text(context, explanation, 14f, false).apply {
                         maxLines = 2
@@ -256,7 +262,10 @@ class PreferencePageView(
             if (wide) {
                 orientation = LinearLayout.HORIZONTAL
                 gravity = Gravity.CENTER_VERTICAL
-                addView(label, LinearLayout.LayoutParams(dp(260), LinearLayout.LayoutParams.WRAP_CONTENT).apply { marginEnd = dp(12) })
+                // A title too long for the label column gets half the row, the control the other half.
+                val halves = titleView.paint.measureText(title.toString()) > dp(LABEL_WIDTH)
+                addView(label, (if (halves) LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                    else LinearLayout.LayoutParams(dp(LABEL_WIDTH), LinearLayout.LayoutParams.WRAP_CONTENT)).apply { marginEnd = dp(12) })
                 addView(control, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
             } else {
                 orientation = LinearLayout.VERTICAL

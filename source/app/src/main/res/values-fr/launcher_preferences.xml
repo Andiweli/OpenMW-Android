@@ -103,8 +103,8 @@
     <string name="pref_omw050_controller_menus_summary">Menus conçus pour les manettes.</string>
     <string name="pref_omw050_controller_tooltips_title">Infobulles à la manette</string>
     <string name="pref_omw050_controller_tooltips_summary">Infobulles sans appuyer sur R3.</string>
-    <string name="pref_omw051_controller_trigger_thresholds_title">Sensibilité des gâchettes de la manette</string>
-    <string name="pref_omw051_controller_trigger_thresholds_dialogtitle">Sensibilité des gâchettes de la manette</string>
+    <string name="pref_omw051_controller_trigger_thresholds_title">Sensibilité des gâchettes</string>
+    <string name="pref_omw051_controller_trigger_thresholds_dialogtitle">Sensibilité des gâchettes</string>
     <string name="pref_controls_summary">Position, taille et opacité des boutons.</string>
     <string name="gs_framerate_limit_summary">%s FPS</string>
     <string name="l10n_settings_audio_title">Audio</string>

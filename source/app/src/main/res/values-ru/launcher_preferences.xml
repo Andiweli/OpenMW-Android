@@ -103,8 +103,8 @@
     <string name="pref_omw050_controller_menus_summary">Меню, созданные для геймпада.</string>
     <string name="pref_omw050_controller_tooltips_title">Подсказки контроллера</string>
     <string name="pref_omw050_controller_tooltips_summary">Подсказки без нажатия R3.</string>
-    <string name="pref_omw051_controller_trigger_thresholds_title">Чувствительность курков контроллера</string>
-    <string name="pref_omw051_controller_trigger_thresholds_dialogtitle">Чувствительность курков контроллера</string>
+    <string name="pref_omw051_controller_trigger_thresholds_title">Чувствительность курков</string>
+    <string name="pref_omw051_controller_trigger_thresholds_dialogtitle">Чувствительность курков</string>
     <string name="pref_controls_summary">Положение, размер и прозрачность кнопок.</string>
     <string name="gs_framerate_limit_summary">%s FPS</string>
     <string name="l10n_settings_audio_title">Аудио</string>

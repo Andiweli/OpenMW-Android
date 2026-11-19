@@ -103,8 +103,8 @@
     <string name="pref_omw050_controller_menus_summary">Menus built for gamepads.</string>
     <string name="pref_omw050_controller_tooltips_title">Controller Tooltips</string>
     <string name="pref_omw050_controller_tooltips_summary">Tooltips without pressing R3.</string>
-    <string name="pref_omw051_controller_trigger_thresholds_title">Controller Trigger Sensitivity</string>
-    <string name="pref_omw051_controller_trigger_thresholds_dialogtitle">Controller Trigger Sensitivity</string>
+    <string name="pref_omw051_controller_trigger_thresholds_title">Trigger Sensitivity</string>
+    <string name="pref_omw051_controller_trigger_thresholds_dialogtitle">Trigger Sensitivity</string>
     <string name="pref_controls_summary">Position, size and opacity of the buttons.</string>
     <string name="gs_framerate_limit_summary">%s FPS</string>
     <string name="l10n_settings_audio_title">Audio</string>
