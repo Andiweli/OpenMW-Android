@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='utf-8'?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference android:key="pref_user_data_dir" android:title="@string/user_data_dir_title" />
+    <CheckBoxPreference android:key="pref_cheats_enabled" android:title="@string/pref_cheats_enabled_title" android:summary="@string/pref_cheats_enabled_summary" android:defaultValue="false" />
+</PreferenceScreen>

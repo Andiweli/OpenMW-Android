@@ -221,4 +221,6 @@
     <string name="user_data_dir_unavailable">Mappen för sparfiler är inte tillgänglig eller skrivskyddad:\n%1$s\n\nSätt i lagringsmediet, kontrollera lagringsbehörigheten eller välj en annan mapp i startprogrammet.</string>
     <string name="pref_swipe_to_look_title">Svep för att titta</string>
     <string name="pref_swipe_to_look_summary">Svep på fri skärmyta för att se dig omkring i spelet. Höger spak och menyer fungerar som tidigare.</string>
+    <string name="pref_cheats_enabled_title">Aktivera fusk</string>
+    <string name="pref_cheats_enabled_summary">Lägger till en sida ”Fusk” i spelets inställningar (Alternativ > Skript) som kan ge din karaktär guld. Av som standard.</string>
 </resources>

@@ -128,5 +128,13 @@
             android:screenOrientation="fullUser"
             android:theme="@style/MyTheme" />
 
+        <activity
+            android:name="ui.activity.Advanced_SettingsActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="false"
+            android:label="@string/pref_advanced"
+            android:screenOrientation="fullUser"
+            android:theme="@style/MyTheme" />
+
     </application>
 </manifest>

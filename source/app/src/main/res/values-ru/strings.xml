@@ -221,4 +221,6 @@
     <string name="user_data_dir_unavailable">Папка сохранений недоступна или защищена от записи:\n%1$s\n\nВставьте носитель, проверьте разрешение на доступ к памяти или выберите другую папку в лаунчере.</string>
     <string name="pref_swipe_to_look_title">Обзор свайпом</string>
     <string name="pref_swipe_to_look_summary">Проводите пальцем по свободной части экрана, чтобы осматриваться в игре. Правый стик и меню работают как прежде.</string>
+    <string name="pref_cheats_enabled_title">Включить читы</string>
+    <string name="pref_cheats_enabled_summary">Добавляет в настройки игры (Параметры > Скрипты) страницу «Читы», позволяющую выдать персонажу золото. По умолчанию выключено.</string>
 </resources>

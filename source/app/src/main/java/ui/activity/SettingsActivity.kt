@@ -61,7 +61,8 @@ class FragmentGameSettings : PreferenceFragment() {
             "game_settings_shadows",
             "game_settings_animations",
             "game_settings_interface",
-            "game_settings_engine"
+            "game_settings_engine",
+            "game_settings_advanced"
         ).forEach { key ->
             findPreference(key)?.widgetLayoutResource = R.layout.preference_widget_chevron
         }
@@ -110,6 +111,12 @@ class FragmentGameSettings : PreferenceFragment() {
 
         findPreference("game_settings_engine").setOnPreferenceClickListener {
             val intent = Intent(activity, Engine_SettingsActivity::class.java)
+            this.startActivity(intent)
+            true
+        }
+
+        findPreference("game_settings_advanced").setOnPreferenceClickListener {
+            val intent = Intent(activity, Advanced_SettingsActivity::class.java)
             this.startActivity(intent)
             true
         }
@@ -666,3 +673,29 @@ class Engine_SettingsActivity : AppCompatActivity() {
     }
 }
 
+class Advanced_SettingsActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_settings)
+
+        setSupportActionBar(findViewById(R.id.settings_toolbar))
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        if (savedInstanceState == null) {
+            fragmentManager.beginTransaction()
+                .replace(R.id.settings_frame, ui.fragments.FragmentAdvancedSettings())
+                .commit()
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+}

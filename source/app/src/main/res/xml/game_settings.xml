@@ -6,4 +6,5 @@
     <Preference android:key="game_settings_animations" android:title="@string/game_settings_animations_title" />
     <Preference android:key="game_settings_interface" android:title="@string/game_settings_interface_title" />
     <Preference android:key="game_settings_engine" android:title="@string/game_settings_engine_title" />
+    <Preference android:key="game_settings_advanced" android:title="@string/pref_advanced" />
 </PreferenceScreen>

@@ -221,4 +221,6 @@
     <string name="user_data_dir_unavailable">Der Ordner für Spielstände ist nicht verfügbar oder nicht beschreibbar:\n%1$s\n\nSetze den Speicher ein, prüfe die Speicherberechtigung oder wähle im Launcher einen anderen Ordner.</string>
     <string name="pref_swipe_to_look_title">Wischen zum Umsehen</string>
     <string name="pref_swipe_to_look_summary">Auf freier Bildschirmfläche wischen, um dich im Spiel umzusehen. Der rechte Stick und die Menüs funktionieren weiter wie bisher.</string>
+    <string name="pref_cheats_enabled_title">Cheats aktivieren</string>
+    <string name="pref_cheats_enabled_summary">Fügt im Spiel unter Optionen > Skripte eine Seite „Cheats“ hinzu, über die du deiner Figur Gold geben kannst. Standardmäßig aus.</string>
 </resources>

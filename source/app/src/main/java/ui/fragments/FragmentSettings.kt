@@ -44,8 +44,6 @@ import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
-import com.codekidlabs.storagechooser.Content
-import com.codekidlabs.storagechooser.StorageChooser
 import com.codekidlabs.storagechooser.utils.StorageVolumeUtil
 import com.libopenmw.openmw.BuildConfig
 import com.libopenmw.openmw.R
@@ -53,8 +51,6 @@ import constants.Constants
 import file.GameDataCheck
 import file.GameFilesLocation
 import file.GameInstaller
-import file.UserDataLocation
-import permission.PermissionHelper
 
 import ui.activity.ConfigureControls
 import ui.activity.MainActivity
@@ -165,21 +161,8 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
         }
 
         findPreference("game_files").setOnPreferenceClickListener {
-            showFolderChooser { path -> setupData(path) }
+            FolderChooser.show(activity, fragmentManager) { path -> setupData(path) }
             true
-        }
-
-        // A saves folder in shared storage lets sync tools such as Syncthing reach the
-        // saves. Automotive targets API 35 with scoped storage, where the engine cannot
-        // write to such folders, so it keeps the app-specific folder.
-        val userDataPreference = findPreference(UserDataLocation.PREF_USER_DATA_DIR)
-        if (BuildConfig.IS_AUTOMOTIVE_BUILD) {
-            (findPreference("general_settings") as? PreferenceGroup)?.removePreference(userDataPreference)
-        } else {
-            userDataPreference?.setOnPreferenceClickListener {
-                showUserDataDialog()
-                true
-            }
         }
 
         // On AAOS, prefer the app-owned shared-media directory. This remains a
@@ -516,121 +499,6 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
         }, "OpenMW-game-files-check").start()
     }
 
-    /** Opens the directory chooser, after checking the storage permission. */
-    private fun showFolderChooser(onSelect: (String) -> Unit) {
-        if (!PermissionHelper.canOpenLegacyStorageChooser(activity)) {
-            showError(R.string.permissions_error_title, R.string.permissions_error_message)
-            return
-        }
-
-        val chooserContent = Content().apply {
-            selectLabel = getString(R.string.chooser_select)
-            createLabel = getString(R.string.chooser_create)
-            newFolderLabel = getString(R.string.chooser_new_folder)
-            cancelLabel = getString(R.string.chooser_cancel)
-            overviewHeading = getString(R.string.chooser_heading)
-            internalStorageText = getString(R.string.chooser_internal_storage)
-            freeSpaceText = getString(R.string.chooser_free_space)
-            folderCreatedToastText = getString(R.string.chooser_folder_created)
-            folderErrorToastText = getString(R.string.chooser_folder_error)
-            textfieldHintText = getString(R.string.chooser_folder_name)
-            textfieldErrorText = getString(R.string.chooser_empty_folder_name)
-        }
-
-        val chooser = StorageChooser.Builder()
-            .withActivity(activity)
-            .withFragmentManager(fragmentManager)
-            .withMemoryBar(true)
-            .withContent(chooserContent)
-            .allowCustomPath(true)
-            .setType(StorageChooser.DIRECTORY_CHOOSER)
-            .build()
-
-        chooser.show()
-
-        chooser.setOnSelectListener { path -> onSelect(path) }
-    }
-
-    private fun showUserDataDialog() {
-        val hostActivity = activity ?: return
-        val options = arrayOf(
-            getString(R.string.user_data_dir_choose),
-            getString(R.string.user_data_dir_use_default)
-        )
-        AlertDialog.Builder(hostActivity)
-            .setTitle(R.string.user_data_dir_title)
-            .setItems(options) { _, which ->
-                when (which) {
-                    0 -> showFolderChooser { path -> changeUserDataDir(File(path).absolutePath) }
-                    else -> changeUserDataDir("")
-                }
-            }
-            .setNegativeButton(android.R.string.cancel, null)
-            .show()
-    }
-
-    /**
-     * Switches the saves folder to [path] (empty for the default app folder). The
-     * folder is checked for write access, and the saves from the current folder
-     * are copied over without replacing any save already there.
-     */
-    private fun changeUserDataDir(path: String) {
-        val hostActivity = activity ?: return
-        val sharedPref = preferenceScreen.sharedPreferences
-        val currentPath = sharedPref.getString(UserDataLocation.PREF_USER_DATA_DIR, "").orEmpty()
-        if (path == currentPath)
-            return
-
-        val defaultDir = File(Constants.USER_FILE_STORAGE)
-        val from = if (currentPath.isEmpty()) defaultDir else File(currentPath)
-        val to = if (path.isEmpty()) defaultDir else File(path)
-
-        val progress = AlertDialog.Builder(hostActivity)
-            .setMessage(R.string.user_data_dir_copying)
-            .setCancelable(false)
-            .show()
-        val mainHandler = Handler(Looper.getMainLooper())
-
-        Thread({
-            var error: String? = null
-            var copied = 0
-            try {
-                UserDataLocation.ensureWritable(to)
-                copied = UserDataLocation.copySaves(from, to)
-                sharedPref.edit().putString(UserDataLocation.PREF_USER_DATA_DIR, path).commit()
-            } catch (e: Exception) {
-                Log.e(TAG, "Could not switch the saves folder to ${to.absolutePath}", e)
-                error = e.message ?: e.javaClass.simpleName
-            }
-
-            mainHandler.post {
-                progress.dismiss()
-                if (!isAdded)
-                    return@post
-                if (error != null) {
-                    showMessage(
-                        getString(R.string.user_data_dir_error_title),
-                        getString(R.string.user_data_dir_error_message, to.absolutePath, error)
-                    )
-                } else {
-                    showMessage(
-                        getString(R.string.user_data_dir_title),
-                        getString(R.string.user_data_dir_changed_message, to.absolutePath, copied)
-                    )
-                }
-            }
-        }, "OpenMW-saves-folder").start()
-    }
-
-    /**
-     * Shows an alert dialog displaying a specific error
-     * @param title Title string resource
-     * @param message Message string resource
-     */
-    private fun showError(title: Int, message: Int, url: String? = null) {
-        showMessage(getString(title), getString(message), url)
-    }
-
     private fun showMessage(title: String, message: String, url: String? = null) {
         val dialog = AlertDialog.Builder(activity)
             .setTitle(title)
@@ -707,10 +575,6 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
             else -> if (preference is EditTextPreference) {
                 preference.summary = preference.text
             }
-        }
-        if (key == UserDataLocation.PREF_USER_DATA_DIR) {
-            val path = sharedPref.getString(key, "").orEmpty()
-            preference.summary = if (path.isEmpty()) getString(R.string.user_data_dir_default_summary) else path
         }
         // Show selected value as a summary for game_files
         if (key == "game_files") {

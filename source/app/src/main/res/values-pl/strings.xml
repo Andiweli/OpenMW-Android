@@ -221,4 +221,6 @@
     <string name="user_data_dir_unavailable">Folder zapisów jest niedostępny lub nie można w nim zapisywać:\n%1$s\n\nWłóż nośnik, sprawdź uprawnienie do pamięci lub wybierz inny folder w launcherze.</string>
     <string name="pref_swipe_to_look_title">Przesuń, aby się rozglądać</string>
     <string name="pref_swipe_to_look_summary">Przesuwaj palcem po wolnej części ekranu, aby rozglądać się w grze. Prawy drążek i menu działają jak dotychczas.</string>
+    <string name="pref_cheats_enabled_title">Włącz kody</string>
+    <string name="pref_cheats_enabled_summary">Dodaje stronę „Kody” w ustawieniach gry (Opcje > Skrypty), która pozwala dać postaci złoto. Domyślnie wyłączone.</string>
 </resources>

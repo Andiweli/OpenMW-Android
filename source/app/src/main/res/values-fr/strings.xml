@@ -221,4 +221,6 @@
     <string name="user_data_dir_unavailable">Le dossier des sauvegardes est indisponible ou non accessible en écriture :\n%1$s\n\nInsérez le stockage, vérifiez l\'autorisation de stockage ou choisissez un autre dossier dans le lanceur.</string>
     <string name="pref_swipe_to_look_title">Balayer pour regarder</string>
     <string name="pref_swipe_to_look_summary">Balayez une zone libre de l\'écran pour regarder autour de vous en jeu. Le stick droit et les menus fonctionnent comme avant.</string>
+    <string name="pref_cheats_enabled_title">Activer les triches</string>
+    <string name="pref_cheats_enabled_summary">Ajoute une page « Triches » aux paramètres du jeu (Options > Scripts) pour donner de l\'or à votre personnage. Désactivé par défaut.</string>
 </resources>

@@ -320,4 +320,6 @@ OpenMW by the OpenMW Team since 2008</string>
     <string name="user_data_dir_unavailable">The saves folder is not available or not writable:\n%1$s\n\nInsert the storage, check the storage permission, or choose another saves folder in the launcher.</string>
     <string name="pref_swipe_to_look_title">Swipe to Look</string>
     <string name="pref_swipe_to_look_summary">Swipe on free screen space to look around during gameplay. The right stick and menus keep working as before.</string>
+    <string name="pref_cheats_enabled_title">Enable cheats</string>
+    <string name="pref_cheats_enabled_summary">Adds a Cheats page to the in-game settings (Options > Scripts) that can give your character gold. Off by default.</string>
 </resources>

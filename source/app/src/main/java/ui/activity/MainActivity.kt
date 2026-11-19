@@ -722,8 +722,10 @@ class MainActivity : AppCompatActivity() {
                     append("content=${HandheldController.CONTENT_FILE}\n")
                 }
 
-                // Adds Settings > Scripts > Cheats in-game; inert until the player uses it there.
-                val cheats = CheatsController.install(this@MainActivity)
+                // Adds Settings > Scripts > Cheats in-game when enabled in the launcher.
+                val cheatsEnabled = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
+                    .getBoolean(CheatsController.PREF_ENABLED, false)
+                val cheats = CheatsController.install(this@MainActivity, cheatsEnabled)
                 if (cheats != null) {
                     append("data=\"${cheats.absolutePath}\"\n")
                     append("content=${CheatsController.CONTENT_FILE}\n")

@@ -21,6 +21,7 @@ I.Settings.registerGroup({
             name = 'amount',
             description = 'amountDescription',
             default = 1000,
+            argument = { integer = true, min = 1, max = 1000000 },
         },
         {
             -- Acts as a button: player.lua resets it once global.lua confirms the gold was added.
