@@ -23,6 +23,7 @@ import android.text.TextUtils
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
@@ -104,6 +105,18 @@ class LauncherHomeView(context: Context, private val actions: Actions) : LinearL
             maxLines = 1
         }
 
+        // The app icon in front of the name.
+        val brand = LinearLayout(context).apply {
+            orientation = HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            addView(ImageView(context).apply {
+                setImageResource(R.drawable.launcher_logo)
+                scaleType = ImageView.ScaleType.FIT_CENTER
+                importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+            }, LayoutParams(dp(40), dp(40)).apply { marginEnd = dp(12) })
+            addView(mark)
+        }
+
         // Right-aligned, read from the right: Spielen, the update button, the installed version.
         val buttons = LinearLayout(context).apply {
             orientation = HORIZONTAL
@@ -122,12 +135,12 @@ class LauncherHomeView(context: Context, private val actions: Actions) : LinearL
             if (wide) {
                 orientation = HORIZONTAL
                 gravity = Gravity.CENTER_VERTICAL
-                addView(mark, LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f))
+                addView(brand, LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f))
                 addView(buttons)
             } else {
                 // Narrow windows: the buttons go below the name.
                 orientation = VERTICAL
-                addView(mark)
+                addView(brand)
                 addView(buttons, LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
                     topMargin = dp(10)
                     gravity = Gravity.END
