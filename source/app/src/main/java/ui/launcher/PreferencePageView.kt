@@ -47,7 +47,8 @@ import kotlin.math.roundToInt
  * unchanged); only their presentation is new:
  *
  * - a category becomes a section label,
- * - switches become full-width ON/OFF tiles, each with its short explanation below,
+ * - switches become full-width ON/OFF tiles; a short explanation is a small
+ *   second line inside the tile, which keeps the common height,
  * - a choice list with short labels becomes a row of option buttons; any other
  *   list becomes one button that steps through the choices,
  * - a value (resolution, a longer list, text) becomes a row with a value button,
@@ -127,11 +128,10 @@ class PreferencePageView(
         // One switch per row, so its title is never cut off; its explanation right below.
         fun flushToggles() {
             pendingToggles.forEach { preference ->
-                parent.addView(toggle(preference), LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+                parent.addView(toggle(preference), LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(LauncherStyle.CONTROL_HEIGHT)).apply {
                     topMargin = dp(4)
+                    bottomMargin = dp(4)
                 })
-                if (!preference.summary.isNullOrBlank())
-                    parent.addView(note(preference.summary).also { bindEnabled(it, preference) })
             }
             pendingToggles.clear()
         }
@@ -155,13 +155,11 @@ class PreferencePageView(
                 }
                 preference.key in sliders -> {
                     val spec = sliders.getValue(preference.key)
-                    parent.addView(sliderRow(preference, spec))
-                    if (spec.summaryAsNote && !preference.summary.isNullOrBlank())
-                        parent.addView(note(preference.summary))
+                    parent.addView(sliderRow(preference, spec, if (spec.summaryAsNote) preference.summary else null))
                 }
                 preference is ListPreference && (preference.entries?.size ?: 0) >= 2 -> {
-                    parent.addView(if (fitsAsButtons(preference)) optionRow(preference) else cycleRow(preference))
-                    descriptiveSummary(preference)?.let { parent.addView(note(it)) }
+                    val explanation = descriptiveSummary(preference)
+                    parent.addView(if (fitsAsButtons(preference)) optionRow(preference, explanation) else cycleRow(preference, explanation))
                 }
                 else -> parent.addView(valueRow(preference))
             }
@@ -180,7 +178,7 @@ class PreferencePageView(
     }
 
     /** One button showing the current choice; tap or right goes to the next, left back. */
-    private fun cycleRow(preference: ListPreference): View {
+    private fun cycleRow(preference: ListPreference, explanation: CharSequence?): View {
         val values = preference.entryValues
         fun step(by: Int) {
             val count = values.size
@@ -202,7 +200,7 @@ class PreferencePageView(
         updaters += {
             button.text = "\u2039   ${preference.entry ?: ""}   \u203a"
         }
-        val view = row(preference.title ?: "", button)
+        val view = row(preference.title ?: "", button, explanation)
         bindEnabled(view, preference)
         return view
     }
@@ -214,12 +212,6 @@ class PreferencePageView(
             return null
         return summary
     }
-
-    private fun note(text: CharSequence): TextView =
-        LauncherStyle.text(context, text, 12f, false).apply {
-            setLineSpacing(0f, 1.15f)
-            setPadding(dp(2), dp(2), dp(2), dp(6))
-        }
 
     private fun bindEnabled(view: View, preference: Preference) {
         updaters += {
@@ -237,13 +229,24 @@ class PreferencePageView(
             for (i in 0 until view.childCount) setEnabledDeep(view.getChildAt(i), enabled)
     }
 
-    /** Label on the left, the control on the right; stacked on narrow screens. */
-    private fun row(title: CharSequence, control: View): LinearLayout {
+    /**
+     * Label on the left, the control on the right; stacked on narrow screens. A short
+     * [explanation] is a small second line under the label, the control keeps its height.
+     */
+    private fun row(title: CharSequence, control: View, explanation: CharSequence? = null): LinearLayout {
         val wide = context.resources.configuration.screenWidthDp >= 600
         return LinearLayout(context).apply {
             setPadding(0, dp(4), 0, dp(4))
-            val label = LauncherStyle.text(context, title, 14f, false, LauncherStyle.INK).apply {
+            val label = LinearLayout(context).apply {
+                orientation = LinearLayout.VERTICAL
                 gravity = Gravity.CENTER_VERTICAL
+                addView(LauncherStyle.text(context, title, 14f, false, LauncherStyle.INK))
+                if (!explanation.isNullOrBlank())
+                    addView(LauncherStyle.text(context, explanation, 11f, false).apply {
+                        maxLines = 2
+                        ellipsize = TextUtils.TruncateAt.END
+                        setPadding(0, dp(1), 0, 0)
+                    })
             }
             if (wide) {
                 orientation = LinearLayout.HORIZONTAL
@@ -259,9 +262,19 @@ class PreferencePageView(
     }
 
     private fun toggle(preference: TwoStatePreference): View {
-        val title = LauncherStyle.text(context, preference.title ?: "", 14f, false, LauncherStyle.INK).apply {
-            maxLines = 1
-            ellipsize = TextUtils.TruncateAt.END
+        // Title and, if there is one, the explanation as a small second line.
+        val texts = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.CENTER_VERTICAL
+            addView(LauncherStyle.text(context, preference.title ?: "", 14f, false, LauncherStyle.INK).apply {
+                maxLines = 1
+                ellipsize = TextUtils.TruncateAt.END
+            })
+            if (!preference.summary.isNullOrBlank())
+                addView(LauncherStyle.text(context, preference.summary, 11f, false).apply {
+                    maxLines = 1
+                    ellipsize = TextUtils.TruncateAt.END
+                })
         }
         val state = LauncherStyle.text(context, "", 10.5f, true).apply { letterSpacing = 0.08f }
         val view = LinearLayout(context).apply {
@@ -271,7 +284,7 @@ class PreferencePageView(
             setPadding(dp(12), 0, dp(12), 0)
             isClickable = true
             isFocusable = true
-            addView(title, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { marginEnd = dp(10) })
+            addView(texts, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { marginEnd = dp(10) })
             addView(state)
             setOnClickListener { preference.isChecked = !preference.isChecked }
         }
@@ -288,7 +301,7 @@ class PreferencePageView(
         return view
     }
 
-    private fun optionRow(preference: ListPreference): View {
+    private fun optionRow(preference: ListPreference, explanation: CharSequence?): View {
         val entries = preference.entries
         val values = preference.entryValues
         val grid = EqualGrid(context, maxColumns = entries.size, minCellWidthDp = 96)
@@ -310,7 +323,7 @@ class PreferencePageView(
                     LauncherStyle.background(context, LauncherStyle.SURFACE, LauncherStyle.BORDER)
             }
         }
-        val view = row(preference.title ?: "", grid)
+        val view = row(preference.title ?: "", grid, explanation)
         bindEnabled(view, preference)
         return view
     }
@@ -371,7 +384,7 @@ class PreferencePageView(
         }
     }
 
-    private fun sliderRow(preference: Preference, spec: SliderSpec): View {
+    private fun sliderRow(preference: Preference, spec: SliderSpec, explanation: CharSequence?): View {
         val prefs = preference.sharedPreferences
         val key = preference.key
         val steps = ((spec.maximum - spec.minimum) / spec.step).roundToInt()
@@ -428,7 +441,7 @@ class PreferencePageView(
             seekBar.progress = ((shown - spec.minimum) / spec.step).roundToInt().coerceIn(0, steps)
             valueLabel.text = if (value == null && spec.autoLabel != null) spec.autoLabel.invoke() else format(shown)
         }
-        val view = row(preference.title ?: "", control)
+        val view = row(preference.title ?: "", control, explanation)
         bindEnabled(view, preference)
         return view
     }

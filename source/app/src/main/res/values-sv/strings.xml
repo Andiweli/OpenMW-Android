@@ -255,6 +255,7 @@
     <string name="launcher_hint_back_play">B: tillbaka · START: spela</string>
     <string name="launcher_on">PÅ</string>
     <string name="launcher_off">AV</string>
+    <string name="launcher_section_onscreen">Ordna skärmknappar</string>
     <string name="launcher_section_areas">Områden</string>
     <string name="launcher_gs_game_mechanics_summary">Strid, följeslagare, sparfiler</string>
     <string name="launcher_gs_visuals_summary">Avlägsen terräng, shaders, dimma</string>

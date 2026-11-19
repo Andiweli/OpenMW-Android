@@ -255,6 +255,7 @@
     <string name="launcher_hint_back_play">B: назад · START: играть</string>
     <string name="launcher_on">ВКЛ</string>
     <string name="launcher_off">ВЫКЛ</string>
+    <string name="launcher_section_onscreen">Расположение экранных кнопок</string>
     <string name="launcher_section_areas">Разделы</string>
     <string name="launcher_gs_game_mechanics_summary">Бой, спутники, сохранения</string>
     <string name="launcher_gs_visuals_summary">Дальний ландшафт, шейдеры, туман</string>

@@ -44,10 +44,14 @@ class ModsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_mods)
-
-        setSupportActionBar(findViewById(R.id.mods_toolbar))
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        // Launcher page frame: "‹ Back", the title and "Play" on top, the tabs below.
+        val content = layoutInflater.inflate(R.layout.activity_mods, null)
+        setContentView(
+            ui.launcher.LauncherStyle.pageFrame(
+                this, getString(R.string.activity_mods),
+                onBack = { finish() }, onPlay = { LauncherPageActivity.play(this) }, content = content
+            )
+        )
 
         val tabLayout = findViewById<TabLayout>(R.id.tabLayout)
         val flipper = findViewById<ViewFlipper>(R.id.flipper)
@@ -122,13 +126,13 @@ class ModsActivity : AppCompatActivity() {
         list.adapter = adapter
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                onBackPressed()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
+    override fun dispatchKeyEvent(event: android.view.KeyEvent): Boolean {
+        // START plays from the mod list too, as on every launcher page.
+        if (event.keyCode == android.view.KeyEvent.KEYCODE_BUTTON_START) {
+            if (event.action == android.view.KeyEvent.ACTION_UP)
+                LauncherPageActivity.play(this)
+            return true
         }
+        return super.dispatchKeyEvent(event)
     }
 }

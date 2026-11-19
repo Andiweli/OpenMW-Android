@@ -255,6 +255,7 @@
     <string name="launcher_hint_back_play">B : retour · START : jouer</string>
     <string name="launcher_on">OUI</string>
     <string name="launcher_off">NON</string>
+    <string name="launcher_section_onscreen">Disposer les boutons à l\'écran</string>
     <string name="launcher_section_areas">Catégories</string>
     <string name="launcher_gs_game_mechanics_summary">Combat, compagnons, sauvegardes</string>
     <string name="launcher_gs_visuals_summary">Terrain lointain, shaders, brouillard</string>

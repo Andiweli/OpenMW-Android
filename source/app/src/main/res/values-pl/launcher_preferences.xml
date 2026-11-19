@@ -105,7 +105,7 @@
     <string name="pref_omw050_controller_tooltips_summary">Podpowiedzi bez naciskania R3.</string>
     <string name="pref_omw051_controller_trigger_thresholds_title">Czułość spustów kontrolera</string>
     <string name="pref_omw051_controller_trigger_thresholds_dialogtitle">Czułość spustów kontrolera</string>
-    <string name="pref_controls_summary">Rozmieść przyciski ekranowe.</string>
+    <string name="pref_controls_summary">Położenie, rozmiar i przezroczystość przycisków.</string>
     <string name="gs_framerate_limit_summary">%s FPS</string>
     <string name="l10n_settings_audio_title">Dźwięk</string>
     <string name="pref_omw050_doppler_title">Efekt Dopplera</string>

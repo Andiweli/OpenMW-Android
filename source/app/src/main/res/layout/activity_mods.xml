@@ -7,20 +7,15 @@
     tools:context="ui.activity.ModsActivity"
     android:orientation="vertical">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/mods_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
-
     <com.google.android.material.tabs.TabLayout
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         app:tabTextAppearance="@style/MyCustomTextAppearance"
         android:id="@+id/tabLayout"
+        android:background="@color/launcherPanel"
+        app:tabIndicatorColor="@color/colorAccent"
+        app:tabTextColor="@color/launcherMuted"
+        app:tabSelectedTextColor="@color/colorAccent"
         app:tabMode="scrollable">
 
         <com.google.android.material.tabs.TabItem
@@ -52,22 +47,38 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list_mods"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:paddingStart="22dp"
+            android:paddingEnd="22dp"
+            android:paddingBottom="12dp"
+            android:clipToPadding="false" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list_resources"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:paddingStart="22dp"
+            android:paddingEnd="22dp"
+            android:paddingBottom="12dp"
+            android:clipToPadding="false" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list_dirs"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:paddingStart="22dp"
+            android:paddingEnd="22dp"
+            android:paddingBottom="12dp"
+            android:clipToPadding="false" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list_groundcovers"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:paddingStart="22dp"
+            android:paddingEnd="22dp"
+            android:paddingBottom="12dp"
+            android:clipToPadding="false" />
     </ViewFlipper>
 
 </LinearLayout>

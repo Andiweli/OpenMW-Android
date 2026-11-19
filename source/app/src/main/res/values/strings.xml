@@ -354,6 +354,7 @@ OpenMW by the OpenMW Team since 2008</string>
     <string name="launcher_hint_back_play">B: back · START: play</string>
     <string name="launcher_on">ON</string>
     <string name="launcher_off">OFF</string>
+    <string name="launcher_section_onscreen">Arrange on-screen buttons</string>
     <string name="launcher_section_areas">Areas</string>
     <string name="launcher_gs_game_mechanics_summary">Combat, followers, saves</string>
     <string name="launcher_gs_visuals_summary">Distant land, shaders, fog</string>

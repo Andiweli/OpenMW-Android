@@ -255,6 +255,7 @@
     <string name="launcher_hint_back_play">B: wstecz · START: graj</string>
     <string name="launcher_on">WŁ.</string>
     <string name="launcher_off">WYŁ.</string>
+    <string name="launcher_section_onscreen">Układ przycisków ekranowych</string>
     <string name="launcher_section_areas">Obszary</string>
     <string name="launcher_gs_game_mechanics_summary">Walka, towarzysze, zapisy</string>
     <string name="launcher_gs_visuals_summary">Odległy teren, shadery, mgła</string>

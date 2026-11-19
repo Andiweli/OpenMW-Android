@@ -236,7 +236,7 @@ class MainActivity : AppCompatActivity() {
                 LauncherPageActivity.intent(this@MainActivity, getString(R.string.launcher_tile_graphics), "cat_graphics", "cat_performance")
             )
             override fun openControls() = startActivity(
-                LauncherPageActivity.intent(this@MainActivity, getString(R.string.launcher_tile_controls), "cat_ui")
+                LauncherPageActivity.intent(this@MainActivity, getString(R.string.launcher_tile_controls), "cat_ui", "cat_ui_onscreen")
             )
             override fun openAudio() = startActivity(
                 LauncherPageActivity.intent(this@MainActivity, getString(R.string.launcher_tile_audio), "cat_audio")

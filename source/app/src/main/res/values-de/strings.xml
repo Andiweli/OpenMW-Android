@@ -255,6 +255,7 @@
     <string name="launcher_hint_back_play">B: zurück · START: spielen</string>
     <string name="launcher_on">AN</string>
     <string name="launcher_off">AUS</string>
+    <string name="launcher_section_onscreen">Bildschirmtasten anordnen</string>
     <string name="launcher_section_areas">Bereiche</string>
     <string name="launcher_gs_game_mechanics_summary">Kampf, Begleiter, Spielstände</string>
     <string name="launcher_gs_visuals_summary">Fernlandschaft, Shader, Nebel</string>

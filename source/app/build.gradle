@@ -228,8 +228,10 @@ tasks.register('verifyOpenMwPayload') {
                 !launcherSettingsXml.contains('android:summary="@string/pref_nohighp_summary"') ||
                 controllerTooltipsIndex < 0 ||
                 controllerTriggerIndex <= controllerTooltipsIndex ||
-                onScreenControlsIndex <= controllerTriggerIndex ||
-                hideOnScreenButtonsIndex <= onScreenControlsIndex ||
+                hideOnScreenButtonsIndex <= controllerTriggerIndex ||
+                // The on-screen controls editor sits last, under its own heading.
+                onScreenControlsIndex <= hideOnScreenButtonsIndex ||
+                !launcherSettingsXml.contains('android:key="cat_ui_onscreen"') ||
                 launcherSettingsXml.contains('android:key="pref_graphicsLibrary_v2"')) {
             throw new GradleException(
                     'OpenMW 0.51 launcher order or precision explanation is missing from settings.xml.'
