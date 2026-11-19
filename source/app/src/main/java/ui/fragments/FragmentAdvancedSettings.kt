@@ -38,6 +38,23 @@ import java.io.File
  */
 class FragmentAdvancedSettings : PreferenceFragment(), OnSharedPreferenceChangeListener {
 
+    private var page: ui.launcher.PreferencePageView? = null
+
+    override fun onCreateView(
+        inflater: android.view.LayoutInflater,
+        container: android.view.ViewGroup?,
+        savedInstanceState: Bundle?
+    ): android.view.View {
+        val view = ui.launcher.PreferencePageView(activity, preferenceScreen)
+        page = view
+        return view
+    }
+
+    override fun onDestroyView() {
+        page = null
+        super.onDestroyView()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -78,10 +95,13 @@ class FragmentAdvancedSettings : PreferenceFragment(), OnSharedPreferenceChangeL
         listOf("commandLine", "envLine").forEach { key ->
             (findPreference(key) as? EditTextPreference)?.let { it.summary = it.text }
         }
-        val preference = findPreference(UserDataLocation.PREF_USER_DATA_DIR) ?: return
-        val path = preferenceScreen.sharedPreferences
-            .getString(UserDataLocation.PREF_USER_DATA_DIR, "").orEmpty()
-        preference.summary = if (path.isEmpty()) getString(R.string.user_data_dir_default_summary) else path
+        // Automotive builds have no saves folder option.
+        findPreference(UserDataLocation.PREF_USER_DATA_DIR)?.let { preference ->
+            val path = preferenceScreen.sharedPreferences
+                .getString(UserDataLocation.PREF_USER_DATA_DIR, "").orEmpty()
+            preference.summary = if (path.isEmpty()) getString(R.string.user_data_dir_default_summary) else path
+        }
+        page?.refresh()
     }
 
     private fun showUserDataDialog() {

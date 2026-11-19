@@ -1,10 +1,14 @@
 <?xml version='1.0' encoding='utf-8'?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <Preference android:key="game_settings_game_mechanics" android:title="@string/game_settings_game_mechanics_title" />
-    <Preference android:key="game_settings_visuals" android:title="@string/game_settings_visuals_title" />
-    <Preference android:key="game_settings_shadows" android:title="@string/game_settings_shadows_title" />
-    <Preference android:key="game_settings_animations" android:title="@string/game_settings_animations_title" />
-    <Preference android:key="game_settings_interface" android:title="@string/game_settings_interface_title" />
-    <Preference android:key="game_settings_engine" android:title="@string/game_settings_engine_title" />
-    <Preference android:key="game_settings_advanced" android:title="@string/pref_advanced" />
+    <PreferenceCategory android:key="cat_game_settings_areas" android:title="@string/launcher_section_areas">
+        <Preference android:key="game_settings_game_mechanics" android:title="@string/game_settings_game_mechanics_title" android:summary="@string/launcher_gs_game_mechanics_summary" />
+        <Preference android:key="game_settings_visuals" android:title="@string/game_settings_visuals_title" android:summary="@string/launcher_gs_visuals_summary" />
+        <Preference android:key="game_settings_shadows" android:title="@string/game_settings_shadows_title" android:summary="@string/launcher_gs_shadows_summary" />
+        <Preference android:key="game_settings_animations" android:title="@string/game_settings_animations_title" android:summary="@string/launcher_gs_animations_summary" />
+        <Preference android:key="game_settings_interface" android:title="@string/game_settings_interface_title" android:summary="@string/launcher_gs_interface_summary" />
+        <Preference android:key="game_settings_engine" android:title="@string/game_settings_engine_title" android:summary="@string/launcher_gs_engine_summary" />
+    </PreferenceCategory>
+    <PreferenceCategory android:key="cat_game_settings_advanced" android:title="@string/pref_advanced">
+        <Preference android:key="game_settings_advanced" android:title="@string/pref_advanced" android:summary="@string/launcher_gs_advanced_summary" />
+    </PreferenceCategory>
 </PreferenceScreen>

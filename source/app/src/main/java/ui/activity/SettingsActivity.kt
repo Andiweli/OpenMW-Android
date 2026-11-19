@@ -42,6 +42,9 @@ import kotlin.math.round
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.content.Intent
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.preference.EditTextPreference
 import android.preference.Preference
 import android.preference.ListPreference
@@ -49,23 +52,27 @@ import android.preference.PreferenceFragment
 import android.preference.PreferenceGroup
 
 class FragmentGameSettings : PreferenceFragment() {
+    // Every entry on this page opens a child settings screen; they are shown as tiles.
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
+        ui.launcher.PreferencePageView(
+            activity,
+            preferenceScreen,
+            navigationKeys = setOf(
+                "game_settings_game_mechanics",
+                "game_settings_visuals",
+                "game_settings_shadows",
+                "game_settings_animations",
+                "game_settings_interface",
+                "game_settings_engine",
+                "game_settings_advanced"
+            )
+        )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         addPreferencesFromResource(R.xml.game_settings)
 
-        // Every entry on this page opens a child settings screen.
-        listOf(
-            "game_settings_game_mechanics",
-            "game_settings_visuals",
-            "game_settings_shadows",
-            "game_settings_animations",
-            "game_settings_interface",
-            "game_settings_engine",
-            "game_settings_advanced"
-        ).forEach { key ->
-            findPreference(key)?.widgetLayoutResource = R.layout.preference_widget_chevron
-        }
 /*
         findPreference("game_settings_game_mechanics").setOnPreferenceClickListener {
             getPreferenceScreen().removeAll()
@@ -123,55 +130,78 @@ class FragmentGameSettings : PreferenceFragment() {
     }
 }
 
-class SettingsActivity : AppCompatActivity() {
+/**
+ * A launcher settings screen in the CubeEvil4 menu look: "‹ Back", the screen's
+ * title (its manifest label) and "Play" on top, the settings below. START plays.
+ */
+abstract class LauncherSettingsActivity : AppCompatActivity() {
+
+    abstract fun createFragment(): android.app.Fragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
-
-        setSupportActionBar(findViewById(R.id.settings_toolbar))
-
-        // Enable the "back" icon in the action bar
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-/*
-        // Switch tabs between categories
-        settings_tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {	
-                settings_flipper.displayedChild = tab.position
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab) {
-            }
-
-            override fun onTabReselected(tab: TabLayout.Tab) {
-            }
-        })
-*/
-
+        val container = android.widget.FrameLayout(this).apply { id = R.id.settings_frame }
+        setContentView(
+            ui.launcher.LauncherStyle.pageFrame(
+                this, title, onBack = { finish() }, onPlay = { LauncherPageActivity.play(this) }, content = container
+            )
+        )
         if (savedInstanceState == null) {
             fragmentManager.beginTransaction()
-                .replace(R.id.settings_frame, FragmentGameSettings())
+                .replace(R.id.settings_frame, createFragment())
                 .commit()
         }
     }
 
-    /**
-     * Makes the "back" icon in the actionbar perform the back operation
-     */
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                onBackPressed()
-                true
-            }
-
-            else -> super.onOptionsItemSelected(item)
+    override fun dispatchKeyEvent(event: android.view.KeyEvent): Boolean {
+        if (event.keyCode == android.view.KeyEvent.KEYCODE_BUTTON_START) {
+            if (event.action == android.view.KeyEvent.ACTION_UP)
+                LauncherPageActivity.play(this)
+            return true
         }
+        return super.dispatchKeyEvent(event)
     }
+}
+
+class SettingsActivity : LauncherSettingsActivity() {
+    override fun createFragment(): android.app.Fragment = FragmentGameSettings()
 }
 
 class FragmentGameSettingsPage : PreferenceFragment(), OnSharedPreferenceChangeListener {
     private var pageResource: Int = 0
+    private var page: ui.launcher.PreferencePageView? = null
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        fun slider(minimum: Float, maximum: Float, step: Float, defaultValue: Float, decimals: Int) =
+            ui.launcher.PreferencePageView.SliderSpec(minimum, maximum, step, defaultValue, decimals, summaryAsNote = true)
+        // Same ranges as the former slider dialogs (showSteppedSliderPreference).
+        val sliders = when (pageResource) {
+            R.xml.gs_visuals -> mapOf(
+                "gs_object_paging_min_size" to slider(0.01f, 1.0f, 0.01f, 0.25f, 2)
+            )
+            R.xml.gs_engine -> mapOf(
+                "gs_groundcover_density" to slider(0.0f, 1.0f, 0.05f, 1.0f, 2),
+                "gs_groundcover_rendering_distance" to slider(1024.0f, 8192.0f, 256.0f, 6144.0f, 0),
+                "gs_navmesh_threads" to slider(1.0f, 8.0f, 1.0f, 1.0f, 0),
+                "gs_physics_threads" to slider(1.0f, 8.0f, 1.0f, 1.0f, 0),
+                "gs_preload_threads" to slider(1.0f, 3.0f, 1.0f, 2.0f, 0)
+            )
+            else -> emptyMap()
+        }
+        val view = ui.launcher.PreferencePageView(activity, preferenceScreen, sliders = sliders)
+        page = view
+        return view
+    }
+
+    override fun onDestroyView() {
+        page = null
+        super.onDestroyView()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        page?.refresh()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -429,6 +459,7 @@ class FragmentGameSettingsPage : PreferenceFragment(), OnSharedPreferenceChangeL
         if (key == null)
             return
         updatePreference(sharedPreferences, key)
+        page?.refresh()
     }
 
     private fun updatePreference(sharedPreferences: SharedPreferences, key: String) {
@@ -457,245 +488,38 @@ class FragmentGameSettingsPage : PreferenceFragment(), OnSharedPreferenceChangeL
     }
 }
 
-class Game_Mechanics_SettingsActivity : AppCompatActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
-
-        setSupportActionBar(findViewById(R.id.settings_toolbar))
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        if (savedInstanceState == null) {
-            fragmentManager.beginTransaction()
-                .replace(R.id.settings_frame, FragmentGameSettingsPage.newInstance(R.xml.gs_game_mechanics))
-                .commit()
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                onBackPressed()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
+class Game_Mechanics_SettingsActivity : LauncherSettingsActivity() {
+    override fun createFragment(): android.app.Fragment = FragmentGameSettingsPage.newInstance(R.xml.gs_game_mechanics)
 }
 
-class Visuals_SettingsActivity : AppCompatActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
-
-        setSupportActionBar(findViewById(R.id.settings_toolbar))
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        if (savedInstanceState == null) {
-            fragmentManager.beginTransaction()
-                .replace(R.id.settings_frame, FragmentGameSettingsPage.newInstance(R.xml.gs_visuals))
-                .commit()
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                onBackPressed()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
+class Visuals_SettingsActivity : LauncherSettingsActivity() {
+    override fun createFragment(): android.app.Fragment = FragmentGameSettingsPage.newInstance(R.xml.gs_visuals)
 }
 
-class Shadows_SettingsActivity : AppCompatActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
-
-        setSupportActionBar(findViewById(R.id.settings_toolbar))
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        if (savedInstanceState == null) {
-            fragmentManager.beginTransaction()
-                .replace(R.id.settings_frame, FragmentGameSettingsPage.newInstance(R.xml.gs_shadows))
-                .commit()
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                onBackPressed()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
+class Shadows_SettingsActivity : LauncherSettingsActivity() {
+    override fun createFragment(): android.app.Fragment = FragmentGameSettingsPage.newInstance(R.xml.gs_shadows)
 }
 
-class Animations_SettingsActivity : AppCompatActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
-
-        setSupportActionBar(findViewById(R.id.settings_toolbar))
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        if (savedInstanceState == null) {
-            fragmentManager.beginTransaction()
-                .replace(R.id.settings_frame, FragmentGameSettingsPage.newInstance(R.xml.gs_animations))
-                .commit()
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                onBackPressed()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
+class Animations_SettingsActivity : LauncherSettingsActivity() {
+    override fun createFragment(): android.app.Fragment = FragmentGameSettingsPage.newInstance(R.xml.gs_animations)
 }
 
-class Interface_SettingsActivity : AppCompatActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
-
-        setSupportActionBar(findViewById(R.id.settings_toolbar))
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        if (savedInstanceState == null) {
-            fragmentManager.beginTransaction()
-                .replace(R.id.settings_frame, FragmentGameSettingsPage.newInstance(R.xml.gs_interface))
-                .commit()
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                onBackPressed()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
+class Interface_SettingsActivity : LauncherSettingsActivity() {
+    override fun createFragment(): android.app.Fragment = FragmentGameSettingsPage.newInstance(R.xml.gs_interface)
 }
 
-class Bug_Fixes_SettingsActivity : AppCompatActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
-
-        setSupportActionBar(findViewById(R.id.settings_toolbar))
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        if (savedInstanceState == null) {
-            fragmentManager.beginTransaction()
-                .replace(R.id.settings_frame, FragmentGameSettingsPage.newInstance(R.xml.gs_bug_fixes))
-                .commit()
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                onBackPressed()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
+class Bug_Fixes_SettingsActivity : LauncherSettingsActivity() {
+    override fun createFragment(): android.app.Fragment = FragmentGameSettingsPage.newInstance(R.xml.gs_bug_fixes)
 }
 
-class Miscellaneous_SettingsActivity : AppCompatActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
-
-        setSupportActionBar(findViewById(R.id.settings_toolbar))
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        if (savedInstanceState == null) {
-            fragmentManager.beginTransaction()
-                .replace(R.id.settings_frame, FragmentGameSettingsPage.newInstance(R.xml.gs_miscellaneous))
-                .commit()
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                onBackPressed()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
+class Miscellaneous_SettingsActivity : LauncherSettingsActivity() {
+    override fun createFragment(): android.app.Fragment = FragmentGameSettingsPage.newInstance(R.xml.gs_miscellaneous)
 }
 
-class Engine_SettingsActivity : AppCompatActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
-
-        setSupportActionBar(findViewById(R.id.settings_toolbar))
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        if (savedInstanceState == null) {
-            fragmentManager.beginTransaction()
-                .replace(R.id.settings_frame, FragmentGameSettingsPage.newInstance(R.xml.gs_engine))
-                .commit()
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                onBackPressed()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
+class Engine_SettingsActivity : LauncherSettingsActivity() {
+    override fun createFragment(): android.app.Fragment = FragmentGameSettingsPage.newInstance(R.xml.gs_engine)
 }
 
-class Advanced_SettingsActivity : AppCompatActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
-
-        setSupportActionBar(findViewById(R.id.settings_toolbar))
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        if (savedInstanceState == null) {
-            fragmentManager.beginTransaction()
-                .replace(R.id.settings_frame, ui.fragments.FragmentAdvancedSettings())
-                .commit()
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                onBackPressed()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
+class Advanced_SettingsActivity : LauncherSettingsActivity() {
+    override fun createFragment(): android.app.Fragment = ui.fragments.FragmentAdvancedSettings()
 }

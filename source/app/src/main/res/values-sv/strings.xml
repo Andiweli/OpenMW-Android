@@ -255,4 +255,12 @@
     <string name="launcher_hint_back_play">B: tillbaka · START: spela</string>
     <string name="launcher_on">PÅ</string>
     <string name="launcher_off">AV</string>
+    <string name="launcher_section_areas">Områden</string>
+    <string name="launcher_gs_game_mechanics_summary">Strid, följeslagare, sparfiler</string>
+    <string name="launcher_gs_visuals_summary">Avlägsen terräng, shaders, dimma</string>
+    <string name="launcher_gs_shadows_summary">Skuggkastare, kvalitet, avstånd</string>
+    <string name="launcher_gs_animations_summary">Örtplockning, rörelse, hölstring</string>
+    <string name="launcher_gs_interface_summary">Typsnitt, verktygstips, karta</string>
+    <string name="launcher_gs_engine_summary">Markväxtlighet, navmesh, trådar</string>
+    <string name="launcher_gs_advanced_summary">Sparmapp, fusk, startalternativ</string>
 </resources>

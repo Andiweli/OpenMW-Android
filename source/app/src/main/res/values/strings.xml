@@ -354,4 +354,12 @@ OpenMW by the OpenMW Team since 2008</string>
     <string name="launcher_hint_back_play">B: back · START: play</string>
     <string name="launcher_on">ON</string>
     <string name="launcher_off">OFF</string>
+    <string name="launcher_section_areas">Areas</string>
+    <string name="launcher_gs_game_mechanics_summary">Combat, followers, saves</string>
+    <string name="launcher_gs_visuals_summary">Distant land, shaders, fog</string>
+    <string name="launcher_gs_shadows_summary">Shadow casters, quality, distance</string>
+    <string name="launcher_gs_animations_summary">Herbalism, movement, sheathing</string>
+    <string name="launcher_gs_interface_summary">Fonts, tooltips, map</string>
+    <string name="launcher_gs_engine_summary">Groundcover, navmesh, threads</string>
+    <string name="launcher_gs_advanced_summary">Saves folder, cheats, start options</string>
 </resources>

@@ -255,4 +255,12 @@
     <string name="launcher_hint_back_play">B: zurück · START: spielen</string>
     <string name="launcher_on">AN</string>
     <string name="launcher_off">AUS</string>
+    <string name="launcher_section_areas">Bereiche</string>
+    <string name="launcher_gs_game_mechanics_summary">Kampf, Begleiter, Spielstände</string>
+    <string name="launcher_gs_visuals_summary">Fernlandschaft, Shader, Nebel</string>
+    <string name="launcher_gs_shadows_summary">Schattenwerfer, Qualität, Entfernung</string>
+    <string name="launcher_gs_animations_summary">Kräutersammeln, Bewegung, Wegstecken</string>
+    <string name="launcher_gs_interface_summary">Schrift, Tooltips, Karte</string>
+    <string name="launcher_gs_engine_summary">Bodenbewuchs, NavMesh, Threads</string>
+    <string name="launcher_gs_advanced_summary">Ordner für Spielstände, Cheats, Startoptionen</string>
 </resources>

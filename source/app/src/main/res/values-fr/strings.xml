@@ -255,4 +255,12 @@
     <string name="launcher_hint_back_play">B : retour · START : jouer</string>
     <string name="launcher_on">OUI</string>
     <string name="launcher_off">NON</string>
+    <string name="launcher_section_areas">Catégories</string>
+    <string name="launcher_gs_game_mechanics_summary">Combat, compagnons, sauvegardes</string>
+    <string name="launcher_gs_visuals_summary">Terrain lointain, shaders, brouillard</string>
+    <string name="launcher_gs_shadows_summary">Ombres portées, qualité, distance</string>
+    <string name="launcher_gs_animations_summary">Herboristerie, mouvement, rengainer</string>
+    <string name="launcher_gs_interface_summary">Polices, infobulles, carte</string>
+    <string name="launcher_gs_engine_summary">Végétation, navmesh, threads</string>
+    <string name="launcher_gs_advanced_summary">Dossier des sauvegardes, triches, démarrage</string>
 </resources>

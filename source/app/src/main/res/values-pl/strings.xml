@@ -255,4 +255,12 @@
     <string name="launcher_hint_back_play">B: wstecz · START: graj</string>
     <string name="launcher_on">WŁ.</string>
     <string name="launcher_off">WYŁ.</string>
+    <string name="launcher_section_areas">Obszary</string>
+    <string name="launcher_gs_game_mechanics_summary">Walka, towarzysze, zapisy</string>
+    <string name="launcher_gs_visuals_summary">Odległy teren, shadery, mgła</string>
+    <string name="launcher_gs_shadows_summary">Rzucanie cieni, jakość, odległość</string>
+    <string name="launcher_gs_animations_summary">Zielarstwo, ruch, chowanie broni</string>
+    <string name="launcher_gs_interface_summary">Czcionki, podpowiedzi, mapa</string>
+    <string name="launcher_gs_engine_summary">Roślinność, navmesh, wątki</string>
+    <string name="launcher_gs_advanced_summary">Folder zapisów, kody, opcje startu</string>
 </resources>

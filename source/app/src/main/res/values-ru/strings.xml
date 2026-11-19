@@ -255,4 +255,12 @@
     <string name="launcher_hint_back_play">B: назад · START: играть</string>
     <string name="launcher_on">ВКЛ</string>
     <string name="launcher_off">ВЫКЛ</string>
+    <string name="launcher_section_areas">Разделы</string>
+    <string name="launcher_gs_game_mechanics_summary">Бой, спутники, сохранения</string>
+    <string name="launcher_gs_visuals_summary">Дальний ландшафт, шейдеры, туман</string>
+    <string name="launcher_gs_shadows_summary">Тени, качество, дальность</string>
+    <string name="launcher_gs_animations_summary">Сбор трав, движение, оружие в ножнах</string>
+    <string name="launcher_gs_interface_summary">Шрифты, подсказки, карта</string>
+    <string name="launcher_gs_engine_summary">Растительность, навмеш, потоки</string>
+    <string name="launcher_gs_advanced_summary">Папка сохранений, читы, запуск</string>
 </resources>

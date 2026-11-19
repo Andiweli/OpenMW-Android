@@ -51,7 +51,7 @@ import kotlin.math.roundToInt
  * - a short choice list becomes a row of option buttons,
  * - a value (resolution, a longer list, text) becomes a row with a value button,
  * - a [SliderSpec] key becomes an inline slider,
- * - an entry that opens another screen becomes a full-width button.
+ * - entries that open another screen become tiles, up to three side by side.
  *
  * Call [refresh] after a preference changed; the controls update in place, so
  * the controller focus stays where it is.
@@ -69,8 +69,12 @@ class PreferencePageView(
         val maximum: Float,
         val step: Float,
         val defaultValue: Float,
+        /** Decimal places stored and shown; 0 stores whole numbers ("4", not "4.0"). */
+        val decimals: Int = 1,
         /** When set, an "Auto" button stores "" and the label shows this text. */
-        val autoLabel: (() -> String)? = null
+        val autoLabel: (() -> String)? = null,
+        /** Show the preference's summary (its explanation) below the slider. */
+        val summaryAsNote: Boolean = false
     )
 
     private val updaters = ArrayList<() -> Unit>()
@@ -105,6 +109,19 @@ class PreferencePageView(
 
     private fun buildGroup(parent: LinearLayout, group: PreferenceGroup) {
         val pendingToggles = ArrayList<TwoStatePreference>()
+        val pendingTiles = ArrayList<Preference>()
+
+        fun flushTiles() {
+            if (pendingTiles.isEmpty())
+                return
+            val grid = EqualGrid(context, maxColumns = 3, minCellWidthDp = 220)
+            pendingTiles.forEach { grid.addView(navigationTile(it)) }
+            parent.addView(grid, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+                topMargin = dp(4)
+                bottomMargin = dp(4)
+            })
+            pendingTiles.clear()
+        }
 
         fun flushToggles() {
             if (pendingToggles.isEmpty())
@@ -123,29 +140,36 @@ class PreferencePageView(
 
         for (preference in children(group)) {
             if (preference is TwoStatePreference) {
+                flushTiles()
                 pendingToggles += preference
                 continue
             }
             flushToggles()
+            if (preference.key in navigationKeys) {
+                pendingTiles += preference
+                continue
+            }
+            flushTiles()
             when {
                 preference is PreferenceCategory -> {
                     parent.addView(LauncherStyle.sectionLabel(context, preference.title ?: ""))
                     buildGroup(parent, preference)
                 }
-                preference.key in sliders -> parent.addView(sliderRow(preference, sliders.getValue(preference.key)))
+                preference.key in sliders -> {
+                    val spec = sliders.getValue(preference.key)
+                    parent.addView(sliderRow(preference, spec))
+                    if (spec.summaryAsNote && !preference.summary.isNullOrBlank())
+                        parent.addView(note(preference.summary))
+                }
                 preference is ListPreference && (preference.entries?.size ?: 0) in 2..6 -> {
                     parent.addView(optionRow(preference))
                     descriptiveSummary(preference)?.let { parent.addView(note(it)) }
-                }
-                preference.key in navigationKeys -> {
-                    parent.addView(navigationButton(preference))
-                    if (!preference.summary.isNullOrBlank())
-                        parent.addView(note(preference.summary))
                 }
                 else -> parent.addView(valueRow(preference))
             }
         }
         flushToggles()
+        flushTiles()
     }
 
     /** A list summary that explains the setting instead of repeating the chosen entry. */
@@ -273,15 +297,10 @@ class PreferencePageView(
         return view
     }
 
-    private fun navigationButton(preference: Preference): View {
-        val button = LauncherStyle.button(context, "${preference.title}  ›") { openValue(preference) }
-        bindEnabled(button, preference)
-        return button.apply {
-            layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
-                topMargin = dp(4)
-                bottomMargin = dp(4)
-            }
-        }
+    private fun navigationTile(preference: Preference): View {
+        val tile = LauncherStyle.tile(context, preference.title ?: "", preference.summary ?: "") { openValue(preference) }
+        bindEnabled(tile, preference)
+        return tile
     }
 
     /** What a tap on the preference did before: its own click handler, or a choice/text dialog. */
@@ -322,11 +341,13 @@ class PreferencePageView(
         val key = preference.key
         val steps = ((spec.maximum - spec.minimum) / spec.step).roundToInt()
         val valueLabel = LauncherStyle.text(context, "", 14f, true, LauncherStyle.GOLD).apply {
-            minWidth = dp(64)
+            minWidth = dp(72)
             gravity = Gravity.END
         }
         fun valueFor(progress: Int) = (spec.minimum + progress * spec.step).coerceIn(spec.minimum, spec.maximum)
-        fun format(value: Float) = String.format(Locale.ROOT, "%.1f", value)
+        fun format(value: Float) =
+            if (spec.decimals == 0) value.roundToInt().toString()
+            else String.format(Locale.ROOT, "%.${spec.decimals}f", value)
 
         val seekBar = SeekBar(context).apply {
             max = steps
