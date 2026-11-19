@@ -1489,6 +1489,8 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
 
     /** Launcher Handheld mode: controller-first input, no touch overlay. */
     public static volatile boolean sHandheldMode = false;
+    /** Launcher Swipe to look: a finger on free screen space turns the camera in gameplay. */
+    public static volatile boolean sSwipeToLook = false;
     /** Whether the overlay pointer is drawn while the engine cursor is up. */
     public static volatile boolean sPointerShown = false;
     /** L3 showed the pointer; the engine reports its cursor a frame later. */
@@ -2526,6 +2528,95 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
         return false;
     }
 
+    // Swipe to look: the finger that turns the camera, or -1, and the sub-pixel
+    // motion not yet sent.
+    private int mLookPointerId = -1;
+    private float mLookLastX, mLookLastY;
+    private float mLookRestX, mLookRestY;
+
+    // Same feel as the right stick's swipe area (JoystickRight): its motion factor,
+    // and its width relative to the screen (JOYSTICK_SIZE / VIRTUAL_SCREEN_WIDTH in Osc.kt).
+    private static final float LOOK_MOTION_FACTOR = 900f;
+    private static final float LOOK_REFERENCE_WIDTH = 230f / 1024f;
+
+    /**
+     * Turns the camera while a finger swipes over free screen space in gameplay.
+     * Buttons and sticks are views above the surface and keep their own touches;
+     * menus (mouse cursor shown) keep the normal touch handling.
+     *
+     * @return true when the event belongs to the look gesture
+     */
+    private boolean handleSwipeLook(MotionEvent event) {
+        int source = event.getSource();
+        if (source == InputDevice.SOURCE_MOUSE
+                || source == (InputDevice.SOURCE_MOUSE | InputDevice.SOURCE_TOUCHSCREEN)) {
+            return false;
+        }
+
+        int action = event.getActionMasked();
+        if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_POINTER_DOWN) {
+            if (mLookPointerId != -1) {
+                // A second finger while looking is ignored.
+                return true;
+            }
+            if (SDLActivity.isMouseShown() != 0) {
+                return false;
+            }
+            int index = event.getActionIndex();
+            mLookPointerId = event.getPointerId(index);
+            mLookLastX = event.getX(index);
+            mLookLastY = event.getY(index);
+            mLookRestX = 0f;
+            mLookRestY = 0f;
+            return true;
+        }
+
+        if (mLookPointerId == -1) {
+            return false;
+        }
+
+        switch (action) {
+            case MotionEvent.ACTION_MOVE: {
+                if (SDLActivity.isMouseShown() != 0) {
+                    // A menu opened during the swipe; stop turning the camera.
+                    mLookPointerId = -1;
+                    return true;
+                }
+                int index = event.findPointerIndex(mLookPointerId);
+                if (index < 0) {
+                    mLookPointerId = -1;
+                    return true;
+                }
+                float x = event.getX(index);
+                float y = event.getY(index);
+                float reference = Math.max(1f, getWidth() * LOOK_REFERENCE_WIDTH);
+                float moveX = (x - mLookLastX) * LOOK_MOTION_FACTOR / reference + mLookRestX;
+                float moveY = (y - mLookLastY) * LOOK_MOTION_FACTOR / reference + mLookRestY;
+                int sendX = (int) moveX;
+                int sendY = (int) moveY;
+                mLookRestX = moveX - sendX;
+                mLookRestY = moveY - sendY;
+                if (sendX != 0 || sendY != 0) {
+                    SDLActivity.sendRelativeMouseMotion(sendX, sendY);
+                }
+                mLookLastX = x;
+                mLookLastY = y;
+                return true;
+            }
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_POINTER_UP:
+                if (event.getPointerId(event.getActionIndex()) == mLookPointerId) {
+                    mLookPointerId = -1;
+                }
+                return true;
+            case MotionEvent.ACTION_CANCEL:
+                mLookPointerId = -1;
+                return true;
+            default:
+                return true;
+        }
+    }
+
     // Touch events
     @Override
     public boolean onTouch(View v, MotionEvent event) {
@@ -2537,6 +2628,10 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
         int mouseButton;
         int i = -1;
         float x,y,p;
+
+        if (SDLActivity.sSwipeToLook && handleSwipeLook(event)) {
+            return true;
+        }
 
         // drop event unless the mouse is shown (i.e. unless we're in a mouse-enabled menu)
         if ((action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_POINTER_DOWN) &&

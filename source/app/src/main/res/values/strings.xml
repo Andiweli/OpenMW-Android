@@ -307,4 +307,17 @@ OpenMW by the OpenMW Team since 2008</string>
     <string name="legacy_storage_migration_failed_title">Saves not moved</string>
     <string name="legacy_storage_migration_no_space_message">Your saves and settings in\n%1$s\ncould not be moved because %2$s of free storage is needed. The old folder was not changed. Free some storage and restart OpenMW to try again.</string>
     <string name="legacy_storage_migration_failed_message">Your saves and settings in\n%1$s\ncould not be moved (%2$s). The old folder was not changed. Restart OpenMW to try again.</string>
+
+    <!-- Saves folder and swipe to look -->
+    <string name="user_data_dir_title">Saves Folder</string>
+    <string name="user_data_dir_default_summary">Default (app storage). Choose a shared folder to sync your saves, e.g. with Syncthing.</string>
+    <string name="user_data_dir_choose">Choose folder…</string>
+    <string name="user_data_dir_use_default">Use default app folder</string>
+    <string name="user_data_dir_copying">Copying saves…</string>
+    <string name="user_data_dir_changed_message">Saves and screenshots are now stored in:\n%1$s\n\nFiles copied from the previous folder: %2$d. Existing saves were not replaced, and the previous folder was left unchanged.\n\nTip: exclude navmesh.db from syncing, it is a large cache file.</string>
+    <string name="user_data_dir_error_title">Saves folder not changed</string>
+    <string name="user_data_dir_error_message">OpenMW cannot write to this folder:\n%1$s\n(%2$s)\n\nThe previous saves folder is still used.</string>
+    <string name="user_data_dir_unavailable">The saves folder is not available or not writable:\n%1$s\n\nInsert the storage, check the storage permission, or choose another saves folder in the launcher.</string>
+    <string name="pref_swipe_to_look_title">Swipe to Look</string>
+    <string name="pref_swipe_to_look_summary">Swipe on free screen space to look around during gameplay. The right stick and menus keep working as before.</string>
 </resources>

@@ -208,4 +208,17 @@
     <string name="legacy_storage_migration_failed_title">Сохранения не перенесены</string>
     <string name="legacy_storage_migration_no_space_message">Не удалось перенести сохранения и настройки из\n%1$s\nтак как требуется %2$s свободного места. Старая папка не изменена. Освободите место и перезапустите OpenMW, чтобы повторить попытку.</string>
     <string name="legacy_storage_migration_failed_message">Не удалось перенести сохранения и настройки из\n%1$s\n(%2$s). Старая папка не изменена. Перезапустите OpenMW, чтобы повторить попытку.</string>
+
+    <!-- Saves folder and swipe to look -->
+    <string name="user_data_dir_title">Папка сохранений</string>
+    <string name="user_data_dir_default_summary">По умолчанию (память приложения). Выберите общую папку, чтобы синхронизировать сохранения, например через Syncthing.</string>
+    <string name="user_data_dir_choose">Выбрать папку…</string>
+    <string name="user_data_dir_use_default">Использовать папку приложения</string>
+    <string name="user_data_dir_copying">Копирование сохранений…</string>
+    <string name="user_data_dir_changed_message">Сохранения и скриншоты теперь хранятся здесь:\n%1$s\n\nСкопировано файлов из прежней папки: %2$d. Существующие сохранения не заменены, прежняя папка не изменена.\n\nСовет: исключите navmesh.db из синхронизации, это большой файл кэша.</string>
+    <string name="user_data_dir_error_title">Папка сохранений не изменена</string>
+    <string name="user_data_dir_error_message">OpenMW не может записывать в эту папку:\n%1$s\n(%2$s)\n\nПо-прежнему используется прежняя папка сохранений.</string>
+    <string name="user_data_dir_unavailable">Папка сохранений недоступна или защищена от записи:\n%1$s\n\nВставьте носитель, проверьте разрешение на доступ к памяти или выберите другую папку в лаунчере.</string>
+    <string name="pref_swipe_to_look_title">Обзор свайпом</string>
+    <string name="pref_swipe_to_look_summary">Проводите пальцем по свободной части экрана, чтобы осматриваться в игре. Правый стик и меню работают как прежде.</string>
 </resources>

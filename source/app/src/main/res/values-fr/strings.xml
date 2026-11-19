@@ -208,4 +208,17 @@
     <string name="legacy_storage_migration_failed_title">Sauvegardes non déplacées</string>
     <string name="legacy_storage_migration_no_space_message">Vos sauvegardes et paramètres dans\n%1$s\nn\'ont pas pu être déplacés, car %2$s d\'espace libre sont nécessaires. L\'ancien dossier n\'a pas été modifié. Libérez de l\'espace et redémarrez OpenMW pour réessayer.</string>
     <string name="legacy_storage_migration_failed_message">Vos sauvegardes et paramètres dans\n%1$s\nn\'ont pas pu être déplacés (%2$s). L\'ancien dossier n\'a pas été modifié. Redémarrez OpenMW pour réessayer.</string>
+
+    <!-- Saves folder and swipe to look -->
+    <string name="user_data_dir_title">Dossier des sauvegardes</string>
+    <string name="user_data_dir_default_summary">Par défaut (stockage de l\'application). Choisissez un dossier partagé pour synchroniser vos sauvegardes, par ex. avec Syncthing.</string>
+    <string name="user_data_dir_choose">Choisir un dossier…</string>
+    <string name="user_data_dir_use_default">Utiliser le dossier de l\'application</string>
+    <string name="user_data_dir_copying">Copie des sauvegardes…</string>
+    <string name="user_data_dir_changed_message">Les sauvegardes et captures d\'écran sont maintenant enregistrées dans :\n%1$s\n\nFichiers copiés depuis l\'ancien dossier : %2$d. Les sauvegardes existantes n\'ont pas été remplacées et l\'ancien dossier n\'a pas été modifié.\n\nAstuce : excluez navmesh.db de la synchronisation, c\'est un gros fichier de cache.</string>
+    <string name="user_data_dir_error_title">Dossier des sauvegardes inchangé</string>
+    <string name="user_data_dir_error_message">OpenMW ne peut pas écrire dans ce dossier :\n%1$s\n(%2$s)\n\nL\'ancien dossier des sauvegardes reste utilisé.</string>
+    <string name="user_data_dir_unavailable">Le dossier des sauvegardes est indisponible ou non accessible en écriture :\n%1$s\n\nInsérez le stockage, vérifiez l\'autorisation de stockage ou choisissez un autre dossier dans le lanceur.</string>
+    <string name="pref_swipe_to_look_title">Balayer pour regarder</string>
+    <string name="pref_swipe_to_look_summary">Balayez une zone libre de l\'écran pour regarder autour de vous en jeu. Le stick droit et les menus fonctionnent comme avant.</string>
 </resources>

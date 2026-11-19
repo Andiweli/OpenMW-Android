@@ -208,4 +208,17 @@
     <string name="legacy_storage_migration_failed_title">Spielstände nicht verschoben</string>
     <string name="legacy_storage_migration_no_space_message">Deine Spielstände und Einstellungen in\n%1$s\nkonnten nicht verschoben werden, weil %2$s freier Speicher benötigt werden. Der alte Ordner wurde nicht verändert. Gib Speicherplatz frei und starte OpenMW neu, um es erneut zu versuchen.</string>
     <string name="legacy_storage_migration_failed_message">Deine Spielstände und Einstellungen in\n%1$s\nkonnten nicht verschoben werden (%2$s). Der alte Ordner wurde nicht verändert. Starte OpenMW neu, um es erneut zu versuchen.</string>
+
+    <!-- Saves folder and swipe to look -->
+    <string name="user_data_dir_title">Ordner für Spielstände</string>
+    <string name="user_data_dir_default_summary">Standard (App-Speicher). Wähle einen freigegebenen Ordner, um deine Spielstände z. B. mit Syncthing zu synchronisieren.</string>
+    <string name="user_data_dir_choose">Ordner wählen…</string>
+    <string name="user_data_dir_use_default">Standard-App-Ordner verwenden</string>
+    <string name="user_data_dir_copying">Spielstände werden kopiert…</string>
+    <string name="user_data_dir_changed_message">Spielstände und Screenshots werden jetzt hier gespeichert:\n%1$s\n\nAus dem bisherigen Ordner kopierte Dateien: %2$d. Vorhandene Spielstände wurden nicht ersetzt, der bisherige Ordner blieb unverändert.\n\nTipp: navmesh.db von der Synchronisierung ausnehmen, das ist eine große Cache-Datei.</string>
+    <string name="user_data_dir_error_title">Ordner für Spielstände nicht geändert</string>
+    <string name="user_data_dir_error_message">OpenMW kann nicht in diesen Ordner schreiben:\n%1$s\n(%2$s)\n\nEs wird weiterhin der bisherige Ordner verwendet.</string>
+    <string name="user_data_dir_unavailable">Der Ordner für Spielstände ist nicht verfügbar oder nicht beschreibbar:\n%1$s\n\nSetze den Speicher ein, prüfe die Speicherberechtigung oder wähle im Launcher einen anderen Ordner.</string>
+    <string name="pref_swipe_to_look_title">Wischen zum Umsehen</string>
+    <string name="pref_swipe_to_look_summary">Auf freier Bildschirmfläche wischen, um dich im Spiel umzusehen. Der rechte Stick und die Menüs funktionieren weiter wie bisher.</string>
 </resources>

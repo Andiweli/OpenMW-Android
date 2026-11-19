@@ -46,6 +46,7 @@ import com.libopenmw.openmw.R
 import constants.Constants
 import file.GameFilesLocation
 import file.GameInstaller
+import file.UserDataLocation
 
 import java.io.BufferedReader
 import java.io.File
@@ -603,6 +604,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /** The custom saves folder, or null for the default app storage. Not offered on Automotive. */
+    private fun configuredUserDataDir(): File? {
+        if (BuildConfig.IS_AUTOMOTIVE_BUILD)
+            return null
+        val path = prefs.getString(UserDataLocation.PREF_USER_DATA_DIR, "").orEmpty()
+        return if (path.isEmpty()) null else File(path)
+    }
+
     /**
      * Generates openmw.cfg using values from openmw.base.cfg combined with mod manager settings
      */
@@ -614,8 +623,10 @@ class MainActivity : AppCompatActivity() {
 
         // try to read the files
         try {
-            base = File(Constants.OPENMW_BASE_CFG).readLines()
+            val baseLines = File(Constants.OPENMW_BASE_CFG).readLines()
                 .filterNot { it.trim() == "data=\"specify-me!\"" }
+            // A user-chosen saves folder replaces the base config's user-data line.
+            base = UserDataLocation.applyTo(baseLines, configuredUserDataDir())
                 .joinToString("\n", postfix = "\n")
             // TODO: support user custom options
             val fallbackText = File(Constants.OPENMW_FALLBACK_CFG).readText()
@@ -2247,6 +2258,17 @@ class MainActivity : AppCompatActivity() {
                 // Never write into the user storage while the legacy tree is moved there.
                 MyApp.app.awaitLegacyUserStorageMigration()
                 File(Constants.USER_FILE_STORAGE).mkdirs()
+
+                // A custom saves folder that is gone or not writable (card removed,
+                // permission revoked) must stop the launch; OpenMW would otherwise
+                // fail or the player would not find their saves.
+                configuredUserDataDir()?.let { userData ->
+                    try {
+                        UserDataLocation.ensureWritable(userData)
+                    } catch (e: IOException) {
+                        throw IOException(getString(R.string.user_data_dir_unavailable, userData.absolutePath), e)
+                    }
+                }
 
                 // Reinstall static files if their version mismatches OR if an older
                 // launcher-only APK left a valid-looking stamp without the runtime payload.
