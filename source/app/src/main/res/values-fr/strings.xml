@@ -251,4 +251,8 @@
     <string name="launcher_hint_navigate">Croix : naviguer · A : choisir</string>
     <string name="launcher_hint_play">START : jouer</string>
     <string name="launcher_help_github">Projet sur GitHub</string>
+    <string name="launcher_back">‹ Retour</string>
+    <string name="launcher_hint_back_play">B : retour · START : jouer</string>
+    <string name="launcher_on">OUI</string>
+    <string name="launcher_off">NON</string>
 </resources>

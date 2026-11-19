@@ -52,6 +52,40 @@ import java.util.*
  */
 class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener {
 
+    private var page: ui.launcher.PreferencePageView? = null
+
+    /** The settings in the launcher's own style; the preferences stay the model. */
+    override fun onCreateView(
+        inflater: android.view.LayoutInflater,
+        container: android.view.ViewGroup?,
+        savedInstanceState: Bundle?
+    ): android.view.View {
+        val view = ui.launcher.PreferencePageView(
+            activity,
+            preferenceScreen,
+            sliders = mapOf(
+                "pref_uiScaling" to ui.launcher.PreferencePageView.SliderSpec(
+                    minimum = 0.5f, maximum = 3.0f, step = 0.1f,
+                    defaultValue = MyApp.app.defaultScaling.coerceIn(0.5f, 3.0f),
+                    autoLabel = {
+                        MyApp.app.getString(R.string.uiScaling_auto).format(Locale.ROOT, MyApp.app.defaultScaling)
+                    }
+                ),
+                "pref_gamma" to ui.launcher.PreferencePageView.SliderSpec(
+                    minimum = 1.0f, maximum = 3.0f, step = 0.1f, defaultValue = 1.0f
+                )
+            ),
+            navigationKeys = setOf("pref_controls")
+        )
+        page = view
+        return view
+    }
+
+    override fun onDestroyView() {
+        page = null
+        super.onDestroyView()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -352,6 +386,7 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
                 updatePreference(preference, preference.key)
             }
         }
+        page?.refresh()
     }
 
     override fun onDestroy() {
@@ -382,6 +417,7 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
             }
             updateHandheldState()
         }
+        page?.refresh()
     }
 
     /** Handheld mode never shows the touch overlay, so its options do not apply. */

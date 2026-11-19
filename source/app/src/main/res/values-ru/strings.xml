@@ -251,4 +251,8 @@
     <string name="launcher_hint_navigate">Крестовина: навигация · A: выбор</string>
     <string name="launcher_hint_play">START: играть</string>
     <string name="launcher_help_github">Проект на GitHub</string>
+    <string name="launcher_back">‹ Назад</string>
+    <string name="launcher_hint_back_play">B: назад · START: играть</string>
+    <string name="launcher_on">ВКЛ</string>
+    <string name="launcher_off">ВЫКЛ</string>
 </resources>

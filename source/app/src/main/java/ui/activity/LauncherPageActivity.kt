@@ -20,10 +20,12 @@ package ui.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
+import android.view.KeyEvent
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.libopenmw.openmw.R
 import ui.fragments.FragmentSettings
+import ui.launcher.LauncherStyle
 
 /**
  * One launcher area opened from the home screen (Graphics & performance,
@@ -33,11 +35,11 @@ class LauncherPageActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
+        val pageTitle = intent.getStringExtra(EXTRA_TITLE).orEmpty()
+        title = pageTitle
 
-        setSupportActionBar(findViewById(R.id.settings_toolbar))
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        intent.getStringExtra(EXTRA_TITLE)?.let { title = it }
+        val container = FrameLayout(this).apply { id = R.id.settings_frame }
+        setContentView(LauncherStyle.pageFrame(this, pageTitle, onBack = { finish() }, onPlay = { play(this) }, content = container))
 
         if (savedInstanceState == null) {
             val categories = intent.getStringArrayListExtra(EXTRA_CATEGORIES) ?: arrayListOf()
@@ -47,19 +49,28 @@ class LauncherPageActivity : AppCompatActivity() {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                onBackPressed()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        // START starts the game from every launcher page, as the hint says.
+        if (event.keyCode == KeyEvent.KEYCODE_BUTTON_START) {
+            if (event.action == KeyEvent.ACTION_UP)
+                play(this)
+            return true
         }
+        return super.dispatchKeyEvent(event)
     }
 
     companion object {
         private const val EXTRA_TITLE = "title"
         private const val EXTRA_CATEGORIES = "categories"
+
+        /** Back to the home screen and start the game from there. */
+        fun play(activity: android.app.Activity) {
+            activity.startActivity(
+                Intent(activity, MainActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                    .putExtra(MainActivity.EXTRA_PLAY, true)
+            )
+        }
 
         fun intent(context: Context, title: String, vararg categories: String): Intent =
             Intent(context, LauncherPageActivity::class.java)

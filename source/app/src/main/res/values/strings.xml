@@ -350,4 +350,8 @@ OpenMW by the OpenMW Team since 2008</string>
     <string name="launcher_hint_navigate">D-pad: navigate · A: select</string>
     <string name="launcher_hint_play">START: play</string>
     <string name="launcher_help_github">Project on GitHub</string>
+    <string name="launcher_back">‹ Back</string>
+    <string name="launcher_hint_back_play">B: back · START: play</string>
+    <string name="launcher_on">ON</string>
+    <string name="launcher_off">OFF</string>
 </resources>

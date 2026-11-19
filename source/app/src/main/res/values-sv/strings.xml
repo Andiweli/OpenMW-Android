@@ -251,4 +251,8 @@
     <string name="launcher_hint_navigate">Styrkors: navigera · A: välj</string>
     <string name="launcher_hint_play">START: spela</string>
     <string name="launcher_help_github">Projektet på GitHub</string>
+    <string name="launcher_back">‹ Tillbaka</string>
+    <string name="launcher_hint_back_play">B: tillbaka · START: spela</string>
+    <string name="launcher_on">PÅ</string>
+    <string name="launcher_off">AV</string>
 </resources>

@@ -104,16 +104,17 @@ class LauncherHomeView(context: Context, private val actions: Actions) : LinearL
             maxLines = 1
         }
 
-        // Spielen, then the installed version and the update button to its right.
+        // Right-aligned, read from the right: Spielen, the update button, the installed version.
         val buttons = LinearLayout(context).apply {
             orientation = HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
-            addView(playButton, LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT))
             addView(versionLabel, LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
-                marginStart = dp(12)
                 marginEnd = dp(12)
             })
-            addView(updateButton, LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT))
+            addView(updateButton, LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
+                marginEnd = dp(8)
+            })
+            addView(playButton, LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT))
         }
 
         return LinearLayout(context).apply {
@@ -127,7 +128,10 @@ class LauncherHomeView(context: Context, private val actions: Actions) : LinearL
                 // Narrow windows: the buttons go below the name.
                 orientation = VERTICAL
                 addView(mark)
-                addView(buttons, LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply { topMargin = dp(10) })
+                addView(buttons, LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
+                    topMargin = dp(10)
+                    gravity = Gravity.END
+                })
             }
         }
     }

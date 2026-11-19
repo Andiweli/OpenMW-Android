@@ -339,6 +339,13 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        // "Spielen" on a launcher sub-page returns here to start the game.
+        if (intent.getBooleanExtra(EXTRA_PLAY, false) && homeView != null)
+            checkStartGame()
+    }
+
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         // Rotation or a resized window: lay the home screen out again for the new width.
@@ -2928,6 +2935,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private const val TAG = "OpenMW-Launcher"
         private const val PROJECT_URL = "https://github.com/Andiweli/OpenMW-Android"
+        const val EXTRA_PLAY = "launcher_play"
 
         // v11.x shared custom-resolution state. MouseCursor and GameActivity
         // both reference these fields, so they must remain in this companion.

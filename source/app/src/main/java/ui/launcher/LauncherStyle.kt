@@ -121,6 +121,49 @@ object LauncherStyle {
             setOnClickListener(onClick)
         }
 
+    /**
+     * The frame of a launcher sub-page, as in CubeEvil4: "‹ Back", the title and
+     * "Play" on top, [content] in the middle, the controller hints below.
+     */
+    fun pageFrame(context: Context, title: CharSequence, onBack: () -> Unit, onPlay: () -> Unit, content: View): LinearLayout {
+        fun d(v: Int) = dp(context, v)
+        val header = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(d(22), d(12), d(22), d(12))
+            addView(button(context, context.getString(com.libopenmw.openmw.R.string.launcher_back)) { onBack() })
+            addView(text(context, title, 22f, true).apply {
+                maxLines = 1
+                ellipsize = TextUtils.TruncateAt.END
+            }, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply {
+                marginStart = d(16)
+                marginEnd = d(16)
+            })
+            addView(button(context, context.getString(com.libopenmw.openmw.R.string.launcher_play), primary = true) { onPlay() })
+        }
+        val footer = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            setPadding(d(22), d(8), d(22), d(10))
+            addView(text(context, context.getString(com.libopenmw.openmw.R.string.launcher_hint_navigate), 11.5f, false).apply {
+                maxLines = 1
+                ellipsize = TextUtils.TruncateAt.END
+            }, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+            addView(text(context, context.getString(com.libopenmw.openmw.R.string.launcher_hint_back_play), 11.5f, false).apply { maxLines = 1 })
+        }
+        fun line(color: Int, height: Int) = View(context).apply { setBackgroundColor(color) } to
+            LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, d(height))
+        return LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            setBackgroundColor(PANEL)
+            line(GOLD, 2).let { addView(it.first, it.second) }
+            addView(header, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
+            line(BORDER, 1).let { addView(it.first, it.second) }
+            addView(content, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f))
+            line(BORDER, 1).let { addView(it.first, it.second) }
+            addView(footer, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
+        }
+    }
+
     /** A navigation tile: bold title, a short line below and a gold chevron. */
     fun tile(context: Context, title: CharSequence, summary: CharSequence, onClick: (View) -> Unit): LinearLayout =
         LinearLayout(context).apply {

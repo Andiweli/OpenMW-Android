@@ -251,4 +251,8 @@
     <string name="launcher_hint_navigate">Krzyżak: nawigacja · A: wybór</string>
     <string name="launcher_hint_play">START: graj</string>
     <string name="launcher_help_github">Projekt na GitHubie</string>
+    <string name="launcher_back">‹ Wstecz</string>
+    <string name="launcher_hint_back_play">B: wstecz · START: graj</string>
+    <string name="launcher_on">WŁ.</string>
+    <string name="launcher_off">WYŁ.</string>
 </resources>
