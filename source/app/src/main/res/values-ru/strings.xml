@@ -236,7 +236,7 @@
     <string name="launcher_status_not_chosen">Не выбрано</string>
     <string name="launcher_game_data_not_chosen">Выберите папку, в которой есть Data Files и Morrowind.ini.</string>
     <string name="launcher_choose_folder">Выбрать папку</string>
-    <string name="launcher_language">Язык · %1$s</string>
+    <string name="launcher_language">Язык</string>
     <string name="launcher_tile_game_settings_summary">Геймплей, движок, дополнительно</string>
     <string name="launcher_tile_graphics">Графика и производительность</string>
     <string name="launcher_tile_graphics_summary">Разрешение, шейдеры, частота кадров</string>

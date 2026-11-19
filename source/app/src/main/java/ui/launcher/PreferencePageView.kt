@@ -136,6 +136,11 @@ class PreferencePageView(
             pendingToggles.clear()
         }
 
+        // Lists in one section look alike: if one needs the step button, all of them use it.
+        val listsAsButtons = children(group)
+            .filter { it is ListPreference && it.key !in sliders && (it.entries?.size ?: 0) >= 2 }
+            .all { fitsAsButtons(it as ListPreference) }
+
         for (preference in children(group)) {
             if (preference is TwoStatePreference) {
                 flushTiles()
@@ -159,7 +164,7 @@ class PreferencePageView(
                 }
                 preference is ListPreference && (preference.entries?.size ?: 0) >= 2 -> {
                     val explanation = descriptiveSummary(preference)
-                    parent.addView(if (fitsAsButtons(preference)) optionRow(preference, explanation) else cycleRow(preference, explanation))
+                    parent.addView(if (listsAsButtons) optionRow(preference, explanation) else cycleRow(preference, explanation))
                 }
                 else -> parent.addView(valueRow(preference))
             }
@@ -240,9 +245,9 @@ class PreferencePageView(
             val label = LinearLayout(context).apply {
                 orientation = LinearLayout.VERTICAL
                 gravity = Gravity.CENTER_VERTICAL
-                addView(LauncherStyle.text(context, title, 16f, true))
+                addView(LauncherStyle.text(context, title, 18f, true))
                 if (!explanation.isNullOrBlank())
-                    addView(LauncherStyle.text(context, explanation, 12f, false).apply {
+                    addView(LauncherStyle.text(context, explanation, 14f, false).apply {
                         maxLines = 2
                         ellipsize = TextUtils.TruncateAt.END
                         setPadding(0, dp(1), 0, 0)
@@ -266,17 +271,17 @@ class PreferencePageView(
         val texts = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER_VERTICAL
-            addView(LauncherStyle.text(context, preference.title ?: "", 16f, true).apply {
+            addView(LauncherStyle.text(context, preference.title ?: "", 18f, true).apply {
                 maxLines = 1
                 ellipsize = TextUtils.TruncateAt.END
             })
             if (!preference.summary.isNullOrBlank())
-                addView(LauncherStyle.text(context, preference.summary, 12f, false).apply {
+                addView(LauncherStyle.text(context, preference.summary, 14f, false).apply {
                     maxLines = 1
                     ellipsize = TextUtils.TruncateAt.END
                 })
         }
-        val state = LauncherStyle.text(context, "", 12f, true).apply { letterSpacing = 0.08f }
+        val state = LauncherStyle.text(context, "", 14f, true).apply { letterSpacing = 0.08f }
         val view = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
@@ -388,7 +393,7 @@ class PreferencePageView(
         val prefs = preference.sharedPreferences
         val key = preference.key
         val steps = ((spec.maximum - spec.minimum) / spec.step).roundToInt()
-        val valueLabel = LauncherStyle.text(context, "", 16f, true, LauncherStyle.GOLD).apply {
+        val valueLabel = LauncherStyle.text(context, "", 18f, true, LauncherStyle.GOLD).apply {
             minWidth = dp(72)
             gravity = Gravity.END
         }

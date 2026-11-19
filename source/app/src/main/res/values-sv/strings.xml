@@ -236,7 +236,7 @@
     <string name="launcher_status_not_chosen">Inte vald</string>
     <string name="launcher_game_data_not_chosen">Välj mappen som innehåller Data Files och Morrowind.ini.</string>
     <string name="launcher_choose_folder">Välj mapp</string>
-    <string name="launcher_language">Språk · %1$s</string>
+    <string name="launcher_language">Språk</string>
     <string name="launcher_tile_game_settings_summary">Spelmekanik, motor, avancerat</string>
     <string name="launcher_tile_graphics">Grafik och prestanda</string>
     <string name="launcher_tile_graphics_summary">Upplösning, shaders, bildfrekvens</string>

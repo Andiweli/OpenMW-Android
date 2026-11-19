@@ -22,7 +22,12 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.StateListDrawable
+import android.text.SpannableString
+import android.text.Spanned
 import android.text.TextUtils
+import android.text.style.AbsoluteSizeSpan
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
@@ -102,7 +107,7 @@ object LauncherStyle {
     fun button(context: Context, label: CharSequence, primary: Boolean = false, onClick: (View) -> Unit): TextView =
         TextView(context).apply {
             text = label
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
             typeface = Typeface.DEFAULT_BOLD
             gravity = Gravity.CENTER
             maxLines = 1
@@ -120,6 +125,20 @@ object LauncherStyle {
             isFocusable = true
             setOnClickListener(onClick)
         }
+
+    /** Puts [title] and, smaller below it, [subtitle] on a [button]; the height stays the same. */
+    fun setTwoLines(button: TextView, title: CharSequence, subtitle: CharSequence) {
+        val small = SpannableString(subtitle).apply {
+            setSpan(AbsoluteSizeSpan(14, true), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(ForegroundColorSpan(MUTED), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+        val bold = SpannableString(title).apply {
+            setSpan(StyleSpan(Typeface.BOLD), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+        button.typeface = Typeface.DEFAULT
+        button.maxLines = 2
+        button.text = TextUtils.concat(bold, "\n", small)
+    }
 
     /**
      * The frame of a launcher sub-page, as in CubeEvil4: "‹ Back", the title and
@@ -177,13 +196,13 @@ object LauncherStyle {
             setOnClickListener(onClick)
 
             val texts = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
-            texts.addView(text(context, title, 16f, true).apply { maxLines = 1; ellipsize = TextUtils.TruncateAt.END })
-            texts.addView(text(context, summary, 12f, false).apply {
+            texts.addView(text(context, title, 18f, true).apply { maxLines = 1; ellipsize = TextUtils.TruncateAt.END })
+            texts.addView(text(context, summary, 14f, false).apply {
                 maxLines = 2
                 ellipsize = TextUtils.TruncateAt.END
                 setPadding(0, dp(context, 2), 0, 0)
             })
             addView(texts, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-            addView(text(context, "›", 20f, true, GOLD).apply { setPadding(dp(context, 10), 0, 0, 0) })
+            addView(text(context, "›", 22f, true, GOLD).apply { setPadding(dp(context, 10), 0, 0, 0) })
         }
 }

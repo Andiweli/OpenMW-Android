@@ -45,6 +45,7 @@
 
     <style name="MyCustomTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="android:textAppearance">@style/CustomTabWidgetText</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="CustomTabWidgetText"

@@ -236,7 +236,7 @@
     <string name="launcher_status_not_chosen">Nie wybrano</string>
     <string name="launcher_game_data_not_chosen">Wybierz folder zawierający Data Files i Morrowind.ini.</string>
     <string name="launcher_choose_folder">Wybierz folder</string>
-    <string name="launcher_language">Język · %1$s</string>
+    <string name="launcher_language">Język</string>
     <string name="launcher_tile_game_settings_summary">Rozgrywka, silnik, zaawansowane</string>
     <string name="launcher_tile_graphics">Grafika i wydajność</string>
     <string name="launcher_tile_graphics_summary">Rozdzielczość, shadery, liczba klatek</string>

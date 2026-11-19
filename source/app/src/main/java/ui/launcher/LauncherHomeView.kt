@@ -56,7 +56,7 @@ class LauncherHomeView(context: Context, private val actions: Actions) : LinearL
     private val wide = context.resources.configuration.screenWidthDp >= 560
 
     val playButton: TextView = LauncherStyle.button(context, s(R.string.launcher_play), primary = true) { actions.play() }.apply {
-        setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
         setPadding(dp(26), 0, dp(26), 0)
     }
     private val updateButton: TextView = LauncherStyle.button(context, s(R.string.launcher_up_to_date)) { actions.openReleases() }.apply {
@@ -68,7 +68,7 @@ class LauncherHomeView(context: Context, private val actions: Actions) : LinearL
         letterSpacing = 0.08f
         setPadding(dp(7), dp(2), dp(7), dp(2))
     }
-    private val gameDataDetail = LauncherStyle.text(context, "", 13f, false).apply {
+    private val gameDataDetail = LauncherStyle.text(context, "", 14f, false).apply {
         setPadding(0, dp(3), 0, 0)
     }
     private val languageButton: TextView = LauncherStyle.button(context, "") { actions.chooseLanguage() }
@@ -158,7 +158,7 @@ class LauncherHomeView(context: Context, private val actions: Actions) : LinearL
         val title = LinearLayout(context).apply {
             orientation = HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
-            addView(LauncherStyle.text(context, s(R.string.launcher_game_data_title), 16f, true))
+            addView(LauncherStyle.text(context, s(R.string.launcher_game_data_title), 18f, true))
             addView(badge, LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply { marginStart = dp(8) })
         }
         val info = LinearLayout(context).apply {
@@ -238,6 +238,6 @@ class LauncherHomeView(context: Context, private val actions: Actions) : LinearL
     }
 
     fun setLanguage(name: String) {
-        languageButton.text = context.getString(R.string.launcher_language, name)
+        LauncherStyle.setTwoLines(languageButton, s(R.string.launcher_language), name)
     }
 }

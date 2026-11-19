@@ -335,7 +335,7 @@ OpenMW by the OpenMW Team since 2008</string>
     <string name="launcher_status_not_chosen">Not chosen</string>
     <string name="launcher_game_data_not_chosen">Choose the folder that contains Data Files and Morrowind.ini.</string>
     <string name="launcher_choose_folder">Choose folder</string>
-    <string name="launcher_language">Language · %1$s</string>
+    <string name="launcher_language">Language</string>
     <string name="launcher_tile_game_settings_summary">Gameplay, Engine, Advanced</string>
     <string name="launcher_tile_graphics">Graphics &amp; Performance</string>
     <string name="launcher_tile_graphics_summary">Resolution, shaders, frame rate</string>
