@@ -14,40 +14,47 @@ if not input.actions.RadialMenu then
     }
 end
 
-I.Settings.registerPage({
-    key = 'OMWRadialMenu',
-    l10n = 'OMWRadialMenu',
-    name = 'Page',
-    description = 'PageDescription',
-})
+-- The settings group lives in permanent storage shared by MENU and PLAYER.
+-- Registering it in both contexts fails in the second one, so only the
+-- MENU context registers the page and group; openmw.menu exists only there.
+local isMenu = pcall(require, 'openmw.menu')
 
-I.Settings.registerGroup({
-    key = 'SettingsOMWRadialMenu',
-    page = 'OMWRadialMenu',
-    l10n = 'OMWRadialMenu',
-    name = 'Group',
-    permanentStorage = true,
-    settings = {
-        {
-            key = 'enabled',
-            renderer = 'checkbox',
-            name = 'enabled',
-            description = 'enabledDescription',
-            default = true,
-        },
-        {
-            key = 'radialOpenBinding',
-            renderer = 'inputBinding',
-            name = 'openBinding',
-            description = 'openBindingDescription',
-            default = 'radialOpenBinding',
-            argument = {
-                key = 'RadialMenu',
-                type = 'action',
+if isMenu then
+    I.Settings.registerPage({
+        key = 'OMWRadialMenu',
+        l10n = 'OMWRadialMenu',
+        name = 'Page',
+        description = 'PageDescription',
+    })
+
+    I.Settings.registerGroup({
+        key = 'SettingsOMWRadialMenu',
+        page = 'OMWRadialMenu',
+        l10n = 'OMWRadialMenu',
+        name = 'Group',
+        permanentStorage = true,
+        settings = {
+            {
+                key = 'enabled',
+                renderer = 'checkbox',
+                name = 'enabled',
+                description = 'enabledDescription',
+                default = true,
+            },
+            {
+                key = 'radialOpenBinding',
+                renderer = 'inputBinding',
+                name = 'openBinding',
+                description = 'openBindingDescription',
+                default = 'radialOpenBinding',
+                argument = {
+                    key = 'RadialMenu',
+                    type = 'action',
+                },
             },
         },
-    },
-})
+    })
+end
 
 local bindings = storage.playerSection('OMWInputBindings')
 local current = bindings:get('radialOpenBinding')
