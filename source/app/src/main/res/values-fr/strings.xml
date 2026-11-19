@@ -23,7 +23,7 @@
     <string name="pref_uiScaling">Facteur d’échelle de l’interface</string>
     <string name="pref_font_size">Taille de police</string>
     <string name="pref_truetype_fonts_title">Polices nettes</string>
-    <string name="pref_truetype_fonts_summary">Utiliser les polices TrueType d’OpenMW au lieu des polices bitmap d’origine. Elles restent nettes à toutes les tailles de police et échelles d’interface, et sont nécessaires au-delà de la taille 18.</string>
+    <string name="pref_truetype_fonts_summary">Polices nettes à toutes les tailles. Nécessaires au-delà de la taille 18.</string>
     <string name="uiScaling_auto">Auto (%1$.2f)</string>
     <string name="pref_screen_keeper">Garder l’écran toujours allumé</string>
     <string name="pref_touchpadSensitivity">Sensibilité du pavé tactile virtuel</string>
@@ -34,7 +34,7 @@
     <string name="action_show_screen_controls">Commandes à l’écran</string>
     <string name="pref_hide_controls">Masquer les boutons à l’écran</string>
     <string name="pref_handheld_mode_title">Mode portable</string>
-    <string name="pref_handheld_mode_summary">Pour les appareils avec commandes intégrées. Masque les boutons à l’écran. Maintenez L1 pour le menu radial. R1 ouvre le journal. Select fait se reposer, ou ouvre le clavier Android dans un champ de texte. L3 affiche le pointeur dans les menus. Maintenez Select et appuyez sur L3 ou R3 pour l’overlay de performances.</string>
+    <string name="pref_handheld_mode_summary">Pour les commandes intégrées : pas de boutons à l\'écran, L1 menu radial, R1 journal, Select repos.</string>
     <string name="config_was_reset">La configuration statique a été réinitialisée aux valeurs par défaut</string>
     <string name="user_config_was_reset">La configuration utilisateur a été réinitialisée aux valeurs par défaut</string>
     <string name="user_resources_was_reset">Les ressources utilisateur ont été réinitialisées aux valeurs par défaut</string>
@@ -220,9 +220,9 @@
     <string name="user_data_dir_error_message">OpenMW ne peut pas écrire dans ce dossier :\n%1$s\n(%2$s)\n\nL\'ancien dossier des sauvegardes reste utilisé.</string>
     <string name="user_data_dir_unavailable">Le dossier des sauvegardes est indisponible ou non accessible en écriture :\n%1$s\n\nInsérez le stockage, vérifiez l\'autorisation de stockage ou choisissez un autre dossier dans le lanceur.</string>
     <string name="pref_swipe_to_look_title">Balayer pour regarder</string>
-    <string name="pref_swipe_to_look_summary">Balayez une zone libre de l\'écran pour regarder autour de vous en jeu. Le stick droit et les menus fonctionnent comme avant.</string>
+    <string name="pref_swipe_to_look_summary">Balayer une zone libre de l\'écran pour regarder autour de soi.</string>
     <string name="pref_cheats_enabled_title">Activer les triches</string>
-    <string name="pref_cheats_enabled_summary">Ajoute une page « Triches » aux paramètres du jeu (Options > Scripts) pour donner de l\'or à votre personnage. Désactivé par défaut.</string>
+    <string name="pref_cheats_enabled_summary">Page en jeu Options &gt; Scripts &gt; Triches pour obtenir de l\'or.</string>
 
     <!-- Launcher home screen -->
     <string name="launcher_play">Jouer</string>

@@ -23,7 +23,7 @@
     <string name="pref_uiScaling">Масштаб интерфейса</string>
     <string name="pref_font_size">Размер шрифта</string>
     <string name="pref_truetype_fonts_title">Чёткие шрифты</string>
-    <string name="pref_truetype_fonts_summary">Использовать шрифты TrueType из OpenMW вместо оригинальных растровых. Они остаются чёткими при любом размере шрифта и масштабе интерфейса и нужны для размеров больше 18.</string>
+    <string name="pref_truetype_fonts_summary">Чёткие шрифты любого размера. Нужны для размеров больше 18.</string>
     <string name="uiScaling_auto">Авто (%1$.2f)</string>
     <string name="pref_screen_keeper">Не выключать экран</string>
     <string name="pref_touchpadSensitivity">Чувствительность виртуальной сенсорной панели</string>
@@ -34,7 +34,7 @@
     <string name="action_show_screen_controls">Экранное управление</string>
     <string name="pref_hide_controls">Скрыть экранные кнопки</string>
     <string name="pref_handheld_mode_title">Портативный режим</string>
-    <string name="pref_handheld_mode_summary">Для устройств со встроенным управлением. Скрывает экранные кнопки. Удерживайте L1 для радиального меню. R1 открывает дневник. Select — отдых, а в текстовом поле открывает клавиатуру Android. L3 показывает курсор в меню. Удерживайте Select и нажмите L3 или R3 для оверлея производительности.</string>
+    <string name="pref_handheld_mode_summary">Для встроенного управления: без экранных кнопок, L1 — радиальное меню, R1 — дневник, Select — отдых.</string>
     <string name="config_was_reset">Статическая конфигурация сброшена к значениям по умолчанию</string>
     <string name="user_config_was_reset">Конфигурация пользователя сброшена к значениям по умолчанию</string>
     <string name="user_resources_was_reset">Пользовательские ресурсы сброшены к значениям по умолчанию</string>
@@ -220,9 +220,9 @@
     <string name="user_data_dir_error_message">OpenMW не может записывать в эту папку:\n%1$s\n(%2$s)\n\nПо-прежнему используется прежняя папка сохранений.</string>
     <string name="user_data_dir_unavailable">Папка сохранений недоступна или защищена от записи:\n%1$s\n\nВставьте носитель, проверьте разрешение на доступ к памяти или выберите другую папку в лаунчере.</string>
     <string name="pref_swipe_to_look_title">Обзор свайпом</string>
-    <string name="pref_swipe_to_look_summary">Проводите пальцем по свободной части экрана, чтобы осматриваться в игре. Правый стик и меню работают как прежде.</string>
+    <string name="pref_swipe_to_look_summary">Проводите по свободной части экрана, чтобы осматриваться.</string>
     <string name="pref_cheats_enabled_title">Включить читы</string>
-    <string name="pref_cheats_enabled_summary">Добавляет в настройки игры (Параметры > Скрипты) страницу «Читы», позволяющую выдать персонажу золото. По умолчанию выключено.</string>
+    <string name="pref_cheats_enabled_summary">Страница «Читы» в игре (Параметры &gt; Скрипты) для получения золота.</string>
 
     <!-- Launcher home screen -->
     <string name="launcher_play">Играть</string>

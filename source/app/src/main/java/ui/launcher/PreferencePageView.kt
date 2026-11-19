@@ -47,8 +47,9 @@ import kotlin.math.roundToInt
  * unchanged); only their presentation is new:
  *
  * - a category becomes a section label,
- * - switches become ON/OFF tiles, two side by side, their explanations below,
- * - a short choice list becomes a row of option buttons,
+ * - switches become full-width ON/OFF tiles, each with its short explanation below,
+ * - a choice list with short labels becomes a row of option buttons; any other
+ *   list becomes one button that steps through the choices,
  * - a value (resolution, a longer list, text) becomes a row with a value button,
  * - a [SliderSpec] key becomes an inline slider,
  * - entries that open another screen become tiles, up to three side by side.
@@ -123,18 +124,15 @@ class PreferencePageView(
             pendingTiles.clear()
         }
 
+        // One switch per row, so its title is never cut off; its explanation right below.
         fun flushToggles() {
-            if (pendingToggles.isEmpty())
-                return
-            val grid = EqualGrid(context, maxColumns = 2, minCellWidthDp = 300)
-            pendingToggles.forEach { grid.addView(toggle(it)) }
-            parent.addView(grid, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
-                topMargin = dp(4)
-                bottomMargin = dp(4)
-            })
-            val notes = pendingToggles.filter { !it.summary.isNullOrBlank() }
-            if (notes.isNotEmpty())
-                parent.addView(note(notes.joinToString("\n") { "${it.title}: ${it.summary}" }))
+            pendingToggles.forEach { preference ->
+                parent.addView(toggle(preference), LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+                    topMargin = dp(4)
+                })
+                if (!preference.summary.isNullOrBlank())
+                    parent.addView(note(preference.summary).also { bindEnabled(it, preference) })
+            }
             pendingToggles.clear()
         }
 
@@ -161,8 +159,8 @@ class PreferencePageView(
                     if (spec.summaryAsNote && !preference.summary.isNullOrBlank())
                         parent.addView(note(preference.summary))
                 }
-                preference is ListPreference && (preference.entries?.size ?: 0) in 2..6 -> {
-                    parent.addView(optionRow(preference))
+                preference is ListPreference && (preference.entries?.size ?: 0) >= 2 -> {
+                    parent.addView(if (fitsAsButtons(preference)) optionRow(preference) else cycleRow(preference))
                     descriptiveSummary(preference)?.let { parent.addView(note(it)) }
                 }
                 else -> parent.addView(valueRow(preference))
@@ -170,6 +168,43 @@ class PreferencePageView(
         }
         flushToggles()
         flushTiles()
+    }
+
+    /**
+     * Short labels (numbers, Low/Medium/High) fit side by side; longer ones would be
+     * cut off, so they get a single button that steps through the choices.
+     */
+    private fun fitsAsButtons(preference: ListPreference): Boolean {
+        val labels = preference.entries.map { it.toString() }
+        return labels.size <= 4 && labels.maxOf { it.length } <= 11 && labels.sumOf { it.length } <= 36
+    }
+
+    /** One button showing the current choice; tap or right goes to the next, left back. */
+    private fun cycleRow(preference: ListPreference): View {
+        val values = preference.entryValues
+        fun step(by: Int) {
+            val count = values.size
+            val current = preference.findIndexOfValue(preference.value).coerceAtLeast(0)
+            preference.value = values[((current + by) % count + count) % count].toString()
+        }
+        val button = LauncherStyle.button(context, "") { step(1) }.apply {
+            setOnKeyListener { _, keyCode, event ->
+                val by = when (keyCode) {
+                    android.view.KeyEvent.KEYCODE_DPAD_RIGHT -> 1
+                    android.view.KeyEvent.KEYCODE_DPAD_LEFT -> -1
+                    else -> 0
+                }
+                if (by != 0 && event.action == android.view.KeyEvent.ACTION_DOWN)
+                    step(by)
+                by != 0
+            }
+        }
+        updaters += {
+            button.text = "\u2039   ${preference.entry ?: ""}   \u203a"
+        }
+        val view = row(preference.title ?: "", button)
+        bindEnabled(view, preference)
+        return view
     }
 
     /** A list summary that explains the setting instead of repeating the chosen entry. */

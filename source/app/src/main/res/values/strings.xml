@@ -79,7 +79,7 @@
     <string name="pref_uiScaling">UI Scaling Factor</string>
     <string name="pref_font_size">Font Size</string>
     <string name="pref_truetype_fonts_title">Sharp Fonts</string>
-    <string name="pref_truetype_fonts_summary">Use OpenMW\'s TrueType fonts instead of the original bitmap fonts. They stay sharp at every font size and UI scale, and are needed for font sizes above 18.</string>
+    <string name="pref_truetype_fonts_summary">Sharp fonts at every size. Needed above size 18.</string>
     <string-array name="pref_font_size_values" translatable="false">
         <item>12</item>
         <item>14</item>
@@ -99,7 +99,7 @@
     <string name="action_show_screen_controls">On-Screen Controls</string>
     <string name="pref_hide_controls">Hide On-Screen Buttons</string>
     <string name="pref_handheld_mode_title">Handheld Mode</string>
-    <string name="pref_handheld_mode_summary">For devices with built-in controls. Hides the on-screen buttons. Hold L1 for the radial menu. R1 opens the journal. Select rests, or opens the Android keyboard in a text field. L3 shows the pointer in menus. Hold Select and press L3 or R3 for the performance overlay.</string>
+    <string name="pref_handheld_mode_summary">For built-in controls: no on-screen buttons, L1 radial menu, R1 journal, Select rests.</string>
     <string name="config_was_reset">Static configuration was reset to default values</string>
     <string name="user_config_was_reset">User configuration was reset to default values</string>
     <string name="user_resources_was_reset">User resources were reset to default values</string>
@@ -319,9 +319,9 @@ OpenMW by the OpenMW Team since 2008</string>
     <string name="user_data_dir_error_message">OpenMW cannot write to this folder:\n%1$s\n(%2$s)\n\nThe previous saves folder is still used.</string>
     <string name="user_data_dir_unavailable">The saves folder is not available or not writable:\n%1$s\n\nInsert the storage, check the storage permission, or choose another saves folder in the launcher.</string>
     <string name="pref_swipe_to_look_title">Swipe to Look</string>
-    <string name="pref_swipe_to_look_summary">Swipe on free screen space to look around during gameplay. The right stick and menus keep working as before.</string>
+    <string name="pref_swipe_to_look_summary">Swipe on free screen space to look around.</string>
     <string name="pref_cheats_enabled_title">Enable cheats</string>
-    <string name="pref_cheats_enabled_summary">Adds a Cheats page to the in-game settings (Options > Scripts) that can give your character gold. Off by default.</string>
+    <string name="pref_cheats_enabled_summary">In-game page Options &gt; Scripts &gt; Cheats to get gold.</string>
 
     <!-- Launcher home screen -->
     <string name="launcher_play">Play</string>

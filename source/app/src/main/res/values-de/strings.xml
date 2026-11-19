@@ -23,7 +23,7 @@
     <string name="pref_uiScaling">UI-Skalierungsfaktor</string>
     <string name="pref_font_size">Schriftgröße</string>
     <string name="pref_truetype_fonts_title">Scharfe Schriften</string>
-    <string name="pref_truetype_fonts_summary">Die TrueType-Schriften von OpenMW statt der originalen Bitmap-Schriften verwenden. Sie bleiben bei jeder Schriftgröße und UI-Skalierung scharf und sind für Schriftgrößen über 18 nötig.</string>
+    <string name="pref_truetype_fonts_summary">Scharfe Schriften in jeder Größe. Ab Größe 18 nötig.</string>
     <string name="uiScaling_auto">Automatisch (%1$.2f)</string>
     <string name="pref_screen_keeper">Bildschirm immer eingeschaltet lassen</string>
     <string name="pref_touchpadSensitivity">Empfindlichkeit des virtuellen Touchpads</string>
@@ -34,7 +34,7 @@
     <string name="action_show_screen_controls">Bildschirmsteuerung</string>
     <string name="pref_hide_controls">Bildschirmtasten ausblenden</string>
     <string name="pref_handheld_mode_title">Handheld-Modus</string>
-    <string name="pref_handheld_mode_summary">Für Geräte mit eingebauten Bedienelementen. Blendet die Bildschirmtasten aus. L1 gedrückt halten für das Radialmenü. R1 öffnet das Tagebuch. Select rastet, oder öffnet in einem Textfeld die Android-Tastatur. L3 zeigt den Zeiger in Menüs. Select gedrückt halten und L3 oder R3 für die Leistungsanzeige.</string>
+    <string name="pref_handheld_mode_summary">Für eingebaute Tasten: keine Bildschirmtasten, L1 Radialmenü, R1 Tagebuch, Select rasten.</string>
     <string name="config_was_reset">Statische Konfiguration wurde auf Standardwerte zurückgesetzt</string>
     <string name="user_config_was_reset">Benutzerkonfiguration wurde auf Standardwerte zurückgesetzt</string>
     <string name="user_resources_was_reset">Benutzerressourcen wurden auf Standardwerte zurückgesetzt</string>
@@ -220,9 +220,9 @@
     <string name="user_data_dir_error_message">OpenMW kann nicht in diesen Ordner schreiben:\n%1$s\n(%2$s)\n\nEs wird weiterhin der bisherige Ordner verwendet.</string>
     <string name="user_data_dir_unavailable">Der Ordner für Spielstände ist nicht verfügbar oder nicht beschreibbar:\n%1$s\n\nSetze den Speicher ein, prüfe die Speicherberechtigung oder wähle im Launcher einen anderen Ordner.</string>
     <string name="pref_swipe_to_look_title">Wischen zum Umsehen</string>
-    <string name="pref_swipe_to_look_summary">Auf freier Bildschirmfläche wischen, um dich im Spiel umzusehen. Der rechte Stick und die Menüs funktionieren weiter wie bisher.</string>
+    <string name="pref_swipe_to_look_summary">Auf freier Fläche wischen, um dich umzusehen.</string>
     <string name="pref_cheats_enabled_title">Cheats aktivieren</string>
-    <string name="pref_cheats_enabled_summary">Fügt im Spiel unter Optionen > Skripte eine Seite „Cheats“ hinzu, über die du deiner Figur Gold geben kannst. Standardmäßig aus.</string>
+    <string name="pref_cheats_enabled_summary">Seite im Spiel unter Optionen &gt; Skripte &gt; Cheats für Gold.</string>
 
     <!-- Launcher home screen -->
     <string name="launcher_play">Spielen</string>
