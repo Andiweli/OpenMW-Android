@@ -1,0 +1,13 @@
+Page: "Cheats"
+PageDescription: "Single-player conveniences. Use at your own risk."
+
+Group: "Gold"
+
+amount: "Amount"
+amountDescription: "How much gold to add when you turn on \"Give gold\" below."
+
+giveGold: "Give gold"
+giveGoldDescription: "Turning this on adds the amount above to your inventory, then turns itself back off."
+
+goldAdded: "+{amount} gold"
+cheatError: "Cheats: {error}"

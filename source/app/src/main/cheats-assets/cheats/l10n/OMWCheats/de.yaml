@@ -1,0 +1,13 @@
+Page: "Cheats"
+PageDescription: "Hilfen für das Einzelspiel. Nutzung auf eigene Gefahr."
+
+Group: "Gold"
+
+amount: "Menge"
+amountDescription: "Wie viel Gold hinzugefügt wird, wenn du unten \"Gold geben\" einschaltest."
+
+giveGold: "Gold geben"
+giveGoldDescription: "Fügt beim Einschalten die obige Menge deinem Inventar hinzu und schaltet sich danach wieder aus."
+
+goldAdded: "+{amount} Gold"
+cheatError: "Cheats: {error}"
