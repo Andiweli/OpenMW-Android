@@ -223,4 +223,32 @@
     <string name="pref_swipe_to_look_summary">Проводите пальцем по свободной части экрана, чтобы осматриваться в игре. Правый стик и меню работают как прежде.</string>
     <string name="pref_cheats_enabled_title">Включить читы</string>
     <string name="pref_cheats_enabled_summary">Добавляет в настройки игры (Параметры > Скрипты) страницу «Читы», позволяющую выдать персонажу золото. По умолчанию выключено.</string>
+
+    <!-- Launcher home screen -->
+    <string name="launcher_play">Играть</string>
+    <string name="launcher_up_to_date">Актуально</string>
+    <string name="launcher_update">Обновить</string>
+    <string name="launcher_section_game_data">Данные игры</string>
+    <string name="launcher_section_settings">Настройки</string>
+    <string name="launcher_game_data_title">Morrowind</string>
+    <string name="launcher_status_found">Найдено</string>
+    <string name="launcher_status_missing">Не найдено</string>
+    <string name="launcher_status_not_chosen">Не выбрано</string>
+    <string name="launcher_game_data_not_chosen">Выберите папку, в которой есть Data Files и Morrowind.ini.</string>
+    <string name="launcher_choose_folder">Выбрать папку</string>
+    <string name="launcher_language">Язык · %1$s</string>
+    <string name="launcher_tile_game_settings_summary">Геймплей, движок, дополнительно</string>
+    <string name="launcher_tile_graphics">Графика и производительность</string>
+    <string name="launcher_tile_graphics_summary">Разрешение, шейдеры, частота кадров</string>
+    <string name="launcher_tile_controls">Управление</string>
+    <string name="launcher_tile_controls_summary">Контроллер, сенсор, портативный режим</string>
+    <string name="launcher_tile_audio">Звук</string>
+    <string name="launcher_tile_audio_summary">Эффект Доплера, позиция слушателя</string>
+    <string name="launcher_tile_mods">Моды</string>
+    <string name="launcher_tile_mods_summary">Плагины, порядок загрузки, растительность</string>
+    <string name="launcher_tile_help">Справка</string>
+    <string name="launcher_tile_help_summary">О программе, сброс, GitHub</string>
+    <string name="launcher_hint_navigate">Крестовина: навигация · A: выбор</string>
+    <string name="launcher_hint_play">START: играть</string>
+    <string name="launcher_help_github">Проект на GitHub</string>
 </resources>

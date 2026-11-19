@@ -21,14 +21,10 @@
 package ui.fragments
 
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.preference.CheckBoxPreference
 import android.preference.EditTextPreference
 import android.preference.ListPreference
@@ -36,48 +32,31 @@ import android.preference.Preference
 import android.preference.PreferenceFragment
 import android.preference.PreferenceGroup
 import android.text.InputType
-import android.util.Log
 import android.view.Gravity
-import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
-import com.codekidlabs.storagechooser.utils.StorageVolumeUtil
-import com.libopenmw.openmw.BuildConfig
 import com.libopenmw.openmw.R
 import constants.Constants
-import file.GameDataCheck
-import file.GameFilesLocation
-import file.GameInstaller
 
 import ui.activity.ConfigureControls
-import ui.activity.MainActivity
-import ui.activity.ModsActivity
-import ui.activity.SettingsActivity
 import utils.MyApp
-import java.io.File
 import java.util.*
 
+/**
+ * The launcher's settings lists. Each launcher area (Graphics & performance,
+ * Controls, Audio) shows only its own categories of settings.xml, chosen by
+ * [ARG_CATEGORIES]; the keys and stored values are the same as before.
+ */
 class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener {
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        // Black/OLED is intentionally limited to the launcher presentation.
-        // The normal Dark design keeps the original AppCompat grey unchanged.
-        val sharedPref = preferenceScreen.sharedPreferences
-        if (sharedPref.getInt(getString(R.string.theme), 0) == 3) {
-            view.setBackgroundColor(Color.BLACK)
-            view.findViewById<View>(android.R.id.list)?.setBackgroundColor(Color.BLACK)
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         addPreferencesFromResource(R.xml.settings)
+        keepOnlyCategories(arguments?.getStringArrayList(ARG_CATEGORIES))
         preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
 
         prepareControllerTriggerPreference()
@@ -85,11 +64,11 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
         updateHandheldState()
 
         // Make launcher entries that open another screen visually distinct.
-        listOf("pref_game_settings", "pref_mods", "pref_controls").forEach { key ->
+        listOf("pref_controls").forEach { key ->
             findPreference(key)?.widgetLayoutResource = R.layout.preference_widget_chevron
         }
 
-        findPreference("pref_uiScaling").setOnPreferenceClickListener {
+        findPreference("pref_uiScaling")?.setOnPreferenceClickListener {
             showSteppedSliderPreference(
                 key = "pref_uiScaling",
                 title = getString(R.string.pref_uiScaling),
@@ -102,12 +81,12 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
             true
         }
 
-        findPreference("pref_customResolution").setOnPreferenceClickListener {
+        findPreference("pref_customResolution")?.setOnPreferenceClickListener {
             showCustomResolutionDialog()
             true
         }
 
-        findPreference("pref_gamma").setOnPreferenceClickListener {
+        findPreference("pref_gamma")?.setOnPreferenceClickListener {
             showSteppedSliderPreference(
                 key = "pref_gamma",
                 title = getString(R.string.pref_gamma),
@@ -119,78 +98,12 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
             true
         }
 
-        findPreference("pref_controls").setOnPreferenceClickListener {
+        findPreference("pref_controls")?.setOnPreferenceClickListener {
             val intent = Intent(activity, ConfigureControls::class.java)
             this.startActivity(intent)
             true
         }
 
-        findPreference("pref_game_settings").setOnPreferenceClickListener {
-            val intent = Intent(activity, SettingsActivity::class.java)
-            this.startActivity(intent)
-            true
-        }
-
-        findPreference("pref_mods").setOnPreferenceClickListener {
-            // Just prevent crash here if data files are not selected
-            val sharedPref = preferenceScreen.sharedPreferences
-            val inst = GameInstaller(sharedPref.getString("game_files", "")!!)
-            if (!inst.check()) {
-                // A removed SD card or a denied folder is explained as such; the
-                // stored selection stays untouched either way.
-                val problem = GameFilesLocation.locateConfigured(sharedPref)
-                if (problem != null) {
-                    val (title, message) = GameFilesLocation.describe(activity, problem)
-                    showMessage(title, message)
-                } else {
-                    AlertDialog.Builder(getActivity())
-                        .setTitle(R.string.no_data_files_title)
-                        .setMessage(R.string.no_data_files_message)
-                        .setPositiveButton(android.R.string.ok) { _: DialogInterface, _: Int -> }
-                        .show()
-                }
-
-                false
-            }
-            else
-            {
-                val intent = Intent(activity, ModsActivity::class.java)
-                this.startActivity(intent)
-                true
-            }
-        }
-
-        findPreference("game_files").setOnPreferenceClickListener {
-            FolderChooser.show(activity, fragmentManager) { path -> setupData(path) }
-            true
-        }
-
-        // On AAOS, prefer the app-owned shared-media directory. This remains a
-        // normal filesystem path, so the native OpenMW core does not need SAF/VFS
-        // changes and the game data is not copied into Android/data.
-        autoSelectAutomotiveGameFilesIfAvailable()
-    }
-
-    private fun autoSelectAutomotiveGameFilesIfAvailable() {
-        if (!BuildConfig.IS_AUTOMOTIVE_BUILD)
-            return
-
-        val sharedPref = preferenceScreen.sharedPreferences
-        val currentPath = sharedPref.getString("game_files", "") ?: ""
-        if (currentPath.isNotEmpty() && GameInstaller(currentPath).check())
-            return
-
-        val mediaDirs = activity.externalMediaDirs
-        for (mediaRoot in mediaDirs) {
-            if (mediaRoot == null)
-                continue
-
-            val candidate = File(mediaRoot, "Morrowind")
-            if (GameInstaller(candidate.absolutePath).check()) {
-                setupData(candidate.absolutePath, showProgress = false)
-                return
-            }
-        }
     }
 
     private fun dp(value: Int): Int =
@@ -426,94 +339,6 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
         dialog.show()
     }
 
-    /**
-     * Checks the specified path for a valid morrowind installation by actually reading
-     * the required files, generates config files and only then saves the path.
-     *
-     * The check runs off the UI thread. An invalid or unreadable selection never changes
-     * the stored game folder or its openmw.fallback.cfg; the reason is shown instead.
-     */
-    private fun setupData(path: String, showProgress: Boolean = true) {
-        val hostActivity = activity ?: return
-        val sharedPref = preferenceScreen.sharedPreferences
-        val encoding = sharedPref.getString("pref_encoding", GameInstaller.DEFAULT_CHARSET_PREF)!!
-        val hadSelection = sharedPref.getString(GameFilesLocation.PREF_GAME_FILES, "").orEmpty().isNotEmpty()
-        val gameDir = File(path).absoluteFile
-
-        // Remember which volume holds the folder, so that a removed SD card can later be
-        // reported as such instead of as a missing folder.
-        val storage = StorageVolumeUtil.findStorageContaining(hostActivity, gameDir.path)
-        val storageRoot = storage?.storagePath
-        val storageId = storage?.storageId
-
-        val progress = if (showProgress) {
-            AlertDialog.Builder(hostActivity)
-                .setMessage(R.string.game_files_checking)
-                .setCancelable(false)
-                .show()
-        } else {
-            null
-        }
-        val mainHandler = Handler(Looper.getMainLooper())
-
-        Thread({
-            val check = GameFilesLocation.validator(storageRoot).validate(gameDir)
-
-            var configReady = false
-            if (check is GameDataCheck.Valid) {
-                val inst = GameInstaller(gameDir.path)
-                val output = inst.convertIniToString(encoding)
-                configReady = output != null && GameInstaller.writeFallbackConfig(output)
-
-                if (configReady) {
-                    inst.setNomedia()
-                    sharedPref.edit()
-                        .putString(GameFilesLocation.PREF_GAME_FILES, gameDir.path)
-                        .putString(GameFilesLocation.PREF_STORAGE_ROOT, storageRoot)
-                        .putString(GameFilesLocation.PREF_STORAGE_ID, storageId)
-                        .commit()
-                }
-            }
-
-            Log.i(TAG, "Game folder check: path=${gameDir.path}; storage=$storageId at $storageRoot; " +
-                "result=$check; configReady=$configReady")
-
-            mainHandler.post {
-                progress?.dismiss()
-                if (!isAdded)
-                    return@post
-
-                val unchanged = if (hadSelection) "\n\n" + getString(R.string.game_files_selection_unchanged) else ""
-                when {
-                    check is GameDataCheck.Valid && configReady -> Unit
-                    check is GameDataCheck.Valid ->
-                        showMessage(getString(R.string.data_error_title),
-                            getString(R.string.ini_error_message) + unchanged)
-                    else -> {
-                        val (title, message) = GameFilesLocation.describe(hostActivity, check)
-                        val url = if (check is GameDataCheck.MissingGameFiles) "https://omw.xyz.is/game.html" else null
-                        showMessage(title, message + unchanged, url)
-                    }
-                }
-            }
-        }, "OpenMW-game-files-check").start()
-    }
-
-    private fun showMessage(title: String, message: String, url: String? = null) {
-        val dialog = AlertDialog.Builder(activity)
-            .setTitle(title)
-            .setMessage(message)
-            .setPositiveButton(android.R.string.ok) { _: DialogInterface, _: Int -> }
-
-        if (url != null) {
-            dialog.setNeutralButton(R.string.dialog_howto) { _, _ ->
-                (activity as MainActivity).openUrl(url)
-            }
-        }
-
-        dialog.show()
-    }
-
     override fun onResume() {
         super.onResume()
         for (i in 0 until preferenceScreen.preferenceCount) {
@@ -527,6 +352,22 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
                 updatePreference(preference, preference.key)
             }
         }
+    }
+
+    override fun onDestroy() {
+        preferenceScreen.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
+        super.onDestroy()
+    }
+
+    /** Removes every category of the screen whose key is not in [keys]; null keeps all. */
+    private fun keepOnlyCategories(keys: List<String>?) {
+        if (keys == null)
+            return
+        val screen = preferenceScreen
+        val remove = (0 until screen.preferenceCount)
+            .map { screen.getPreference(it) }
+            .filter { it.key == null || it.key !in keys }
+        remove.forEach { screen.removePreference(it) }
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
@@ -588,12 +429,12 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
      */
     private fun updateGammaState() {
         val sharedPref = preferenceScreen.sharedPreferences
-        findPreference("pref_gamma").isEnabled = true
+        findPreference("pref_gamma")?.isEnabled = true
 
 	var isnohighpenabled = false;
         if(sharedPref.getString("pref_shadersDir_v2", "") == "modified")
 		isnohighpenabled = true
-        findPreference("pref_nohighp").isEnabled = isnohighpenabled
+        findPreference("pref_nohighp")?.isEnabled = isnohighpenabled
 /*
 	var isAdditionalAnimSourcesEnabled = false;
         if(sharedPref.getBoolean("gs_use_additional_animation_sources", false) == true) isAdditionalAnimSourcesEnabled = true
@@ -603,7 +444,12 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
     }
 
     companion object {
-        private const val TAG = "OpenMW-Storage"
+        const val ARG_CATEGORIES = "categories"
+
+        fun newInstance(categories: List<String>): FragmentSettings =
+            FragmentSettings().apply {
+                arguments = Bundle().apply { putStringArrayList(ARG_CATEGORIES, ArrayList(categories)) }
+            }
     }
 
 }

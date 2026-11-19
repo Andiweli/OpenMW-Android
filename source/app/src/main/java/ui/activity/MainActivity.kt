@@ -32,9 +32,7 @@ import android.preference.PreferenceManager
 import android.system.ErrnoException
 import android.system.Os
 import android.util.DisplayMetrics
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.Lifecycle
 import android.util.Log
 import android.view.Menu
@@ -60,7 +58,6 @@ import mods.ModType
 import mods.ModsCollection
 import mods.ModsDatabaseOpenHelper
 import mods.ModsPaths
-import ui.fragments.FragmentSettings
 import permission.PermissionHelper
 import utils.MyApp
 import utils.Utils.hideAndroidControls
@@ -91,6 +88,12 @@ class MainActivity : AppCompatActivity() {
     private var launcherSavedState: Bundle? = null
 
     private var legacyMigrationDialog: ProgressDialog? = null
+
+    // The home screen (see showHome). Rebuilt when the window size changes.
+    private var homeView: ui.launcher.LauncherHomeView? = null
+    private var gameFilesSetup: ui.fragments.GameFilesSetup? = null
+    private val updateListener: (ui.launcher.LauncherUpdate.State) -> Unit =
+        { state -> homeView?.setUpdateState(state) }
     private val legacyMigrationListener: (MyApp.LegacyStorageMigrationResult) -> Unit =
         { result -> onLegacyStorageMigrationFinished(result) }
 
@@ -170,37 +173,19 @@ class MainActivity : AppCompatActivity() {
 
         PermissionHelper.getWriteExternalStoragePermission(this@MainActivity)
 
-        // Keep the opaque black Android starting window only for the short
-        // pre-launcher loading phase. Once the launcher hierarchy is installed,
-        // restore the stock themed background unless the explicit OLED launcher
-        // design is selected.
-        val launcherThemePreference = prefs.getInt(getString(R.string.theme), 0)
-        setContentView(R.layout.main)
-        if (launcherThemePreference == 3) {
-            applyOledLauncherWindowBackground()
-        } else {
-            restoreOriginalLauncherWindowBackground()
-        }
+        // The black starting window was only for the short loading phase; the
+        // launcher itself has one look, the brown home screen.
+        window.setBackgroundDrawable(
+            android.graphics.drawable.ColorDrawable(ui.launcher.LauncherStyle.PANEL)
+        )
         migrateObjectPagingMinSizeDefault()
         migrateOpenMw050SettingsPreferences()
         migrateOpenMw051SettingsPreferences()
         migrateOpenMw051GroundcoverPreferences()
 
-        if(launcherThemePreference == 0) AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-        else if(launcherThemePreference == 1) AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-
-        fragmentManager.beginTransaction()
-            .replace(R.id.content_frame, FragmentSettings()).commit()
-
-        val launcherToolbar =
-            findViewById<androidx.appcompat.widget.Toolbar>(R.id.main_toolbar)
-        setSupportActionBar(launcherToolbar)
-        applyLauncherSurfaceTheme(launcherToolbar)
-        installUserConfigurationOverflow(launcherToolbar)
-
-        val fab = findViewById<FloatingActionButton>(R.id.fab)
-        fab.setOnClickListener { checkStartGame() }
+        gameFilesSetup = ui.fragments.GameFilesSetup(this) { refreshHome() }
+        showHome()
+        gameFilesSetup?.autoSelectAutomotiveIfAvailable()
 
         if (prefs.getString("bugsnag_consent", "")!! == "") {
             askBugsnagConsent()
@@ -216,48 +201,6 @@ class MainActivity : AppCompatActivity() {
             )
             skipGuiHandler.postDelayed(skipGuiAutoLaunchRunnable, 800L)
         }
-    }
-
-    private fun restoreOriginalLauncherWindowBackground() {
-        // The startup panel deliberately paints the Window black before the launcher exists.
-        // Once R.layout.main is installed, restore the Window background resolved from the
-        // original MyTheme/AppCompat DayNight theme. Do not hard-code a grey here: this is
-        // exactly the background the unmodified launcher inherited from its theme.
-        val value = android.util.TypedValue()
-        if (!theme.resolveAttribute(android.R.attr.windowBackground, value, true)) {
-            window.setBackgroundDrawable(null)
-            return
-        }
-
-        val background = when {
-            value.resourceId != 0 -> resources.getDrawable(value.resourceId, theme)
-            value.type in android.util.TypedValue.TYPE_FIRST_COLOR_INT..android.util.TypedValue.TYPE_LAST_COLOR_INT ->
-                android.graphics.drawable.ColorDrawable(value.data)
-            else -> null
-        }
-        window.setBackgroundDrawable(background)
-    }
-
-    private fun isOledLauncherTheme(): Boolean =
-        prefs.getInt(getString(R.string.theme), 0) == 3
-
-    private fun applyOledLauncherWindowBackground() {
-        val black = android.graphics.Color.BLACK
-        window.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(black))
-        window.statusBarColor = black
-        window.navigationBarColor = black
-    }
-
-    private fun applyLauncherSurfaceTheme(toolbar: androidx.appcompat.widget.Toolbar) {
-        if (!isOledLauncherTheme()) {
-            return
-        }
-
-        val black = android.graphics.Color.BLACK
-        applyOledLauncherWindowBackground()
-        findViewById<android.view.View>(R.id.drawer_layout)?.setBackgroundColor(black)
-        findViewById<android.view.View>(R.id.content_frame)?.setBackgroundColor(black)
-        toolbar.setBackgroundColor(black)
     }
 
     private fun createOpaqueLoadingPanel(): android.view.View {
@@ -282,7 +225,136 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /** Builds the home screen; the actions open the launcher areas. */
+    private fun showHome() {
+        val view = ui.launcher.LauncherHomeView(this, object : ui.launcher.LauncherHomeView.Actions {
+            override fun play() = checkStartGame()
+            override fun chooseGameFolder() { gameFilesSetup?.choose() }
+            override fun chooseLanguage() = showLanguageDialog()
+            override fun openGameSettings() = startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
+            override fun openGraphics() = startActivity(
+                LauncherPageActivity.intent(this@MainActivity, getString(R.string.launcher_tile_graphics), "cat_graphics", "cat_performance")
+            )
+            override fun openControls() = startActivity(
+                LauncherPageActivity.intent(this@MainActivity, getString(R.string.launcher_tile_controls), "cat_ui")
+            )
+            override fun openAudio() = startActivity(
+                LauncherPageActivity.intent(this@MainActivity, getString(R.string.launcher_tile_audio), "cat_audio")
+            )
+            override fun openMods() = openModsIfGameFilesReady()
+            override fun openHelp() = showHelpDialog()
+            override fun openReleases() = openUrl(ui.launcher.LauncherUpdate.RELEASES)
+        })
+        view.setVersion(BuildConfig.VERSION_NAME)
+        homeView = view
+        setContentView(view)
+        refreshHome()
+
+        // Google Play updates the Automotive build itself, so it shows no update button.
+        if (!BuildConfig.IS_AUTOMOTIVE_BUILD)
+            ui.launcher.LauncherUpdate.check(BuildConfig.VERSION_NAME, updateListener)
+
+        view.playButton.requestFocus()
+    }
+
+    /** Game data status and language on the home screen. */
+    private fun refreshHome() {
+        val view = homeView ?: return
+        val path = prefs.getString(GameFilesLocation.PREF_GAME_FILES, "").orEmpty()
+        when {
+            path.isEmpty() -> view.setGameData(
+                ui.launcher.LauncherHomeView.GameDataStatus.NOT_CHOSEN,
+                getString(R.string.launcher_game_data_not_chosen)
+            )
+            GameInstaller(path).check() -> view.setGameData(ui.launcher.LauncherHomeView.GameDataStatus.FOUND, path)
+            else -> view.setGameData(ui.launcher.LauncherHomeView.GameDataStatus.MISSING, path)
+        }
+
+        val values = resources.getStringArray(R.array.pref_encoding_values)
+        val entries = resources.getStringArray(R.array.pref_encoding_entries)
+        val current = prefs.getString("pref_encoding", GameInstaller.DEFAULT_CHARSET_PREF)
+        val entry = entries.getOrNull(values.indexOf(current)) ?: current.orEmpty()
+        // "Lateinisch (win1252)" on the button reads "Lateinisch".
+        view.setLanguage(entry.substringBefore(" (").trim())
+    }
+
+    private fun showLanguageDialog() {
+        val values = resources.getStringArray(R.array.pref_encoding_values)
+        val entries = resources.getStringArray(R.array.pref_encoding_entries)
+        val current = values.indexOf(prefs.getString("pref_encoding", GameInstaller.DEFAULT_CHARSET_PREF))
+        AlertDialog.Builder(this)
+            .setTitle(R.string.pref_encoding)
+            .setSingleChoiceItems(entries, current) { dialog, which ->
+                prefs.edit().putString("pref_encoding", values[which]).apply()
+                dialog.dismiss()
+                refreshHome()
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
+    /** Opens the mod list, or explains why the game files are not usable yet. */
+    private fun openModsIfGameFilesReady() {
+        val inst = GameInstaller(prefs.getString(GameFilesLocation.PREF_GAME_FILES, "")!!)
+        if (inst.check()) {
+            startActivity(Intent(this, ModsActivity::class.java))
+            return
+        }
+        // A removed SD card or a denied folder is explained as such; the stored
+        // selection stays untouched either way.
+        val problem = GameFilesLocation.locateConfigured(prefs)
+        val (title, message) = if (problem != null) {
+            GameFilesLocation.describe(this, problem)
+        } else {
+            Pair(getString(R.string.no_data_files_title), getString(R.string.no_data_files_message))
+        }
+        AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(android.R.string.ok, null)
+            .show()
+    }
+
+    /** "Hilfe & Info": the former toolbar menu, plus the project page. */
+    private fun showHelpDialog() {
+        val entries = mutableListOf<Pair<String, () -> Unit>>()
+        entries += getString(R.string.action_about) to { showAboutDialog() }
+        entries += getString(R.string.launcher_help_github) to { openUrl(PROJECT_URL) }
+        entries += getString(R.string.action_reset_user_config) to {
+            removeUserConfig()
+            Toast.makeText(this, getString(R.string.user_config_was_reset), Toast.LENGTH_SHORT).show()
+        }
+        entries += getString(R.string.action_reset_user_resources) to {
+            removeStaticFiles()
+            removeResourceFiles()
+            Toast.makeText(this, getString(R.string.user_resources_was_reset), Toast.LENGTH_SHORT).show()
+        }
+        if (MyApp.haveBugsnagApiKey)
+            entries += getString(R.string.action_bugsnag_consent) to { askBugsnagConsent() }
+
+        AlertDialog.Builder(this)
+            .setTitle(R.string.launcher_tile_help)
+            .setItems(entries.map { it.first }.toTypedArray()) { _, which -> entries[which].second() }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        // Rotation or a resized window: lay the home screen out again for the new width.
+        if (homeView != null)
+            showHome()
+    }
+
     override fun dispatchKeyEvent(event: android.view.KeyEvent): Boolean {
+        // START on a controller starts the game from the home screen, as the hint says.
+        if (event.keyCode == android.view.KeyEvent.KEYCODE_BUTTON_START && homeView != null &&
+            !skipGuiAutoLaunchPending) {
+            if (event.action == android.view.KeyEvent.ACTION_UP)
+                checkStartGame()
+            return true
+        }
+
         if (event.keyCode == android.view.KeyEvent.KEYCODE_VOLUME_UP) {
             if (skipGuiAutoLaunchPending &&
                 event.action == android.view.KeyEvent.ACTION_DOWN) {
@@ -309,6 +381,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
+        ui.launcher.LauncherUpdate.removeListener(updateListener)
         skipGuiHandler.removeCallbacks(skipGuiAutoLaunchRunnable)
         skipGuiAutoLaunchPending = false
         MyApp.app.removeLegacyUserStorageMigrationListener(legacyMigrationListener)
@@ -331,6 +404,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        // The game folder or language may have changed on another screen.
+        refreshHome()
 
         // Migrate the legacy /storage/emulated/0/omw user tree after the
         // Activity has had a chance to request legacy game-file storage
@@ -2602,52 +2677,6 @@ class MainActivity : AppCompatActivity() {
         return value.data
     }
 
-    /**
-     * The stock AppCompat overflow popup can overlap its three-dot anchor.
-     * Install a launcher-owned overflow button instead so the popup is always
-     * positioned BELOW the icon and can have a proper section heading.
-     */
-    private fun installUserConfigurationOverflow(
-        toolbar: androidx.appcompat.widget.Toolbar
-    ) {
-        val overflow = android.widget.TextView(this).apply {
-            text = "\u22ee"
-            textSize = 29f
-            gravity = android.view.Gravity.CENTER
-            contentDescription = getString(R.string.user_configuration)
-            isClickable = true
-            isFocusable = true
-            setTextColor(
-                launcherThemeColor(
-                    android.R.attr.textColorPrimary,
-                    android.graphics.Color.WHITE
-                )
-            )
-
-            val selectable = android.util.TypedValue()
-            if (theme.resolveAttribute(
-                    android.R.attr.selectableItemBackgroundBorderless,
-                    selectable,
-                    true
-                ) && selectable.resourceId != 0
-            ) {
-                setBackgroundResource(selectable.resourceId)
-            }
-
-            layoutParams = androidx.appcompat.widget.Toolbar.LayoutParams(
-                launcherDp(48),
-                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-                android.view.Gravity.END
-            )
-
-            setOnClickListener { anchor ->
-                showUserConfigurationPopup(anchor)
-            }
-        }
-
-        toolbar.addView(overflow)
-    }
-
     private fun launcherPopupRow(
         text: String,
         primaryColor: Int
@@ -2672,220 +2701,6 @@ class MainActivity : AppCompatActivity() {
                 setBackgroundResource(selectable.resourceId)
             }
         }
-
-    private fun showLauncherPopup(
-        anchor: android.view.View,
-        title: String,
-        entries: List<Pair<String, () -> Unit>>
-    ) {
-        val oledTheme = isOledLauncherTheme()
-        val backgroundColor = if (oledTheme) {
-            android.graphics.Color.BLACK
-        } else {
-            launcherThemeColor(
-                android.R.attr.colorBackground,
-                android.graphics.Color.WHITE
-            )
-        }
-        val primaryColor = if (oledTheme) {
-            android.graphics.Color.WHITE
-        } else {
-            launcherThemeColor(
-                android.R.attr.textColorPrimary,
-                android.graphics.Color.BLACK
-            )
-        }
-        val secondaryColor = if (oledTheme) {
-            android.graphics.Color.rgb(176, 176, 176)
-        } else {
-            launcherThemeColor(
-                android.R.attr.textColorSecondary,
-                primaryColor
-            )
-        }
-
-        val container = android.widget.LinearLayout(this).apply {
-            orientation = android.widget.LinearLayout.VERTICAL
-            setPadding(0, launcherDp(6), 0, launcherDp(6))
-
-            background = android.graphics.drawable.GradientDrawable().apply {
-                setColor(backgroundColor)
-                cornerRadius = launcherDp(5).toFloat()
-            }
-        }
-
-        val heading = android.widget.TextView(this).apply {
-            text = title
-            textSize = 13f
-            typeface = android.graphics.Typeface.DEFAULT_BOLD
-            setTextColor(secondaryColor)
-            gravity = android.view.Gravity.CENTER_VERTICAL
-            setPadding(launcherDp(18), launcherDp(8), launcherDp(18), launcherDp(6))
-        }
-        container.addView(
-            heading,
-            android.widget.LinearLayout.LayoutParams(
-                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-                android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-        )
-
-        val divider = android.view.View(this).apply {
-            setBackgroundColor(secondaryColor)
-            alpha = 0.18f
-        }
-        container.addView(
-            divider,
-            android.widget.LinearLayout.LayoutParams(
-                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-                launcherDp(1)
-            )
-        )
-
-        val popupWidth = launcherDp(286)
-        lateinit var popup: android.widget.PopupWindow
-
-        entries.forEach { entry ->
-            val row = launcherPopupRow(entry.first, primaryColor)
-            row.setOnClickListener {
-                popup.dismiss()
-                entry.second.invoke()
-            }
-            container.addView(
-                row,
-                android.widget.LinearLayout.LayoutParams(
-                    android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-                    android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-                )
-            )
-        }
-
-        popup = android.widget.PopupWindow(
-            container,
-            popupWidth,
-            android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
-            true
-        ).apply {
-            isOutsideTouchable = true
-            setBackgroundDrawable(
-                android.graphics.drawable.ColorDrawable(
-                    android.graphics.Color.TRANSPARENT
-                )
-            )
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                elevation = launcherDp(8).toFloat()
-            }
-        }
-
-        // Right-align with the three-dot anchor while keeping the popup entirely
-        // below it. showAsDropDown(), unlike the standard overflow implementation,
-        // does not intentionally overlap the anchor.
-        val xOffset = anchor.width - popupWidth
-        popup.showAsDropDown(anchor, xOffset, launcherDp(2))
-    }
-
-    private fun showUserConfigurationPopup(anchor: android.view.View) {
-        val entries = mutableListOf<Pair<String, () -> Unit>>()
-
-        entries += getString(R.string.action_reset_user_config) to {
-            removeUserConfig()
-            android.widget.Toast.makeText(
-                this,
-                getString(R.string.user_config_was_reset),
-                android.widget.Toast.LENGTH_SHORT
-            ).show()
-        }
-
-        entries += getString(R.string.action_reset_user_resources) to {
-            removeStaticFiles()
-            removeResourceFiles()
-            android.widget.Toast.makeText(
-                this,
-                getString(R.string.user_resources_was_reset),
-                android.widget.Toast.LENGTH_SHORT
-            ).show()
-        }
-
-        entries += getString(R.string.action_theme_submenu) to {
-            showThemePopup(anchor)
-        }
-
-        entries += getString(R.string.action_about) to {
-            showAboutDialog()
-        }
-
-        if (MyApp.haveBugsnagApiKey) {
-            entries += getString(R.string.action_bugsnag_consent) to {
-                askBugsnagConsent()
-            }
-        }
-
-        showLauncherPopup(anchor, getString(R.string.user_configuration), entries)
-    }
-
-    private fun setLauncherTheme(
-        preferenceValue: Int,
-        nightMode: Int,
-        displayNameRes: Int
-    ) {
-        val previousPreference = prefs.getInt(getString(R.string.theme), 0)
-        prefs.edit()
-            .putInt(getString(R.string.theme), preferenceValue)
-            .apply()
-
-        if (previousPreference != preferenceValue) {
-            if (androidx.appcompat.app.AppCompatDelegate.getDefaultNightMode() == nightMode) {
-                // Dark and Black/OLED both use MODE_NIGHT_YES, so switching
-                // between them otherwise would not recreate the launcher.
-                recreate()
-            } else {
-                androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(nightMode)
-            }
-        }
-
-        android.widget.Toast.makeText(
-            this,
-            getString(R.string.theme_set_to, getString(displayNameRes)),
-            android.widget.Toast.LENGTH_SHORT
-        ).show()
-    }
-
-    private fun showThemePopup(anchor: android.view.View) {
-        showLauncherPopup(
-            anchor,
-            getString(R.string.action_theme),
-            listOf(
-                getString(R.string.action_theme_system) to {
-                    setLauncherTheme(
-                        0,
-                        androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
-                        R.string.action_theme_system
-                    )
-                },
-                getString(R.string.action_theme_light) to {
-                    setLauncherTheme(
-                        1,
-                        androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO,
-                        R.string.action_theme_light
-                    )
-                },
-                getString(R.string.action_theme_dark) to {
-                    setLauncherTheme(
-                        2,
-                        androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES,
-                        R.string.action_theme_dark
-                    )
-                },
-                getString(R.string.action_theme_oled) to {
-                    setLauncherTheme(
-                        3,
-                        androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES,
-                        R.string.action_theme_oled
-                    )
-                }
-            )
-        )
-    }
 
     /**
      * 3rdparty-licenses.txt contains concatenated licence texts. Most top-level
@@ -3076,7 +2891,7 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        // The launcher owns its overflow popup so it can stay below the three-dot anchor.
+        // The home screen has no toolbar menu; its entries are under "Help & Info".
         menu.clear()
         return true
     }
@@ -3096,48 +2911,6 @@ class MainActivity : AppCompatActivity() {
                 true
             }
 
-            R.id.action_theme_system -> {
-                with (prefs.edit()) {
-                    putInt(getString(R.string.theme), 0)
-                    apply()
-                }
-
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-
-                Toast.makeText(this, getString(R.string.theme_set_to, getString(R.string.action_theme_system)), Toast.LENGTH_SHORT).show()
-                true
-            }
-
-            R.id.action_theme_light -> {
-                with (prefs.edit()) {
-                    putInt(getString(R.string.theme), 1)
-                    apply()
-                }
-
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-
-                Toast.makeText(this, getString(R.string.theme_set_to, getString(R.string.action_theme_light)), Toast.LENGTH_SHORT).show()
-                true
-            }
-
-            R.id.action_theme_dark -> {
-                setLauncherTheme(
-                    2,
-                    AppCompatDelegate.MODE_NIGHT_YES,
-                    R.string.action_theme_dark
-                )
-                true
-            }
-
-            R.id.action_theme_oled -> {
-                setLauncherTheme(
-                    3,
-                    AppCompatDelegate.MODE_NIGHT_YES,
-                    R.string.action_theme_oled
-                )
-                true
-            }
-
             R.id.action_about -> {
                 showAboutDialog()
                 true
@@ -3154,6 +2927,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val TAG = "OpenMW-Launcher"
+        private const val PROJECT_URL = "https://github.com/Andiweli/OpenMW-Android"
 
         // v11.x shared custom-resolution state. MouseCursor and GameActivity
         // both reference these fields, so they must remain in this companion.

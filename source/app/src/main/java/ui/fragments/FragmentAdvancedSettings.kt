@@ -23,6 +23,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.preference.EditTextPreference
 import android.preference.PreferenceFragment
 import android.util.Log
 import com.libopenmw.openmw.BuildConfig
@@ -32,7 +33,8 @@ import file.UserDataLocation
 import java.io.File
 
 /**
- * Game settings > Advanced: the saves folder and the in-game cheats switch.
+ * Game settings > Advanced: the saves folder, the in-game cheats switch and the
+ * start options (skip the launcher, extra command line and environment).
  */
 class FragmentAdvancedSettings : PreferenceFragment(), OnSharedPreferenceChangeListener {
 
@@ -54,12 +56,12 @@ class FragmentAdvancedSettings : PreferenceFragment(), OnSharedPreferenceChangeL
                 true
             }
         }
-        updateUserDataSummary()
+        updateSummaries()
     }
 
     override fun onResume() {
         super.onResume()
-        updateUserDataSummary()
+        updateSummaries()
     }
 
     override fun onDestroy() {
@@ -68,11 +70,14 @@ class FragmentAdvancedSettings : PreferenceFragment(), OnSharedPreferenceChangeL
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
-        if (key == UserDataLocation.PREF_USER_DATA_DIR)
-            updateUserDataSummary()
+        updateSummaries()
     }
 
-    private fun updateUserDataSummary() {
+    private fun updateSummaries() {
+        // Show the entered text, as the main launcher screen did.
+        listOf("commandLine", "envLine").forEach { key ->
+            (findPreference(key) as? EditTextPreference)?.let { it.summary = it.text }
+        }
         val preference = findPreference(UserDataLocation.PREF_USER_DATA_DIR) ?: return
         val path = preferenceScreen.sharedPreferences
             .getString(UserDataLocation.PREF_USER_DATA_DIR, "").orEmpty()

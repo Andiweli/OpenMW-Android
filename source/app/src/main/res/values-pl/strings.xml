@@ -223,4 +223,32 @@
     <string name="pref_swipe_to_look_summary">Przesuwaj palcem po wolnej części ekranu, aby rozglądać się w grze. Prawy drążek i menu działają jak dotychczas.</string>
     <string name="pref_cheats_enabled_title">Włącz kody</string>
     <string name="pref_cheats_enabled_summary">Dodaje stronę „Kody” w ustawieniach gry (Opcje > Skrypty), która pozwala dać postaci złoto. Domyślnie wyłączone.</string>
+
+    <!-- Launcher home screen -->
+    <string name="launcher_play">Graj</string>
+    <string name="launcher_up_to_date">Aktualna</string>
+    <string name="launcher_update">Aktualizacja</string>
+    <string name="launcher_section_game_data">Dane gry</string>
+    <string name="launcher_section_settings">Ustawienia</string>
+    <string name="launcher_game_data_title">Morrowind</string>
+    <string name="launcher_status_found">Znaleziono</string>
+    <string name="launcher_status_missing">Nie znaleziono</string>
+    <string name="launcher_status_not_chosen">Nie wybrano</string>
+    <string name="launcher_game_data_not_chosen">Wybierz folder zawierający Data Files i Morrowind.ini.</string>
+    <string name="launcher_choose_folder">Wybierz folder</string>
+    <string name="launcher_language">Język · %1$s</string>
+    <string name="launcher_tile_game_settings_summary">Rozgrywka, silnik, zaawansowane</string>
+    <string name="launcher_tile_graphics">Grafika i wydajność</string>
+    <string name="launcher_tile_graphics_summary">Rozdzielczość, shadery, liczba klatek</string>
+    <string name="launcher_tile_controls">Sterowanie</string>
+    <string name="launcher_tile_controls_summary">Kontroler, dotyk, tryb przenośny</string>
+    <string name="launcher_tile_audio">Dźwięk</string>
+    <string name="launcher_tile_audio_summary">Efekt Dopplera, pozycja słuchacza</string>
+    <string name="launcher_tile_mods">Mody</string>
+    <string name="launcher_tile_mods_summary">Wtyczki, kolejność, roślinność</string>
+    <string name="launcher_tile_help">Pomoc i informacje</string>
+    <string name="launcher_tile_help_summary">O aplikacji, reset, GitHub</string>
+    <string name="launcher_hint_navigate">Krzyżak: nawigacja · A: wybór</string>
+    <string name="launcher_hint_play">START: graj</string>
+    <string name="launcher_help_github">Projekt na GitHubie</string>
 </resources>

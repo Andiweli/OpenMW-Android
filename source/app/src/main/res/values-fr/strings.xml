@@ -223,4 +223,32 @@
     <string name="pref_swipe_to_look_summary">Balayez une zone libre de l\'écran pour regarder autour de vous en jeu. Le stick droit et les menus fonctionnent comme avant.</string>
     <string name="pref_cheats_enabled_title">Activer les triches</string>
     <string name="pref_cheats_enabled_summary">Ajoute une page « Triches » aux paramètres du jeu (Options > Scripts) pour donner de l\'or à votre personnage. Désactivé par défaut.</string>
+
+    <!-- Launcher home screen -->
+    <string name="launcher_play">Jouer</string>
+    <string name="launcher_up_to_date">À jour</string>
+    <string name="launcher_update">Mise à jour</string>
+    <string name="launcher_section_game_data">Données du jeu</string>
+    <string name="launcher_section_settings">Paramètres</string>
+    <string name="launcher_game_data_title">Morrowind</string>
+    <string name="launcher_status_found">Trouvé</string>
+    <string name="launcher_status_missing">Introuvable</string>
+    <string name="launcher_status_not_chosen">Non choisi</string>
+    <string name="launcher_game_data_not_chosen">Choisissez le dossier qui contient Data Files et Morrowind.ini.</string>
+    <string name="launcher_choose_folder">Choisir le dossier</string>
+    <string name="launcher_language">Langue · %1$s</string>
+    <string name="launcher_tile_game_settings_summary">Gameplay, moteur, avancé</string>
+    <string name="launcher_tile_graphics">Graphismes et performances</string>
+    <string name="launcher_tile_graphics_summary">Résolution, shaders, fréquence d\'images</string>
+    <string name="launcher_tile_controls">Commandes</string>
+    <string name="launcher_tile_controls_summary">Manette, tactile, mode portable</string>
+    <string name="launcher_tile_audio">Son</string>
+    <string name="launcher_tile_audio_summary">Effet Doppler, position de l\'auditeur</string>
+    <string name="launcher_tile_mods">Mods</string>
+    <string name="launcher_tile_mods_summary">Plugins, ordre de chargement, végétation</string>
+    <string name="launcher_tile_help">Aide et infos</string>
+    <string name="launcher_tile_help_summary">À propos, réinitialiser, GitHub</string>
+    <string name="launcher_hint_navigate">Croix : naviguer · A : choisir</string>
+    <string name="launcher_hint_play">START : jouer</string>
+    <string name="launcher_help_github">Projet sur GitHub</string>
 </resources>

@@ -11,12 +11,36 @@
         <item name="android:textColor">#FFFFFFFF</item>
     </style>
 
-    <style name="MyTheme.Base" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <!-- The launcher's single look: OpenMW browns, parchment text and gold, as in the
+         CubeEvil4 menu. It does not follow the system's light or dark mode. -->
+    <style name="MyTheme.Base" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:colorAccent">@color/colorAccent</item>
+        <item name="colorControlNormal">@color/launcherMuted</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
+        <item name="android:colorControlNormal">@color/launcherMuted</item>
+        <item name="android:colorControlActivated">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/launcherPanel</item>
+        <item name="android:colorBackground">@color/launcherPanel</item>
+        <item name="android:textColorPrimary">@color/launcherInk</item>
+        <item name="android:textColorSecondary">@color/launcherMuted</item>
+        <item name="android:textColorTertiary">@color/launcherMuted</item>
         <item name="actionBarStyle">@style/MyActionBar</item>
         <item name="android:statusBarColor">@color/statusBarColor</item>
+        <item name="android:navigationBarColor">@color/statusBarColor</item>
+        <item name="alertDialogTheme">@style/LauncherDialog</item>
+        <item name="android:alertDialogTheme">@style/LauncherDialog</item>
+    </style>
+
+    <style name="LauncherDialog" parent="@android:style/Theme.Material.Dialog.Alert">
+        <item name="android:colorBackground">@color/launcherSurface</item>
+        <item name="android:colorAccent">@color/colorAccent</item>
+        <item name="android:colorControlActivated">@color/colorAccent</item>
+        <item name="android:colorControlNormal">@color/launcherMuted</item>
+        <item name="android:textColorPrimary">@color/launcherInk</item>
+        <item name="android:textColorSecondary">@color/launcherMuted</item>
     </style>
 
     <style name="MyCustomTextAppearance" parent="TextAppearance.Design.Tab">

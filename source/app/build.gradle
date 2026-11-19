@@ -179,9 +179,9 @@ tasks.register('verifyOpenMwPayload') {
                 !launcherMainActivity.contains('OpenMW 0.51 Android release runtime:') ||
                 !launcherMainActivity.contains('setContentView(createOpaqueLoadingPanel())') ||
                 !launcherMainActivity.contains('private fun initializeLauncher(savedInstanceState: Bundle?)') ||
-                !launcherMainActivity.contains('private fun isOledLauncherTheme(): Boolean') ||
-                !launcherMainActivity.contains('R.string.action_theme_oled') ||
-                !launcherMainActivity.contains('prefs.getInt(getString(R.string.theme), 0) == 3') ||
+                !launcherMainActivity.contains('private fun showHome()') ||
+                !launcherMainActivity.contains('ui.launcher.LauncherHomeView(this') ||
+                !launcherMainActivity.contains('ui.launcher.LauncherUpdate.check(BuildConfig.VERSION_NAME') ||
                 launcherMainActivity.contains('Gate H5a') ||
                 launcherMainActivity.indexOf('text = "ARM64 \\u2022 v${BuildConfig.VERSION_NAME}"') >
                     launcherMainActivity.indexOf('getString(R.string.about_port_info)')) {
@@ -190,17 +190,21 @@ tasks.register('verifyOpenMwPayload') {
             )
         }
 
+        // The launcher has one brown look (CubeEvil4 style); it does not follow
+        // the system's light or dark mode and never uses a translucent window.
         def launcherStyles = file('src/main/res/values/styles.xml').getText('UTF-8')
-        if (launcherStyles.contains('<item name="android:windowBackground">') ||
-                launcherStyles.contains('<item name="android:colorBackground">') ||
-                launcherStyles.contains('<item name="android:windowIsTranslucent">')) {
+        if (!launcherStyles.contains('<style name="MyTheme.Base" parent="Theme.AppCompat.NoActionBar">') ||
+                !launcherStyles.contains('<item name="android:windowBackground">@color/launcherPanel</item>') ||
+                !launcherStyles.contains('<style name="LauncherDialog"') ||
+                launcherStyles.contains('<item name="android:windowIsTranslucent">') ||
+                file('src/main/res/values-night/styles.xml').exists()) {
             throw new GradleException(
-                    'OpenMW launcher must keep the original MyTheme/AppCompat DayNight window/background definitions.'
+                    'OpenMW launcher must keep its single brown MyTheme and dialog theme.'
             )
         }
-        if (!launcherMainActivity.contains('restoreOriginalLauncherWindowBackground()')) {
+        if (!launcherMainActivity.contains('android.graphics.drawable.ColorDrawable(ui.launcher.LauncherStyle.PANEL)')) {
             throw new GradleException(
-                    'OpenMW launcher must restore the original themed window background after the startup loading panel.'
+                    'OpenMW launcher must paint the brown launcher background after the startup loading panel.'
             )
         }
 
@@ -208,9 +212,9 @@ tasks.register('verifyOpenMwPayload') {
         if (!launcherFragmentSettings.contains('prepareControllerTriggerPreference()') ||
                 !launcherFragmentSettings.contains('R.string.controller_trigger_custom_values') ||
                 !launcherFragmentSettings.contains('sharedPref.getString("pref_shadersDir_v2", "") == "modified"') ||
-                !launcherFragmentSettings.contains('sharedPref.getInt(getString(R.string.theme), 0) == 3')) {
+                !launcherFragmentSettings.contains('keepOnlyCategories(arguments?.getStringArrayList(ARG_CATEGORIES))')) {
             throw new GradleException(
-                    'OpenMW 0.51 launcher controller, shader-precision or OLED-theme handling is missing.'
+                    'OpenMW 0.51 launcher controller, shader-precision or launcher-area handling is missing.'
             )
         }
 

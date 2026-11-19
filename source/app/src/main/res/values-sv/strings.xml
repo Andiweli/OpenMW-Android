@@ -223,4 +223,32 @@
     <string name="pref_swipe_to_look_summary">Svep på fri skärmyta för att se dig omkring i spelet. Höger spak och menyer fungerar som tidigare.</string>
     <string name="pref_cheats_enabled_title">Aktivera fusk</string>
     <string name="pref_cheats_enabled_summary">Lägger till en sida ”Fusk” i spelets inställningar (Alternativ > Skript) som kan ge din karaktär guld. Av som standard.</string>
+
+    <!-- Launcher home screen -->
+    <string name="launcher_play">Spela</string>
+    <string name="launcher_up_to_date">Aktuell</string>
+    <string name="launcher_update">Uppdatera</string>
+    <string name="launcher_section_game_data">Speldata</string>
+    <string name="launcher_section_settings">Inställningar</string>
+    <string name="launcher_game_data_title">Morrowind</string>
+    <string name="launcher_status_found">Hittad</string>
+    <string name="launcher_status_missing">Hittades inte</string>
+    <string name="launcher_status_not_chosen">Inte vald</string>
+    <string name="launcher_game_data_not_chosen">Välj mappen som innehåller Data Files och Morrowind.ini.</string>
+    <string name="launcher_choose_folder">Välj mapp</string>
+    <string name="launcher_language">Språk · %1$s</string>
+    <string name="launcher_tile_game_settings_summary">Spelmekanik, motor, avancerat</string>
+    <string name="launcher_tile_graphics">Grafik och prestanda</string>
+    <string name="launcher_tile_graphics_summary">Upplösning, shaders, bildfrekvens</string>
+    <string name="launcher_tile_controls">Kontroller</string>
+    <string name="launcher_tile_controls_summary">Handkontroll, pekskärm, handhållet läge</string>
+    <string name="launcher_tile_audio">Ljud</string>
+    <string name="launcher_tile_audio_summary">Dopplereffekt, lyssnarposition</string>
+    <string name="launcher_tile_mods">Moddar</string>
+    <string name="launcher_tile_mods_summary">Plugins, laddordning, markväxtlighet</string>
+    <string name="launcher_tile_help">Hjälp och info</string>
+    <string name="launcher_tile_help_summary">Om, återställ, GitHub</string>
+    <string name="launcher_hint_navigate">Styrkors: navigera · A: välj</string>
+    <string name="launcher_hint_play">START: spela</string>
+    <string name="launcher_help_github">Projektet på GitHub</string>
 </resources>

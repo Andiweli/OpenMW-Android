@@ -6,5 +6,5 @@
     android:gravity="center"
     android:text="›"
     android:textSize="28sp"
-    android:textColor="?android:attr/textColorSecondary"
+    android:textColor="@color/colorAccent"
     android:contentDescription="@null" />
