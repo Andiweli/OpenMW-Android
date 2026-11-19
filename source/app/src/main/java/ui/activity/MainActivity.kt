@@ -35,6 +35,7 @@ import android.util.DisplayMetrics
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.Lifecycle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -84,6 +85,11 @@ class MainActivity : AppCompatActivity() {
     // timer cannot run a second preparation that rewrites the same config files.
     private var launchInProgress = false
 
+    // The launcher UI is built shortly after onCreate (see initializeLauncherWhenStarted).
+    private var launcherInitialized = false
+    private var launcherInitPending = false
+    private var launcherSavedState: Bundle? = null
+
     private var legacyMigrationDialog: ProgressDialog? = null
     private val legacyMigrationListener: (MyApp.LegacyStorageMigrationResult) -> Unit =
         { result -> onLegacyStorageMigrationFinished(result) }
@@ -111,11 +117,34 @@ class MainActivity : AppCompatActivity() {
             android.graphics.drawable.ColorDrawable(android.graphics.Color.BLACK)
         )
         setContentView(createOpaqueLoadingPanel())
-        window.decorView.postDelayed({
-            if (!isFinishing && !isDestroyed) {
-                initializeLauncher(savedInstanceState)
-            }
-        }, 34L)
+        launcherSavedState = savedInstanceState
+        window.decorView.postDelayed({ initializeLauncherWhenStarted() }, 34L)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // The delayed launcher setup found the Activity already stopped (for example
+        // when it was started while the screen was off). Finish it now that fragment
+        // transactions are allowed again.
+        // The Lifecycle only reports STARTED after onStart returns, so skip that check here.
+        if (launcherInitPending) {
+            launcherInitPending = false
+            initializeLauncherWhenStarted(alreadyStarted = true)
+        }
+    }
+
+    private fun initializeLauncherWhenStarted(alreadyStarted: Boolean = false) {
+        if (launcherInitialized || isFinishing || isDestroyed)
+            return
+        // Committing the settings fragment after onSaveInstanceState throws
+        // IllegalStateException, so wait for the next onStart instead.
+        if (!alreadyStarted && !lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+            launcherInitPending = true
+            return
+        }
+        launcherInitialized = true
+        initializeLauncher(launcherSavedState)
+        launcherSavedState = null
     }
 
     private fun initializeLauncher(savedInstanceState: Bundle?) {
