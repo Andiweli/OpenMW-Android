@@ -59,8 +59,8 @@ object LauncherStyle {
     const val WARN_FILL = 0xff4e1f1c.toInt()
     const val WARN_TEXT = 0xffe2c7c2.toInt()
 
-    /** Height of every button, toggle and option, in dp. */
-    const val CONTROL_HEIGHT = 44
+    /** Height of every button, toggle and option, in dp: the height of the home screen tiles. */
+    const val CONTROL_HEIGHT = 60
     /** Gap between controls and around rows, in dp. */
     const val GAP = 8
     const val BUTTON_RADIUS = 6
@@ -93,7 +93,7 @@ object LauncherStyle {
 
     /** A section label in small capitals, as above each group in CubeEvil4. */
     fun sectionLabel(context: Context, label: CharSequence): TextView =
-        text(context, label.toString().uppercase(), 11f, true, MUTED).apply {
+        text(context, label.toString().uppercase(), 13f, true, MUTED).apply {
             letterSpacing = 0.14f
             setPadding(0, dp(context, 14), 0, dp(context, 6))
         }
@@ -102,7 +102,7 @@ object LauncherStyle {
     fun button(context: Context, label: CharSequence, primary: Boolean = false, onClick: (View) -> Unit): TextView =
         TextView(context).apply {
             text = label
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
             typeface = Typeface.DEFAULT_BOLD
             gravity = Gravity.CENTER
             maxLines = 1
@@ -144,11 +144,11 @@ object LauncherStyle {
         val footer = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
             setPadding(d(22), d(8), d(22), d(10))
-            addView(text(context, context.getString(com.libopenmw.openmw.R.string.launcher_hint_navigate), 11.5f, false).apply {
+            addView(text(context, context.getString(com.libopenmw.openmw.R.string.launcher_hint_navigate), 13f, false).apply {
                 maxLines = 1
                 ellipsize = TextUtils.TruncateAt.END
             }, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-            addView(text(context, context.getString(com.libopenmw.openmw.R.string.launcher_hint_back_play), 11.5f, false).apply { maxLines = 1 })
+            addView(text(context, context.getString(com.libopenmw.openmw.R.string.launcher_hint_back_play), 13f, false).apply { maxLines = 1 })
         }
         fun line(color: Int, height: Int) = View(context).apply { setBackgroundColor(color) } to
             LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, d(height))

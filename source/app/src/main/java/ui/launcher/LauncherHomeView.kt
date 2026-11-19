@@ -62,13 +62,13 @@ class LauncherHomeView(context: Context, private val actions: Actions) : LinearL
     private val updateButton: TextView = LauncherStyle.button(context, s(R.string.launcher_up_to_date)) { actions.openReleases() }.apply {
         visibility = View.GONE
     }
-    private val versionLabel = LauncherStyle.text(context, "", 14f, false)
+    private val versionLabel = LauncherStyle.text(context, "", 15f, false)
 
-    private val badge = LauncherStyle.text(context, "", 10.5f, true).apply {
+    private val badge = LauncherStyle.text(context, "", 12f, true).apply {
         letterSpacing = 0.08f
         setPadding(dp(7), dp(2), dp(7), dp(2))
     }
-    private val gameDataDetail = LauncherStyle.text(context, "", 12.5f, false).apply {
+    private val gameDataDetail = LauncherStyle.text(context, "", 13f, false).apply {
         setPadding(0, dp(3), 0, 0)
     }
     private val languageButton: TextView = LauncherStyle.button(context, "") { actions.chooseLanguage() }
@@ -191,11 +191,11 @@ class LauncherHomeView(context: Context, private val actions: Actions) : LinearL
         orientation = HORIZONTAL
         gravity = Gravity.CENTER_VERTICAL
         setPadding(dp(22), dp(8), dp(22), dp(10))
-        addView(LauncherStyle.text(context, s(R.string.launcher_hint_navigate), 11.5f, false).apply {
+        addView(LauncherStyle.text(context, s(R.string.launcher_hint_navigate), 13f, false).apply {
             maxLines = 1
             ellipsize = TextUtils.TruncateAt.END
         }, LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f))
-        addView(LauncherStyle.text(context, s(R.string.launcher_hint_play), 11.5f, false).apply { maxLines = 1 })
+        addView(LauncherStyle.text(context, s(R.string.launcher_hint_play), 13f, false).apply { maxLines = 1 })
     }
 
     fun setVersion(version: String) {

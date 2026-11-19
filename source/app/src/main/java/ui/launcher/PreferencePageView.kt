@@ -174,7 +174,7 @@ class PreferencePageView(
      */
     private fun fitsAsButtons(preference: ListPreference): Boolean {
         val labels = preference.entries.map { it.toString() }
-        return labels.size <= 4 && labels.maxOf { it.length } <= 11 && labels.sumOf { it.length } <= 36
+        return labels.size <= 4 && labels.maxOf { it.length } <= 8 && labels.sumOf { it.length } <= 28
     }
 
     /** One button showing the current choice; tap or right goes to the next, left back. */
@@ -240,9 +240,9 @@ class PreferencePageView(
             val label = LinearLayout(context).apply {
                 orientation = LinearLayout.VERTICAL
                 gravity = Gravity.CENTER_VERTICAL
-                addView(LauncherStyle.text(context, title, 14f, false, LauncherStyle.INK))
+                addView(LauncherStyle.text(context, title, 16f, true))
                 if (!explanation.isNullOrBlank())
-                    addView(LauncherStyle.text(context, explanation, 11f, false).apply {
+                    addView(LauncherStyle.text(context, explanation, 12f, false).apply {
                         maxLines = 2
                         ellipsize = TextUtils.TruncateAt.END
                         setPadding(0, dp(1), 0, 0)
@@ -251,7 +251,7 @@ class PreferencePageView(
             if (wide) {
                 orientation = LinearLayout.HORIZONTAL
                 gravity = Gravity.CENTER_VERTICAL
-                addView(label, LinearLayout.LayoutParams(dp(210), LinearLayout.LayoutParams.WRAP_CONTENT).apply { marginEnd = dp(10) })
+                addView(label, LinearLayout.LayoutParams(dp(260), LinearLayout.LayoutParams.WRAP_CONTENT).apply { marginEnd = dp(12) })
                 addView(control, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
             } else {
                 orientation = LinearLayout.VERTICAL
@@ -266,17 +266,17 @@ class PreferencePageView(
         val texts = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER_VERTICAL
-            addView(LauncherStyle.text(context, preference.title ?: "", 14f, false, LauncherStyle.INK).apply {
+            addView(LauncherStyle.text(context, preference.title ?: "", 16f, true).apply {
                 maxLines = 1
                 ellipsize = TextUtils.TruncateAt.END
             })
             if (!preference.summary.isNullOrBlank())
-                addView(LauncherStyle.text(context, preference.summary, 11f, false).apply {
+                addView(LauncherStyle.text(context, preference.summary, 12f, false).apply {
                     maxLines = 1
                     ellipsize = TextUtils.TruncateAt.END
                 })
         }
-        val state = LauncherStyle.text(context, "", 10.5f, true).apply { letterSpacing = 0.08f }
+        val state = LauncherStyle.text(context, "", 12f, true).apply { letterSpacing = 0.08f }
         val view = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
@@ -304,13 +304,13 @@ class PreferencePageView(
     private fun optionRow(preference: ListPreference, explanation: CharSequence?): View {
         val entries = preference.entries
         val values = preference.entryValues
-        val grid = EqualGrid(context, maxColumns = entries.size, minCellWidthDp = 96)
+        val grid = EqualGrid(context, maxColumns = entries.size, minCellWidthDp = 120)
         val buttons = entries.indices.map { index ->
             LauncherStyle.button(context, entries[index]) {
                 val value = values[index].toString()
                 if (preference.value != value)
                     preference.value = value
-            }.apply { setTextSize(TypedValue.COMPLEX_UNIT_SP, 13.5f) }
+            }.apply { setPadding(dp(8), 0, dp(8), 0) }
         }
         buttons.forEach { grid.addView(it) }
         updaters += {
@@ -388,7 +388,7 @@ class PreferencePageView(
         val prefs = preference.sharedPreferences
         val key = preference.key
         val steps = ((spec.maximum - spec.minimum) / spec.step).roundToInt()
-        val valueLabel = LauncherStyle.text(context, "", 14f, true, LauncherStyle.GOLD).apply {
+        val valueLabel = LauncherStyle.text(context, "", 16f, true, LauncherStyle.GOLD).apply {
             minWidth = dp(72)
             gravity = Gravity.END
         }
