@@ -211,7 +211,8 @@
 
     <!-- Saves folder and swipe to look -->
     <string name="user_data_dir_title">Folder zapisów gry</string>
-    <string name="user_data_dir_default_summary">Domyślny (pamięć aplikacji). Wybierz udostępniony folder, aby synchronizować zapisy, np. przez Syncthing.</string>
+    <string name="user_data_dir_default_summary">Domyślny (pamięć aplikacji)</string>
+    <string name="user_data_dir_hint">Wybierz folder, np. dla Syncthing.</string>
     <string name="user_data_dir_choose">Wybierz folder…</string>
     <string name="user_data_dir_use_default">Użyj domyślnego folderu aplikacji</string>
     <string name="user_data_dir_copying">Kopiowanie zapisów…</string>
@@ -260,7 +261,7 @@
     <string name="launcher_gs_game_mechanics_summary">Walka, towarzysze, zapisy</string>
     <string name="launcher_gs_visuals_summary">Odległy teren, shadery, mgła</string>
     <string name="launcher_gs_shadows_summary">Rzucanie cieni, jakość, odległość</string>
-    <string name="launcher_gs_animations_summary">Zielarstwo, ruch, chowanie broni</string>
+    <string name="launcher_gs_animations_summary">Ruch i więcej</string>
     <string name="launcher_gs_interface_summary">Czcionki, podpowiedzi, mapa</string>
     <string name="launcher_gs_engine_summary">Roślinność, navmesh, wątki</string>
     <string name="launcher_gs_advanced_summary">Folder zapisów, kody, opcje startu</string>

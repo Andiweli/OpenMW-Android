@@ -211,7 +211,8 @@
 
     <!-- Saves folder and swipe to look -->
     <string name="user_data_dir_title">Dossier des sauvegardes</string>
-    <string name="user_data_dir_default_summary">Par défaut (stockage de l\'application). Choisissez un dossier partagé pour synchroniser vos sauvegardes, par ex. avec Syncthing.</string>
+    <string name="user_data_dir_default_summary">Par défaut (stockage de l\'application)</string>
+    <string name="user_data_dir_hint">Choisissez un dossier, par ex. pour Syncthing.</string>
     <string name="user_data_dir_choose">Choisir un dossier…</string>
     <string name="user_data_dir_use_default">Utiliser le dossier de l\'application</string>
     <string name="user_data_dir_copying">Copie des sauvegardes…</string>
@@ -260,7 +261,7 @@
     <string name="launcher_gs_game_mechanics_summary">Combat, compagnons, sauvegardes</string>
     <string name="launcher_gs_visuals_summary">Terrain lointain, shaders, brouillard</string>
     <string name="launcher_gs_shadows_summary">Ombres portées, qualité, distance</string>
-    <string name="launcher_gs_animations_summary">Herboristerie, mouvement, rengainer</string>
+    <string name="launcher_gs_animations_summary">Mouvement et plus</string>
     <string name="launcher_gs_interface_summary">Polices, infobulles, carte</string>
     <string name="launcher_gs_engine_summary">Végétation, navmesh, threads</string>
     <string name="launcher_gs_advanced_summary">Dossier des sauvegardes, triches, démarrage</string>

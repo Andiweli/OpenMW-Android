@@ -211,7 +211,8 @@
 
     <!-- Saves folder and swipe to look -->
     <string name="user_data_dir_title">Папка сохранений</string>
-    <string name="user_data_dir_default_summary">По умолчанию (память приложения). Выберите общую папку, чтобы синхронизировать сохранения, например через Syncthing.</string>
+    <string name="user_data_dir_default_summary">По умолчанию (память приложения)</string>
+    <string name="user_data_dir_hint">Выберите папку, например для Syncthing.</string>
     <string name="user_data_dir_choose">Выбрать папку…</string>
     <string name="user_data_dir_use_default">Использовать папку приложения</string>
     <string name="user_data_dir_copying">Копирование сохранений…</string>
@@ -260,7 +261,7 @@
     <string name="launcher_gs_game_mechanics_summary">Бой, спутники, сохранения</string>
     <string name="launcher_gs_visuals_summary">Дальний ландшафт, шейдеры, туман</string>
     <string name="launcher_gs_shadows_summary">Тени, качество, дальность</string>
-    <string name="launcher_gs_animations_summary">Сбор трав, движение, оружие в ножнах</string>
+    <string name="launcher_gs_animations_summary">Движение и не только</string>
     <string name="launcher_gs_interface_summary">Шрифты, подсказки, карта</string>
     <string name="launcher_gs_engine_summary">Растительность, навмеш, потоки</string>
     <string name="launcher_gs_advanced_summary">Папка сохранений, читы, запуск</string>

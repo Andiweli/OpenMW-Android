@@ -310,7 +310,8 @@ OpenMW by the OpenMW Team since 2008</string>
 
     <!-- Saves folder and swipe to look -->
     <string name="user_data_dir_title">Saves Folder</string>
-    <string name="user_data_dir_default_summary">Default (app storage). Choose a shared folder to sync your saves, e.g. with Syncthing.</string>
+    <string name="user_data_dir_default_summary">Default (app storage)</string>
+    <string name="user_data_dir_hint">Choose a folder, e.g. for Syncthing.</string>
     <string name="user_data_dir_choose">Choose folder…</string>
     <string name="user_data_dir_use_default">Use default app folder</string>
     <string name="user_data_dir_copying">Copying saves…</string>
@@ -359,7 +360,7 @@ OpenMW by the OpenMW Team since 2008</string>
     <string name="launcher_gs_game_mechanics_summary">Combat, followers, saves</string>
     <string name="launcher_gs_visuals_summary">Distant land, shaders, fog</string>
     <string name="launcher_gs_shadows_summary">Shadow casters, quality, distance</string>
-    <string name="launcher_gs_animations_summary">Herbalism, movement, sheathing</string>
+    <string name="launcher_gs_animations_summary">Movement and more</string>
     <string name="launcher_gs_interface_summary">Fonts, tooltips, map</string>
     <string name="launcher_gs_engine_summary">Groundcover, navmesh, threads</string>
     <string name="launcher_gs_advanced_summary">Saves folder, cheats, start options</string>

@@ -211,7 +211,8 @@
 
     <!-- Saves folder and swipe to look -->
     <string name="user_data_dir_title">Ordner für Spielstände</string>
-    <string name="user_data_dir_default_summary">Standard (App-Speicher). Wähle einen freigegebenen Ordner, um deine Spielstände z. B. mit Syncthing zu synchronisieren.</string>
+    <string name="user_data_dir_default_summary">Standard (App-Speicher)</string>
+    <string name="user_data_dir_hint">Wähle einen Ordner, z. B. für Syncthing.</string>
     <string name="user_data_dir_choose">Ordner wählen…</string>
     <string name="user_data_dir_use_default">Standard-App-Ordner verwenden</string>
     <string name="user_data_dir_copying">Spielstände werden kopiert…</string>
@@ -260,7 +261,7 @@
     <string name="launcher_gs_game_mechanics_summary">Kampf, Begleiter, Spielstände</string>
     <string name="launcher_gs_visuals_summary">Fernlandschaft, Shader, Nebel</string>
     <string name="launcher_gs_shadows_summary">Schattenwerfer, Qualität, Entfernung</string>
-    <string name="launcher_gs_animations_summary">Kräutersammeln, Bewegung, Wegstecken</string>
+    <string name="launcher_gs_animations_summary">Bewegung und mehr</string>
     <string name="launcher_gs_interface_summary">Schrift, Tooltips, Karte</string>
     <string name="launcher_gs_engine_summary">Bodenbewuchs, NavMesh, Threads</string>
     <string name="launcher_gs_advanced_summary">Ordner für Spielstände, Cheats, Startoptionen</string>

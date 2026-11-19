@@ -62,7 +62,9 @@ class PreferencePageView(
     context: Context,
     private val screen: PreferenceGroup,
     private val sliders: Map<String, SliderSpec> = emptyMap(),
-    private val navigationKeys: Set<String> = emptySet()
+    private val navigationKeys: Set<String> = emptySet(),
+    /** A short explanation under the title of a value button, by preference key. */
+    private val notes: Map<String, CharSequence> = emptyMap()
 ) : FrameLayout(context) {
 
     /** An inline slider for a preference stored as a decimal string ("" = [autoValue]). */
@@ -243,7 +245,7 @@ class PreferencePageView(
         const val LABEL_WIDTH = 260
     }
 
-    private fun row(title: CharSequence, control: View, explanation: CharSequence? = null): LinearLayout {
+    private fun row(title: CharSequence, control: View, explanation: CharSequence? = null, halves: Boolean = false): LinearLayout {
         val wide = context.resources.configuration.screenWidthDp >= 600
         return LinearLayout(context).apply {
             setPadding(0, dp(4), 0, dp(4))
@@ -262,9 +264,9 @@ class PreferencePageView(
             if (wide) {
                 orientation = LinearLayout.HORIZONTAL
                 gravity = Gravity.CENTER_VERTICAL
-                // A title too long for the label column gets half the row, the control the other half.
-                val halves = titleView.paint.measureText(title.toString()) > dp(LABEL_WIDTH)
-                addView(label, (if (halves) LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                // Sliders, and titles too long for the label column, get half the row.
+                val equal = halves || titleView.paint.measureText(title.toString()) > dp(LABEL_WIDTH)
+                addView(label, (if (equal) LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
                     else LinearLayout.LayoutParams(dp(LABEL_WIDTH), LinearLayout.LayoutParams.WRAP_CONTENT)).apply { marginEnd = dp(12) })
                 addView(control, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
             } else {
@@ -354,7 +356,7 @@ class PreferencePageView(
             }
             button.text = if (value.isNullOrBlank()) "…" else "$value  ›"
         }
-        val view = row(preference.title ?: "", button)
+        val view = row(preference.title ?: "", button, notes[preference.key])
         bindEnabled(view, preference)
         return view
     }
@@ -455,7 +457,7 @@ class PreferencePageView(
             seekBar.progress = ((shown - spec.minimum) / spec.step).roundToInt().coerceIn(0, steps)
             valueLabel.text = if (value == null && spec.autoLabel != null) spec.autoLabel.invoke() else format(shown)
         }
-        val view = row(preference.title ?: "", control, explanation)
+        val view = row(preference.title ?: "", control, explanation, halves = true)
         bindEnabled(view, preference)
         return view
     }

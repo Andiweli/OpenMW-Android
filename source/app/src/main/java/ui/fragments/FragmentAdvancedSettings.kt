@@ -45,7 +45,10 @@ class FragmentAdvancedSettings : PreferenceFragment(), OnSharedPreferenceChangeL
         container: android.view.ViewGroup?,
         savedInstanceState: Bundle?
     ): android.view.View {
-        val view = ui.launcher.PreferencePageView(activity, preferenceScreen)
+        val view = ui.launcher.PreferencePageView(
+            activity, preferenceScreen,
+            notes = mapOf("pref_user_data_dir" to getString(R.string.user_data_dir_hint))
+        )
         page = view
         return view
     }

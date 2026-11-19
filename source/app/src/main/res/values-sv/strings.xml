@@ -211,7 +211,8 @@
 
     <!-- Saves folder and swipe to look -->
     <string name="user_data_dir_title">Mapp för sparfiler</string>
-    <string name="user_data_dir_default_summary">Standard (appens lagring). Välj en delad mapp för att synkronisera sparfiler, t.ex. med Syncthing.</string>
+    <string name="user_data_dir_default_summary">Standard (appens lagring)</string>
+    <string name="user_data_dir_hint">Välj en mapp, t.ex. för Syncthing.</string>
     <string name="user_data_dir_choose">Välj mapp…</string>
     <string name="user_data_dir_use_default">Använd appens standardmapp</string>
     <string name="user_data_dir_copying">Kopierar sparfiler…</string>
@@ -260,7 +261,7 @@
     <string name="launcher_gs_game_mechanics_summary">Strid, följeslagare, sparfiler</string>
     <string name="launcher_gs_visuals_summary">Avlägsen terräng, shaders, dimma</string>
     <string name="launcher_gs_shadows_summary">Skuggkastare, kvalitet, avstånd</string>
-    <string name="launcher_gs_animations_summary">Örtplockning, rörelse, hölstring</string>
+    <string name="launcher_gs_animations_summary">Rörelse med mera</string>
     <string name="launcher_gs_interface_summary">Typsnitt, verktygstips, karta</string>
     <string name="launcher_gs_engine_summary">Markväxtlighet, navmesh, trådar</string>
     <string name="launcher_gs_advanced_summary">Sparmapp, fusk, startalternativ</string>
