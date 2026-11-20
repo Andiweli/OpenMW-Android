@@ -15,6 +15,7 @@ import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
 import constants.Constants
 import file.LegacyStorageMigrator
+import file.UserDataLocation
 import java.io.File
 import java.io.IOException
 import java.security.MessageDigest
@@ -94,7 +95,31 @@ class MyApp : Application() {
         Constants.GLOBAL_CONFIG = File(filesDir, "config").absolutePath
         Constants.VERSION_STAMP = File(filesDir, "stamp").absolutePath
 
+        // A chosen saves folder also holds the user config (settings.cfg); the
+        // generated openmw.cfg points OpenMW there with its config= line.
+        if (!com.libopenmw.openmw.BuildConfig.IS_AUTOMOTIVE_BUILD) {
+            val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+            val chosen = prefs.getString(UserDataLocation.PREF_USER_DATA_DIR, "").orEmpty()
+            if (chosen.isNotEmpty()) {
+                val dir = File(chosen)
+                UserDataLocation.useConfigOf(dir)
+                // Folders chosen before the config moved along: take the app
+                // folder's settings over once, without replacing files there.
+                if (prefs.getString(UserDataLocation.PREF_CONFIG_ADOPTED, "") != chosen) {
+                    try {
+                        val copied = UserDataLocation.copyConfig(File(Constants.USER_FILE_STORAGE), dir)
+                        prefs.edit().putString(UserDataLocation.PREF_CONFIG_ADOPTED, chosen).apply()
+                        Log.i(TAG, "Copied $copied user config files to $chosen")
+                    } catch (e: Exception) {
+                        // Tried again on the next start, e.g. once storage access is granted.
+                        Log.w(TAG, "Could not copy the user config to $chosen", e)
+                    }
+                }
+            }
+        }
+
         Log.i(TAG, "OpenMW user storage: ${Constants.USER_FILE_STORAGE}")
+        Log.i(TAG, "OpenMW user config: ${Constants.USER_CONFIG}")
     }
 
     /**

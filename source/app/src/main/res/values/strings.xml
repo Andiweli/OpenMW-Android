@@ -311,11 +311,11 @@ OpenMW by the OpenMW Team since 2008</string>
     <!-- Saves folder and swipe to look -->
     <string name="user_data_dir_title">Saves Folder</string>
     <string name="user_data_dir_default_summary">Default (app storage)</string>
-    <string name="user_data_dir_hint">Choose a folder, e.g. for Syncthing.</string>
+    <string name="user_data_dir_hint">Saves and settings.cfg, e.g. for Syncthing.</string>
     <string name="user_data_dir_choose">Choose folder…</string>
     <string name="user_data_dir_use_default">Use default app folder</string>
-    <string name="user_data_dir_copying">Copying saves…</string>
-    <string name="user_data_dir_changed_message">Saves and screenshots are now stored in:\n%1$s\n\nFiles copied from the previous folder: %2$d. Existing saves were not replaced, and the previous folder was left unchanged.\n\nTip: exclude navmesh.db from syncing, it is a large cache file.</string>
+    <string name="user_data_dir_copying">Copying saves and settings…</string>
+    <string name="user_data_dir_changed_message">Saves, screenshots and settings (config folder with settings.cfg) are now stored in:\n%1$s\n\nFiles copied from the previous folder: %2$d. Existing files were not replaced, and the previous folder was left unchanged.\n\nTip: exclude navmesh.db from syncing, it is a large cache file.</string>
     <string name="user_data_dir_error_title">Saves folder not changed</string>
     <string name="user_data_dir_error_message">OpenMW cannot write to this folder:\n%1$s\n(%2$s)\n\nThe previous saves folder is still used.</string>
     <string name="user_data_dir_unavailable">The saves folder is not available or not writable:\n%1$s\n\nInsert the storage, check the storage permission, or choose another saves folder in the launcher.</string>

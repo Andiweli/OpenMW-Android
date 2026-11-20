@@ -129,8 +129,9 @@ class FragmentAdvancedSettings : PreferenceFragment(), OnSharedPreferenceChangeL
 
     /**
      * Switches the saves folder to [path] (empty for the default app folder). The
-     * folder is checked for write access, and the saves from the current folder
-     * are copied over without replacing any save already there.
+     * folder is checked for write access, and the saves and the user config
+     * (settings.cfg) from the current folder are copied over without replacing
+     * any file already there.
      */
     private fun changeUserDataDir(path: String) {
         val hostActivity = activity ?: return
@@ -154,8 +155,13 @@ class FragmentAdvancedSettings : PreferenceFragment(), OnSharedPreferenceChangeL
             var copied = 0
             try {
                 UserDataLocation.ensureWritable(to)
-                copied = UserDataLocation.copySaves(from, to)
-                sharedPref.edit().putString(UserDataLocation.PREF_USER_DATA_DIR, path).commit()
+                copied = UserDataLocation.copySaves(from, to) + UserDataLocation.copyConfig(from, to)
+                sharedPref.edit()
+                    .putString(UserDataLocation.PREF_USER_DATA_DIR, path)
+                    .putString(UserDataLocation.PREF_CONFIG_ADOPTED, path)
+                    .commit()
+                // The launcher now edits the settings.cfg in the new folder, as OpenMW will.
+                UserDataLocation.useConfigOf(if (path.isEmpty()) null else to)
             } catch (e: Exception) {
                 Log.e(TAG, "Could not switch the saves folder to ${to.absolutePath}", e)
                 error = e.message ?: e.javaClass.simpleName

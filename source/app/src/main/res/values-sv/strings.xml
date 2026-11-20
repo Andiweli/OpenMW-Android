@@ -212,11 +212,11 @@
     <!-- Saves folder and swipe to look -->
     <string name="user_data_dir_title">Mapp för sparfiler</string>
     <string name="user_data_dir_default_summary">Standard (appens lagring)</string>
-    <string name="user_data_dir_hint">Välj en mapp, t.ex. för Syncthing.</string>
+    <string name="user_data_dir_hint">Sparfiler och settings.cfg, t.ex. för Syncthing.</string>
     <string name="user_data_dir_choose">Välj mapp…</string>
     <string name="user_data_dir_use_default">Använd appens standardmapp</string>
-    <string name="user_data_dir_copying">Kopierar sparfiler…</string>
-    <string name="user_data_dir_changed_message">Sparfiler och skärmdumpar lagras nu i:\n%1$s\n\nFiler kopierade från den tidigare mappen: %2$d. Befintliga sparfiler ersattes inte och den tidigare mappen lämnades oförändrad.\n\nTips: undanta navmesh.db från synkroniseringen, det är en stor cachefil.</string>
+    <string name="user_data_dir_copying">Kopierar sparfiler och inställningar…</string>
+    <string name="user_data_dir_changed_message">Sparfiler, skärmdumpar och inställningar (mappen config med settings.cfg) lagras nu i:\n%1$s\n\nFiler kopierade från den tidigare mappen: %2$d. Befintliga filer ersattes inte och den tidigare mappen lämnades oförändrad.\n\nTips: undanta navmesh.db från synkroniseringen, det är en stor cachefil.</string>
     <string name="user_data_dir_error_title">Mappen för sparfiler ändrades inte</string>
     <string name="user_data_dir_error_message">OpenMW kan inte skriva till den här mappen:\n%1$s\n(%2$s)\n\nDen tidigare mappen för sparfiler används fortfarande.</string>
     <string name="user_data_dir_unavailable">Mappen för sparfiler är inte tillgänglig eller skrivskyddad:\n%1$s\n\nSätt i lagringsmediet, kontrollera lagringsbehörigheten eller välj en annan mapp i startprogrammet.</string>

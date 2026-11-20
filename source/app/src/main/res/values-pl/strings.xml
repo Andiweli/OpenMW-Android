@@ -212,11 +212,11 @@
     <!-- Saves folder and swipe to look -->
     <string name="user_data_dir_title">Folder zapisów gry</string>
     <string name="user_data_dir_default_summary">Domyślny (pamięć aplikacji)</string>
-    <string name="user_data_dir_hint">Wybierz folder, np. dla Syncthing.</string>
+    <string name="user_data_dir_hint">Zapisy i settings.cfg, np. dla Syncthing.</string>
     <string name="user_data_dir_choose">Wybierz folder…</string>
     <string name="user_data_dir_use_default">Użyj domyślnego folderu aplikacji</string>
-    <string name="user_data_dir_copying">Kopiowanie zapisów…</string>
-    <string name="user_data_dir_changed_message">Zapisy gry i zrzuty ekranu są teraz przechowywane w:\n%1$s\n\nPliki skopiowane z poprzedniego folderu: %2$d. Istniejące zapisy nie zostały zastąpione, a poprzedni folder pozostał bez zmian.\n\nWskazówka: wyklucz navmesh.db z synchronizacji, to duży plik pamięci podręcznej.</string>
+    <string name="user_data_dir_copying">Kopiowanie zapisów i ustawień…</string>
+    <string name="user_data_dir_changed_message">Zapisy gry, zrzuty ekranu i ustawienia (folder config z settings.cfg) są teraz przechowywane w:\n%1$s\n\nPliki skopiowane z poprzedniego folderu: %2$d. Istniejące pliki nie zostały zastąpione, a poprzedni folder pozostał bez zmian.\n\nWskazówka: wyklucz navmesh.db z synchronizacji, to duży plik pamięci podręcznej.</string>
     <string name="user_data_dir_error_title">Folder zapisów nie został zmieniony</string>
     <string name="user_data_dir_error_message">OpenMW nie może zapisywać w tym folderze:\n%1$s\n(%2$s)\n\nNadal używany jest poprzedni folder zapisów.</string>
     <string name="user_data_dir_unavailable">Folder zapisów jest niedostępny lub nie można w nim zapisywać:\n%1$s\n\nWłóż nośnik, sprawdź uprawnienie do pamięci lub wybierz inny folder w launcherze.</string>

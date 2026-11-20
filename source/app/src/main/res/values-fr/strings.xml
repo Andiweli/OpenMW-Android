@@ -212,11 +212,11 @@
     <!-- Saves folder and swipe to look -->
     <string name="user_data_dir_title">Dossier des sauvegardes</string>
     <string name="user_data_dir_default_summary">Par défaut (stockage de l\'application)</string>
-    <string name="user_data_dir_hint">Choisissez un dossier, par ex. pour Syncthing.</string>
+    <string name="user_data_dir_hint">Sauvegardes et settings.cfg, par ex. pour Syncthing.</string>
     <string name="user_data_dir_choose">Choisir un dossier…</string>
     <string name="user_data_dir_use_default">Utiliser le dossier de l\'application</string>
-    <string name="user_data_dir_copying">Copie des sauvegardes…</string>
-    <string name="user_data_dir_changed_message">Les sauvegardes et captures d\'écran sont maintenant enregistrées dans :\n%1$s\n\nFichiers copiés depuis l\'ancien dossier : %2$d. Les sauvegardes existantes n\'ont pas été remplacées et l\'ancien dossier n\'a pas été modifié.\n\nAstuce : excluez navmesh.db de la synchronisation, c\'est un gros fichier de cache.</string>
+    <string name="user_data_dir_copying">Copie des sauvegardes et des réglages…</string>
+    <string name="user_data_dir_changed_message">Les sauvegardes, captures d\'écran et réglages (dossier config avec settings.cfg) sont maintenant enregistrés dans :\n%1$s\n\nFichiers copiés depuis l\'ancien dossier : %2$d. Les fichiers existants n\'ont pas été remplacés et l\'ancien dossier n\'a pas été modifié.\n\nAstuce : excluez navmesh.db de la synchronisation, c\'est un gros fichier de cache.</string>
     <string name="user_data_dir_error_title">Dossier des sauvegardes inchangé</string>
     <string name="user_data_dir_error_message">OpenMW ne peut pas écrire dans ce dossier :\n%1$s\n(%2$s)\n\nL\'ancien dossier des sauvegardes reste utilisé.</string>
     <string name="user_data_dir_unavailable">Le dossier des sauvegardes est indisponible ou non accessible en écriture :\n%1$s\n\nInsérez le stockage, vérifiez l\'autorisation de stockage ou choisissez un autre dossier dans le lanceur.</string>
