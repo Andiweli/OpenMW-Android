@@ -39,7 +39,7 @@
     <string name="user_config_was_reset">Benutzerkonfiguration wurde auf Standardwerte zurückgesetzt</string>
     <string name="user_resources_was_reset">Benutzerressourcen wurden auf Standardwerte zurückgesetzt</string>
     <string name="pref_lang">Spracheinstellungen</string>
-    <string name="pref_encoding">Spielsprache</string>
+    <string name="pref_encoding">Zeichenkodierung</string>
     <string name="pref_encoding_default">win1252</string>
     <string name="btn_opacityPlus">Alpha+</string>
     <string name="btn_opacityMinus">Alpha-</string>
@@ -134,7 +134,7 @@
     <string-array name="pref_encoding_entries">
         <item>Mittel- und Osteuropäisch (win1250)</item>
         <item>Kyrillisch (win1251)</item>
-        <item>Lateinisch (win1252)</item>
+        <item>Latein (win1252)</item>
     </string-array>
     <string-array name="gs_factor_strength_into_hand_to_hand_combat_entries">
         <item>Aus</item>
@@ -237,7 +237,7 @@
     <string name="launcher_status_not_chosen">Nicht gewählt</string>
     <string name="launcher_game_data_not_chosen">Wähle den Ordner mit „Data Files“ und Morrowind.ini.</string>
     <string name="launcher_choose_folder">Ordner wählen</string>
-    <string name="launcher_language">Spielsprache</string>
+    <string name="launcher_language">Zeichenkodierung</string>
     <string name="launcher_tile_game_settings_summary">Gameplay, Engine, Erweitert</string>
     <string name="launcher_tile_graphics">Grafik &amp; Leistung</string>
     <string name="launcher_tile_graphics_summary">Auflösung, Shader, Bildrate</string>
