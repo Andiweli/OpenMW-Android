@@ -263,7 +263,7 @@
     <string name="launcher_gs_engine_summary">Markväxtlighet, navmesh, trådar</string>
     <string name="launcher_gs_advanced_summary">Sparmapp, språk, fusk, start</string>
     <string name="launcher_auto_search">Automatiskt</string>
-    <string name="launcher_auto_search_summary">Sök på alla enheter</string>
+    <string name="launcher_auto_search_summary">Sök överallt…</string>
     <string name="launcher_auto_searching">Söker speldata på alla enheter…</string>
     <string name="launcher_auto_none_title">Ingen speldata hittades</string>
     <string name="launcher_auto_none_message">Ingen Morrowind-mapp hittades på någon enhet (med Morrowind.ini och mappen ”Data Files”). Kopiera speldatan till enheten eller välj mappen med ”Välj mapp”.</string>
@@ -276,4 +276,42 @@
         <item>Höger spak</item>
         <item>Svepyta</item>
     </string-array>
+    <string name="launcher_group_balance">Balans</string>
+    <string name="launcher_group_movement">Rörelse</string>
+    <string name="launcher_group_combat">Strid</string>
+    <string name="launcher_group_followers">Följeslagare</string>
+    <string name="launcher_group_merchants">Handlare</string>
+    <string name="launcher_group_npcs">NPC:er</string>
+    <string name="launcher_group_gameplay">Spelmekanik</string>
+    <string name="launcher_group_quicksave">Snabbsparningar</string>
+    <string name="launcher_group_paging">Paging</string>
+    <string name="launcher_group_physics">Fysik</string>
+    <string name="launcher_group_shader_options">Shaderval</string>
+    <string name="launcher_group_fog">Dimval</string>
+    <string name="launcher_group_processing">Efterbehandling</string>
+    <string name="launcher_group_shadows">Skuggor</string>
+    <string name="launcher_group_shadow_types">Skuggtyper</string>
+    <string name="launcher_group_shadow_options">Skuggval</string>
+    <string name="launcher_group_animation_types">Animationstyper</string>
+    <string name="launcher_group_transitions">Övergångar</string>
+    <string name="launcher_group_font">Typsnitt</string>
+    <string name="launcher_group_owned">Ägande</string>
+    <string name="launcher_group_info">Information</string>
+    <string name="launcher_group_design">Utseende</string>
+    <string name="launcher_group_zoom">Zoom</string>
+    <string name="launcher_group_groundcover">Markvegetation</string>
+    <string name="launcher_group_meshes">Nät</string>
+    <string name="launcher_group_threads">Trådar</string>
+    <string name="launcher_group_framerate">Bildfrekvens</string>
+    <string name="launcher_group_resolution">Upplösning</string>
+    <string name="launcher_group_display">Visningsval</string>
+    <string name="launcher_group_shader">Shaders</string>
+    <string name="launcher_group_interface">Gränssnitt</string>
+    <string name="launcher_group_controls">Styrning</string>
+    <string name="launcher_group_onscreen">Skärmlayout</string>
+    <string name="launcher_group_sound">Ljudval</string>
+    <string name="launcher_group_saves">Sparfiler</string>
+    <string name="launcher_group_language">Språk</string>
+    <string name="launcher_group_cheats">Fusk</string>
+    <string name="launcher_group_start">Start</string>
 </resources>

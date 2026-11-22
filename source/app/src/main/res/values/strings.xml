@@ -362,7 +362,7 @@ OpenMW by the OpenMW Team since 2008</string>
     <string name="launcher_gs_engine_summary">Groundcover, navmesh, threads</string>
     <string name="launcher_gs_advanced_summary">Saves folder, language, cheats, start options</string>
     <string name="launcher_auto_search">Automatic</string>
-    <string name="launcher_auto_search_summary">Search all drives</string>
+    <string name="launcher_auto_search_summary">Search everything…</string>
     <string name="launcher_auto_searching">Searching all drives for game data…</string>
     <string name="launcher_auto_none_title">No game data found</string>
     <string name="launcher_auto_none_message">No Morrowind folder was found on any drive (one with Morrowind.ini and a “Data Files” folder). Copy the game data to the device or pick the folder with “Choose folder”.</string>
@@ -379,4 +379,42 @@ OpenMW by the OpenMW Team since 2008</string>
         <item>stick</item>
         <item>swipe</item>
     </string-array>
+    <string name="launcher_group_balance">Balance</string>
+    <string name="launcher_group_movement">Movement</string>
+    <string name="launcher_group_combat">Combat</string>
+    <string name="launcher_group_followers">Followers</string>
+    <string name="launcher_group_merchants">Merchants</string>
+    <string name="launcher_group_npcs">NPCs</string>
+    <string name="launcher_group_gameplay">Gameplay</string>
+    <string name="launcher_group_quicksave">Quicksaves</string>
+    <string name="launcher_group_paging">Paging</string>
+    <string name="launcher_group_physics">Physics</string>
+    <string name="launcher_group_shader_options">Shader options</string>
+    <string name="launcher_group_fog">Fog options</string>
+    <string name="launcher_group_processing">Processing options</string>
+    <string name="launcher_group_shadows">Shadows</string>
+    <string name="launcher_group_shadow_types">Shadow types</string>
+    <string name="launcher_group_shadow_options">Shadow options</string>
+    <string name="launcher_group_animation_types">Animation types</string>
+    <string name="launcher_group_transitions">Transitions</string>
+    <string name="launcher_group_font">Font</string>
+    <string name="launcher_group_owned">Ownership</string>
+    <string name="launcher_group_info">Information</string>
+    <string name="launcher_group_design">Design</string>
+    <string name="launcher_group_zoom">Zoom</string>
+    <string name="launcher_group_groundcover">Groundcover</string>
+    <string name="launcher_group_meshes">Meshes</string>
+    <string name="launcher_group_threads">Threads</string>
+    <string name="launcher_group_framerate">Frame rate</string>
+    <string name="launcher_group_resolution">Resolution</string>
+    <string name="launcher_group_display">Display options</string>
+    <string name="launcher_group_shader">Shaders</string>
+    <string name="launcher_group_interface">Interface</string>
+    <string name="launcher_group_controls">Controls</string>
+    <string name="launcher_group_onscreen">On-screen layout</string>
+    <string name="launcher_group_sound">Sound options</string>
+    <string name="launcher_group_saves">Saves</string>
+    <string name="launcher_group_language">Language</string>
+    <string name="launcher_group_cheats">Cheats</string>
+    <string name="launcher_group_start">Start</string>
 </resources>

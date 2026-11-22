@@ -7,9 +7,9 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/l10n_gs_game_mechanics_movement_combat_title">
         <CheckBoxPreference android:key="gs_toggle_sneak" android:title="@string/gs_toggle_sneak_title" android:defaultValue="true" android:summary="@string/gs_toggle_sneak_summary" />
+        <CheckBoxPreference android:key="gs_swim_upward_correction" android:title="@string/gs_swim_upward_correction_title" android:summary="@string/gs_swim_upward_correction_summary" />
         <CheckBoxPreference android:key="gs_uncapped_damage_fatigue" android:title="@string/gs_uncapped_damage_fatigue_title" android:summary="@string/gs_uncapped_damage_fatigue_summary" />
         <CheckBoxPreference android:key="gs_only_weapon_bs" android:title="@string/gs_only_weapon_bs_title" android:summary="@string/gs_only_weapon_bs_summary" />
-        <CheckBoxPreference android:key="gs_swim_upward_correction" android:title="@string/gs_swim_upward_correction_title" android:summary="@string/gs_swim_upward_correction_summary" />
         <ListPreference android:key="gs_factor_strength_into_hand-to-hand_combat" android:summary="%s" android:title="@string/gs_factor_strength_into_hand_to_hand_combat_title" android:dialogTitle="@string/gs_factor_strength_into_hand_to_hand_combat_dialogtitle" android:entries="@array/gs_factor_strength_into_hand_to_hand_combat_entries" android:entryValues="@array/gs_factor_strength_into_hand_to_hand_combat_values" android:defaultValue="0" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/l10n_gs_game_mechanics_npc_followers_title">
@@ -20,9 +20,9 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/l10n_gs_game_mechanics_gameplay_fixes_title">
         <CheckBoxPreference android:key="gs_racial_variation_in_speed_fix" android:title="@string/gs_racial_variation_in_speed_fix_title" android:summary="@string/gs_racial_variation_in_speed_fix_summary" />
+        <CheckBoxPreference android:key="gs_merchant_equipping_fix" android:title="@string/gs_merchant_equipping_fix_title" android:summary="@string/gs_merchant_equipping_fix_summary" />
         <CheckBoxPreference android:key="gs_enchanted_weapons_are_magical" android:title="@string/gs_enchanted_weapons_are_magical_title" android:defaultValue="true" android:summary="@string/gs_enchanted_weapons_are_magical_summary" />
         <CheckBoxPreference android:key="gs_classic_reflected_absorb_spells_behavior" android:title="@string/gs_classic_reflected_absorb_spells_behavior_title" android:defaultValue="true" android:summary="@string/gs_classic_reflected_absorb_spells_behavior_summary" />
-        <CheckBoxPreference android:key="gs_merchant_equipping_fix" android:title="@string/gs_merchant_equipping_fix_title" android:summary="@string/gs_merchant_equipping_fix_summary" />
         <CheckBoxPreference android:key="gs_trainers_bs" android:title="@string/gs_trainers_bs_title" android:summary="@string/gs_trainers_bs_summary" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/l10n_gs_game_mechanics_saves_title">

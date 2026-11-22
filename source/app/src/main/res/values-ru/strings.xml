@@ -263,7 +263,7 @@
     <string name="launcher_gs_engine_summary">Растительность, навмеш, потоки</string>
     <string name="launcher_gs_advanced_summary">Сохранения, язык, читы, запуск</string>
     <string name="launcher_auto_search">Автоматически</string>
-    <string name="launcher_auto_search_summary">Искать на всех дисках</string>
+    <string name="launcher_auto_search_summary">Искать везде…</string>
     <string name="launcher_auto_searching">Поиск данных игры на всех дисках…</string>
     <string name="launcher_auto_none_title">Данные игры не найдены</string>
     <string name="launcher_auto_none_message">Папка Morrowind (с Morrowind.ini и папкой «Data Files») не найдена ни на одном диске. Скопируйте данные игры на устройство или выберите папку кнопкой «Выбрать папку».</string>
@@ -276,4 +276,42 @@
         <item>Правый стик</item>
         <item>Область свайпа</item>
     </string-array>
+    <string name="launcher_group_balance">Баланс</string>
+    <string name="launcher_group_movement">Движение</string>
+    <string name="launcher_group_combat">Бой</string>
+    <string name="launcher_group_followers">Спутники</string>
+    <string name="launcher_group_merchants">Торговцы</string>
+    <string name="launcher_group_npcs">NPC</string>
+    <string name="launcher_group_gameplay">Геймплей</string>
+    <string name="launcher_group_quicksave">Быстрые сохранения</string>
+    <string name="launcher_group_paging">Подгрузка</string>
+    <string name="launcher_group_physics">Физика</string>
+    <string name="launcher_group_shader_options">Шейдеры</string>
+    <string name="launcher_group_fog">Туман</string>
+    <string name="launcher_group_processing">Постобработка</string>
+    <string name="launcher_group_shadows">Тени</string>
+    <string name="launcher_group_shadow_types">Типы теней</string>
+    <string name="launcher_group_shadow_options">Настройки теней</string>
+    <string name="launcher_group_animation_types">Типы анимаций</string>
+    <string name="launcher_group_transitions">Переходы</string>
+    <string name="launcher_group_font">Шрифт</string>
+    <string name="launcher_group_owned">Владение</string>
+    <string name="launcher_group_info">Информация</string>
+    <string name="launcher_group_design">Оформление</string>
+    <string name="launcher_group_zoom">Масштаб</string>
+    <string name="launcher_group_groundcover">Растительность</string>
+    <string name="launcher_group_meshes">Сетки</string>
+    <string name="launcher_group_threads">Потоки</string>
+    <string name="launcher_group_framerate">Частота кадров</string>
+    <string name="launcher_group_resolution">Разрешение</string>
+    <string name="launcher_group_display">Экран</string>
+    <string name="launcher_group_shader">Шейдеры</string>
+    <string name="launcher_group_interface">Интерфейс</string>
+    <string name="launcher_group_controls">Управление</string>
+    <string name="launcher_group_onscreen">Экранные кнопки</string>
+    <string name="launcher_group_sound">Звук</string>
+    <string name="launcher_group_saves">Сохранения</string>
+    <string name="launcher_group_language">Язык</string>
+    <string name="launcher_group_cheats">Читы</string>
+    <string name="launcher_group_start">Запуск</string>
 </resources>

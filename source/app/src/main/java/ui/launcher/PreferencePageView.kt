@@ -122,14 +122,21 @@ class PreferencePageView(
     private fun children(group: PreferenceGroup): List<Preference> =
         (0 until group.preferenceCount).map { group.getPreference(it) }
 
+    /** A row of the page: a label at the left, its settings below each other at the right. */
+    private inner class Group(val label: CharSequence?) {
+        val cells = ArrayList<View>()
+        val notes = ArrayList<View>()
+    }
+
     private fun buildGroup(parent: LinearLayout, group: PreferenceGroup) {
-        val pendingCells = ArrayList<Pair<View, View?>>()
+        var current: Group? = null
         val pendingTiles = ArrayList<Preference>()
 
         fun fullWidth() = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
         )
 
+        // Screens that only open other screens (the game settings areas) keep their tile grid.
         fun flushTiles() {
             if (pendingTiles.isEmpty())
                 return
@@ -142,47 +149,96 @@ class PreferencePageView(
             pendingTiles.clear()
         }
 
-        // Two cells side by side, as in CubeEvil4; their explanations below.
-        fun flushCells() {
-            if (pendingCells.isEmpty())
-                return
-            val grid = EqualGrid(context, maxColumns = 2, minCellWidthDp = 240)
-            pendingCells.forEach { grid.addView(it.first) }
-            parent.addView(grid, fullWidth().apply {
-                topMargin = dp(4)
-                bottomMargin = dp(4)
-            })
-            pendingCells.mapNotNull { it.second }.forEach { note ->
-                parent.addView(note, fullWidth().apply { topMargin = dp(6) })
-            }
-            pendingCells.clear()
+        fun flushGroup() {
+            val done = current ?: return
+            current = null
+            if (done.cells.isNotEmpty())
+                parent.addView(groupRow(done), fullWidth().apply { topMargin = dp(4) })
         }
 
         for (preference in children(group)) {
-            when {
-                preference is PreferenceCategory -> {
-                    flushCells()
-                    flushTiles()
-                    parent.addView(LauncherStyle.sectionLabel(context, preference.title ?: ""))
-                    buildGroup(parent, preference)
-                }
-                preference.key in navigationKeys -> {
-                    flushCells()
-                    pendingTiles += preference
-                }
-                else -> {
-                    flushTiles()
-                    pendingCells += when {
-                        preference.key in sliders -> sliderCell(preference, sliders.getValue(preference.key))
-                        preference is TwoStatePreference -> toggleCell(preference)
-                        preference is ListPreference && (preference.entries?.size ?: 0) >= 2 -> choiceCell(preference)
-                        else -> valueCell(preference)
-                    }
-                }
+            if (preference is PreferenceCategory) {
+                flushGroup()
+                flushTiles()
+                parent.addView(LauncherStyle.sectionLabel(context, preference.title ?: ""))
+                buildGroup(parent, preference)
+                continue
+            }
+
+            val label = GROUPS[preference.key]
+            if (preference.key in navigationKeys && label == null && current?.label == null) {
+                flushGroup()
+                pendingTiles += preference
+                continue
+            }
+            flushTiles()
+            if (label != null || current == null) {
+                flushGroup()
+                current = Group(label?.let { context.getString(it) })
+            }
+            val row = current!!
+            if (preference.key in navigationKeys) {
+                row.cells += navigationTile(preference)
+                continue
+            }
+            val (cell, note) = when {
+                preference.key in sliders -> sliderCell(preference, sliders.getValue(preference.key))
+                preference is TwoStatePreference -> toggleCell(preference)
+                preference is ListPreference && (preference.entries?.size ?: 0) >= 2 -> choiceCell(preference)
+                else -> valueCell(preference)
+            }
+            row.cells += cell
+            note?.let { row.notes += it }
+        }
+        flushGroup()
+        flushTiles()
+    }
+
+    /**
+     * The label column at the left and the settings at the right, as in the
+     * CubeEvil4 menu; on narrow screens the label goes above the settings.
+     */
+    private fun groupRow(group: Group): View {
+        val wide = context.resources.configuration.screenWidthDp >= 600
+        val column = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            group.cells.forEachIndexed { index, cell ->
+                val height = if (cell.tag == CELL) dp(LauncherStyle.CONTROL_HEIGHT) else LinearLayout.LayoutParams.WRAP_CONTENT
+                addView(cell, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, height).apply {
+                    if (index > 0) topMargin = dp(LauncherStyle.GAP)
+                })
+            }
+            group.notes.forEach { note ->
+                addView(note, LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply { topMargin = dp(8) })
             }
         }
-        flushCells()
-        flushTiles()
+        val label = LauncherStyle.text(context, group.label ?: "", 16f, true).apply {
+            maxLines = 2
+            ellipsize = TextUtils.TruncateAt.END
+        }
+        return LinearLayout(context).apply {
+            setPadding(0, dp(4), 0, dp(6))
+            if (wide) {
+                orientation = LinearLayout.HORIZONTAL
+                // The label sits level with the first setting.
+                addView(label, LinearLayout.LayoutParams(dp(LABEL_WIDTH), dp(LauncherStyle.CONTROL_HEIGHT)).apply {
+                    marginEnd = dp(16)
+                })
+                label.gravity = Gravity.CENTER_VERTICAL
+                addView(column, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+            } else {
+                orientation = LinearLayout.VERTICAL
+                if (!group.label.isNullOrEmpty())
+                    addView(label, LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply { bottomMargin = dp(6) })
+                addView(column, LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
+                ))
+            }
+        }
     }
 
     /**
@@ -192,7 +248,7 @@ class PreferencePageView(
     private inner class Cell(title: CharSequence, arrows: Boolean) {
         val titleView: TextView = LauncherStyle.text(context, title, 14f, true).apply {
             gravity = Gravity.CENTER
-            maxLines = 2
+            maxLines = 1
             ellipsize = TextUtils.TruncateAt.END
         }
         val valueView: TextView = LauncherStyle.text(context, "", 18f, true).apply {
@@ -223,7 +279,8 @@ class PreferencePageView(
             minimumHeight = dp(LauncherStyle.CONTROL_HEIGHT)
             isClickable = true
             isFocusable = true
-            setOnClickListener { if (enabled()) onActivate() }
+            tag = CELL
+            setOnClickListener { if (enabled()) changed(onActivate) }
             setOnKeyListener { _, keyCode, event ->
                 val by = when (keyCode) {
                     KeyEvent.KEYCODE_BUTTON_L1, KeyEvent.KEYCODE_Q -> -1
@@ -231,7 +288,7 @@ class PreferencePageView(
                     else -> 0
                 }
                 if (by != 0 && event.action == KeyEvent.ACTION_DOWN && enabled())
-                    onStep(by)
+                    changed { onStep(by) }
                 by != 0
             }
         }
@@ -246,13 +303,24 @@ class PreferencePageView(
 
         private fun enabled() = preference?.isEnabled != false
 
+        /**
+         * Runs [change] and then redraws the page. A switch stores its value
+         * (which already redraws through the settings listener) before Android
+         * updates the settings depending on it, so without this redraw those
+         * would show the previous state.
+         */
+        private fun changed(change: () -> Unit) {
+            change()
+            refresh()
+        }
+
         private fun addSide(label: String, by: Int, atStart: Boolean) {
             val arrow = LauncherStyle.text(context, label, 22f, true).apply {
                 gravity = Gravity.CENTER
                 // Tappable, but the focus stays on the whole cell.
                 isClickable = true
                 isFocusable = false
-                setOnClickListener { if (enabled()) onStep(by) }
+                setOnClickListener { if (enabled()) changed { onStep(by) } }
             }
             val divider = View(context)
             arrowViews += arrow
@@ -470,7 +538,7 @@ class PreferencePageView(
             max = steps
             // Dragged with a finger; the controller uses the cell's L1/R1 and arrows.
             isFocusable = false
-            setPadding(dp(14), dp(4), dp(14), dp(2))
+            setPadding(dp(10), 0, dp(10), 0)
             progressTintList = ColorStateList.valueOf(LauncherStyle.GOLD)
             thumbTintList = ColorStateList.valueOf(LauncherStyle.GOLD)
             progressBackgroundTintList = ColorStateList.valueOf(LauncherStyle.BORDER)
@@ -480,12 +548,21 @@ class PreferencePageView(
                         cell.valueView.text = label(progress)
                 }
                 override fun onStartTrackingTouch(bar: SeekBar) = Unit
-                override fun onStopTrackingTouch(bar: SeekBar) = store(bar.progress)
+                override fun onStopTrackingTouch(bar: SeekBar) {
+                    store(bar.progress)
+                    refresh()
+                }
             })
         }
-        cell.center.addView(seekBar, LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
-        ))
+        // Slider and value share the second line, so the cell keeps the common height.
+        cell.center.removeView(cell.valueView)
+        cell.valueView.gravity = Gravity.CENTER_VERTICAL or Gravity.END
+        cell.center.addView(LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            addView(seekBar, LinearLayout.LayoutParams(0, dp(28), 1f))
+            addView(cell.valueView, LinearLayout.LayoutParams(dp(110), LinearLayout.LayoutParams.WRAP_CONTENT))
+        }, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
         cell.onStep = { by -> store((position() + by).coerceIn(0, steps)) }
         cell.onActivate = { store((position() + 1).coerceIn(0, steps)) }
 
@@ -498,5 +575,66 @@ class PreferencePageView(
         }
         bindEnabled(cell, preference)
         return cell.root to note(preference, if (spec.summaryAsNote) preference.summary else null)
+    }
+
+    private companion object {
+        /** Marks the setting cells, which all have the common height. */
+        const val CELL = "launcher-cell"
+        const val LABEL_WIDTH = 190
+
+        /**
+         * The label in the left column, by the key of the first setting it covers;
+         * it covers the following settings up to the next label or section.
+         */
+        val GROUPS: Map<String, Int> = mapOf(
+            // Game settings > Gameplay
+            "gs_soulgem_values_rebalance" to R.string.launcher_group_balance,
+            "gs_toggle_sneak" to R.string.launcher_group_movement,
+            "gs_uncapped_damage_fatigue" to R.string.launcher_group_combat,
+            "gs_followers_defend_immediately" to R.string.launcher_group_followers,
+            "gs_permanent_barter_disposition_changes" to R.string.launcher_group_merchants,
+            "gs_npc_avoid_collision" to R.string.launcher_group_npcs,
+            "gs_racial_variation_in_speed_fix" to R.string.launcher_group_gameplay,
+            "gs_maximum_quicksaves" to R.string.launcher_group_quicksave,
+            // Game settings > Graphics
+            "gs_object_paging_min_size" to R.string.launcher_group_paging,
+            "pref_physicsFPS2" to R.string.launcher_group_physics,
+            "gs_auto_use_object_normal_maps" to R.string.launcher_group_shader_options,
+            "gs_radial_fog" to R.string.launcher_group_fog,
+            "gs_soft_particles" to R.string.launcher_group_processing,
+            // Game settings > Shadows
+            "gs_enable_shadows" to R.string.launcher_group_shadows,
+            "gs_player_shadows" to R.string.launcher_group_shadow_types,
+            "gs_shadow_quality" to R.string.launcher_group_shadow_options,
+            // Game settings > Animations
+            "gs_use_magic_item_animation" to R.string.launcher_group_animation_types,
+            "gs_smooth_movement" to R.string.launcher_group_transitions,
+            // Game settings > Interface
+            "pref_truetype_fonts" to R.string.launcher_group_font,
+            "gs_show_owned" to R.string.launcher_group_owned,
+            "gs_show_effect_duration" to R.string.launcher_group_info,
+            "gs_change_dialogue_topic_color" to R.string.launcher_group_design,
+            "gs_can_zoom_on_maps" to R.string.launcher_group_zoom,
+            // Game settings > Engine
+            "gs_groundcover_enabled" to R.string.launcher_group_groundcover,
+            "gs_build_navmesh" to R.string.launcher_group_meshes,
+            "gs_navmesh_threads" to R.string.launcher_group_threads,
+            // Game settings > Advanced
+            "pref_user_data_dir" to R.string.launcher_group_saves,
+            "pref_encoding" to R.string.launcher_group_language,
+            "pref_cheats_enabled" to R.string.launcher_group_cheats,
+            "pref_skip_gui" to R.string.launcher_group_start,
+            // Graphics & performance
+            "gs_framerate_limit" to R.string.launcher_group_framerate,
+            "pref_customResolution" to R.string.launcher_group_resolution,
+            "pref_display_cutout_area" to R.string.launcher_group_display,
+            "pref_shadersDir_v2" to R.string.launcher_group_shader,
+            // Controls
+            "pref_uiScaling" to R.string.launcher_group_interface,
+            "pref_omw051_controller_trigger_thresholds" to R.string.launcher_group_controls,
+            "pref_controls" to R.string.launcher_group_onscreen,
+            // Audio
+            "pref_omw050_doppler" to R.string.launcher_group_sound
+        )
     }
 }
