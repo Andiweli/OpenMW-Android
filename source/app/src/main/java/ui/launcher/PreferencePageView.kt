@@ -554,15 +554,18 @@ class PreferencePageView(
                 }
             })
         }
-        // Slider and value share the second line, so the cell keeps the common height.
-        cell.center.removeView(cell.valueView)
+        // Name above the slider, the value at the right, centred over the full
+        // height of the cell; so the cell keeps the common height.
+        cell.center.removeAllViews()
+        cell.center.orientation = LinearLayout.HORIZONTAL
         cell.valueView.gravity = Gravity.CENTER_VERTICAL or Gravity.END
         cell.center.addView(LinearLayout(context).apply {
-            orientation = LinearLayout.HORIZONTAL
-            gravity = Gravity.CENTER_VERTICAL
-            addView(seekBar, LinearLayout.LayoutParams(0, dp(28), 1f))
-            addView(cell.valueView, LinearLayout.LayoutParams(dp(110), LinearLayout.LayoutParams.WRAP_CONTENT))
-        }, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.CENTER
+            addView(cell.titleView, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
+            addView(seekBar, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(28)))
+        }, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+        cell.center.addView(cell.valueView, LinearLayout.LayoutParams(dp(110), LinearLayout.LayoutParams.MATCH_PARENT))
         cell.onStep = { by -> store((position() + by).coerceIn(0, steps)) }
         cell.onActivate = { store((position() + 1).coerceIn(0, steps)) }
 
