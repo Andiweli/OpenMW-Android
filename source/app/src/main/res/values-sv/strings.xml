@@ -261,7 +261,7 @@
     <string name="launcher_gs_animations_summary">Rörelse med mera</string>
     <string name="launcher_gs_interface_summary">Typsnitt, verktygstips, karta</string>
     <string name="launcher_gs_engine_summary">Markväxtlighet, navmesh, trådar</string>
-    <string name="launcher_gs_advanced_summary">Sparmapp, fusk, startalternativ</string>
+    <string name="launcher_gs_advanced_summary">Sparmapp, språk, fusk, start</string>
     <string name="launcher_auto_search">Automatiskt</string>
     <string name="launcher_auto_search_summary">Sök på alla enheter</string>
     <string name="launcher_auto_searching">Söker speldata på alla enheter…</string>

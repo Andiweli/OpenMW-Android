@@ -261,7 +261,7 @@
     <string name="launcher_gs_animations_summary">Bewegung und mehr</string>
     <string name="launcher_gs_interface_summary">Schrift, Tooltips, Karte</string>
     <string name="launcher_gs_engine_summary">Bodenbewuchs, NavMesh, Threads</string>
-    <string name="launcher_gs_advanced_summary">Ordner für Spielstände, Cheats, Startoptionen</string>
+    <string name="launcher_gs_advanced_summary">Spielstände, Spielsprache, Cheats, Startoptionen</string>
     <string name="launcher_auto_search">Automatisch</string>
     <string name="launcher_auto_search_summary">Alle Laufwerke durchsuchen</string>
     <string name="launcher_auto_searching">Spieldaten werden auf allen Laufwerken gesucht…</string>

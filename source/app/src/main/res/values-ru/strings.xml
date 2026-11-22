@@ -261,7 +261,7 @@
     <string name="launcher_gs_animations_summary">Движение и не только</string>
     <string name="launcher_gs_interface_summary">Шрифты, подсказки, карта</string>
     <string name="launcher_gs_engine_summary">Растительность, навмеш, потоки</string>
-    <string name="launcher_gs_advanced_summary">Папка сохранений, читы, запуск</string>
+    <string name="launcher_gs_advanced_summary">Сохранения, язык, читы, запуск</string>
     <string name="launcher_auto_search">Автоматически</string>
     <string name="launcher_auto_search_summary">Искать на всех дисках</string>
     <string name="launcher_auto_searching">Поиск данных игры на всех дисках…</string>

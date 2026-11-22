@@ -261,7 +261,7 @@
     <string name="launcher_gs_animations_summary">Ruch i więcej</string>
     <string name="launcher_gs_interface_summary">Czcionki, podpowiedzi, mapa</string>
     <string name="launcher_gs_engine_summary">Roślinność, navmesh, wątki</string>
-    <string name="launcher_gs_advanced_summary">Folder zapisów, kody, opcje startu</string>
+    <string name="launcher_gs_advanced_summary">Zapisy, język, kody, opcje startu</string>
     <string name="launcher_auto_search">Automatycznie</string>
     <string name="launcher_auto_search_summary">Przeszukaj wszystkie dyski</string>
     <string name="launcher_auto_searching">Szukanie danych gry na wszystkich dyskach…</string>

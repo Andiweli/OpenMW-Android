@@ -360,7 +360,7 @@ OpenMW by the OpenMW Team since 2008</string>
     <string name="launcher_gs_animations_summary">Movement and more</string>
     <string name="launcher_gs_interface_summary">Fonts, tooltips, map</string>
     <string name="launcher_gs_engine_summary">Groundcover, navmesh, threads</string>
-    <string name="launcher_gs_advanced_summary">Saves folder, cheats, start options</string>
+    <string name="launcher_gs_advanced_summary">Saves folder, language, cheats, start options</string>
     <string name="launcher_auto_search">Automatic</string>
     <string name="launcher_auto_search_summary">Search all drives</string>
     <string name="launcher_auto_searching">Searching all drives for game data…</string>

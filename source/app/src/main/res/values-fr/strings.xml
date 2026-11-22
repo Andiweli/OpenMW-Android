@@ -261,7 +261,7 @@
     <string name="launcher_gs_animations_summary">Mouvement et plus</string>
     <string name="launcher_gs_interface_summary">Polices, infobulles, carte</string>
     <string name="launcher_gs_engine_summary">Végétation, navmesh, threads</string>
-    <string name="launcher_gs_advanced_summary">Dossier des sauvegardes, triches, démarrage</string>
+    <string name="launcher_gs_advanced_summary">Sauvegardes, langue, triches, démarrage</string>
     <string name="launcher_auto_search">Automatique</string>
     <string name="launcher_auto_search_summary">Chercher sur tous les lecteurs</string>
     <string name="launcher_auto_searching">Recherche des données du jeu sur tous les lecteurs…</string>
