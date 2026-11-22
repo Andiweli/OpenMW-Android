@@ -220,8 +220,6 @@
     <string name="user_data_dir_error_title">Dossier des sauvegardes inchangé</string>
     <string name="user_data_dir_error_message">OpenMW ne peut pas écrire dans ce dossier :\n%1$s\n(%2$s)\n\nL\'ancien dossier des sauvegardes reste utilisé.</string>
     <string name="user_data_dir_unavailable">Le dossier des sauvegardes est indisponible ou non accessible en écriture :\n%1$s\n\nInsérez le stockage, vérifiez l\'autorisation de stockage ou choisissez un autre dossier dans le lanceur.</string>
-    <string name="pref_swipe_to_look_title">Balayer pour regarder</string>
-    <string name="pref_swipe_to_look_summary">Balayer une zone libre de l\'écran pour regarder autour de soi.</string>
     <string name="pref_cheats_enabled_title">Activer les triches</string>
     <string name="pref_cheats_enabled_summary">Page en jeu Options &gt; Scripts &gt; Triches pour obtenir de l\'or.</string>
 
@@ -237,7 +235,6 @@
     <string name="launcher_status_not_chosen">Non choisi</string>
     <string name="launcher_game_data_not_chosen">Choisissez le dossier qui contient Data Files et Morrowind.ini.</string>
     <string name="launcher_choose_folder">Choisir le dossier</string>
-    <string name="launcher_language">Langue</string>
     <string name="launcher_tile_game_settings_summary">Gameplay, moteur, avancé</string>
     <string name="launcher_tile_graphics">Graphismes et performances</string>
     <string name="launcher_tile_graphics_summary">Résolution, shaders, fréquence d\'images</string>
@@ -254,8 +251,8 @@
     <string name="launcher_help_github">Projet sur GitHub</string>
     <string name="launcher_back">‹ Retour</string>
     <string name="launcher_hint_back_play">B : retour · START : jouer</string>
-    <string name="launcher_on">OUI</string>
-    <string name="launcher_off">NON</string>
+    <string name="launcher_on">Oui</string>
+    <string name="launcher_off">Non</string>
     <string name="launcher_section_onscreen">Disposer les boutons à l\'écran</string>
     <string name="launcher_section_areas">Catégories</string>
     <string name="launcher_gs_game_mechanics_summary">Combat, compagnons, sauvegardes</string>
@@ -265,4 +262,18 @@
     <string name="launcher_gs_interface_summary">Polices, infobulles, carte</string>
     <string name="launcher_gs_engine_summary">Végétation, navmesh, threads</string>
     <string name="launcher_gs_advanced_summary">Dossier des sauvegardes, triches, démarrage</string>
+    <string name="launcher_auto_search">Automatique</string>
+    <string name="launcher_auto_search_summary">Chercher sur tous les lecteurs</string>
+    <string name="launcher_auto_searching">Recherche des données du jeu sur tous les lecteurs…</string>
+    <string name="launcher_auto_none_title">Aucune donnée de jeu trouvée</string>
+    <string name="launcher_auto_none_message">Aucun dossier Morrowind n\'a été trouvé (avec Morrowind.ini et un dossier « Data Files »). Copiez les données du jeu sur l\'appareil ou choisissez le dossier avec « Choisir un dossier ».</string>
+    <string name="launcher_auto_pick">Quelles données de jeu utiliser ?</string>
+    <string name="launcher_encoding_summary">Jeu de caractères de votre édition de Morrowind : latin pour le français, l\'anglais, l\'allemand et d\'autres, cyrillique pour le russe, Europe centrale et orientale pour le polonais.</string>
+    <string name="pref_right_look_title">Regarder avec</string>
+    <string name="pref_right_look_summary">Stick droit : un stick à l\'écran. Zone de glissement : pas de stick, glissez sur une zone libre.</string>
+    <string name="launcher_hint_values">L1/R1 : changer la valeur</string>
+    <string-array name="pref_right_look_entries">
+        <item>Stick droit</item>
+        <item>Zone de glissement</item>
+    </string-array>
 </resources>

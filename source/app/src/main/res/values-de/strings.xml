@@ -220,8 +220,6 @@
     <string name="user_data_dir_error_title">Ordner für Spielstände nicht geändert</string>
     <string name="user_data_dir_error_message">OpenMW kann nicht in diesen Ordner schreiben:\n%1$s\n(%2$s)\n\nEs wird weiterhin der bisherige Ordner verwendet.</string>
     <string name="user_data_dir_unavailable">Der Ordner für Spielstände ist nicht verfügbar oder nicht beschreibbar:\n%1$s\n\nSetze den Speicher ein, prüfe die Speicherberechtigung oder wähle im Launcher einen anderen Ordner.</string>
-    <string name="pref_swipe_to_look_title">Wischen zum Umsehen</string>
-    <string name="pref_swipe_to_look_summary">Auf freier Fläche wischen, um dich umzusehen.</string>
     <string name="pref_cheats_enabled_title">Cheats aktivieren</string>
     <string name="pref_cheats_enabled_summary">Seite im Spiel unter Optionen &gt; Skripte &gt; Cheats für Gold.</string>
 
@@ -237,7 +235,6 @@
     <string name="launcher_status_not_chosen">Nicht gewählt</string>
     <string name="launcher_game_data_not_chosen">Wähle den Ordner mit „Data Files“ und Morrowind.ini.</string>
     <string name="launcher_choose_folder">Ordner wählen</string>
-    <string name="launcher_language">Spielsprache</string>
     <string name="launcher_tile_game_settings_summary">Gameplay, Engine, Erweitert</string>
     <string name="launcher_tile_graphics">Grafik &amp; Leistung</string>
     <string name="launcher_tile_graphics_summary">Auflösung, Shader, Bildrate</string>
@@ -254,8 +251,8 @@
     <string name="launcher_help_github">Projekt auf GitHub</string>
     <string name="launcher_back">‹ Zurück</string>
     <string name="launcher_hint_back_play">B: zurück · START: spielen</string>
-    <string name="launcher_on">AN</string>
-    <string name="launcher_off">AUS</string>
+    <string name="launcher_on">An</string>
+    <string name="launcher_off">Aus</string>
     <string name="launcher_section_onscreen">Bildschirmtasten anordnen</string>
     <string name="launcher_section_areas">Bereiche</string>
     <string name="launcher_gs_game_mechanics_summary">Kampf, Begleiter, Spielstände</string>
@@ -265,4 +262,18 @@
     <string name="launcher_gs_interface_summary">Schrift, Tooltips, Karte</string>
     <string name="launcher_gs_engine_summary">Bodenbewuchs, NavMesh, Threads</string>
     <string name="launcher_gs_advanced_summary">Ordner für Spielstände, Cheats, Startoptionen</string>
+    <string name="launcher_auto_search">Automatisch</string>
+    <string name="launcher_auto_search_summary">Alle Laufwerke durchsuchen</string>
+    <string name="launcher_auto_searching">Spieldaten werden auf allen Laufwerken gesucht…</string>
+    <string name="launcher_auto_none_title">Keine Spieldaten gefunden</string>
+    <string name="launcher_auto_none_message">Auf keinem Laufwerk wurde ein Morrowind-Ordner gefunden (mit Morrowind.ini und dem Ordner „Data Files“). Kopiere die Spieldaten auf das Gerät oder wähle den Ordner mit „Ordner wählen“.</string>
+    <string name="launcher_auto_pick">Welche Spieldaten verwenden?</string>
+    <string name="launcher_encoding_summary">Zeichensatz deiner Morrowind-Ausgabe: Lateinisch für Deutsch, Englisch, Französisch u. a., Kyrillisch für Russisch, Mittel- und Osteuropäisch für Polnisch.</string>
+    <string name="pref_right_look_title">Umsehen mit</string>
+    <string name="pref_right_look_summary">Rechter Stick: ein Stick auf dem Bildschirm. Wischfläche: kein Stick, auf freier Fläche wischen.</string>
+    <string name="launcher_hint_values">L1/R1: Wert ändern</string>
+    <string-array name="pref_right_look_entries">
+        <item>Rechter Stick</item>
+        <item>Wischfläche</item>
+    </string-array>
 </resources>

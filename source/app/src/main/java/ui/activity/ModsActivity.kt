@@ -49,7 +49,8 @@ class ModsActivity : AppCompatActivity() {
         setContentView(
             ui.launcher.LauncherStyle.pageFrame(
                 this, getString(R.string.activity_mods),
-                onBack = { finish() }, onPlay = { LauncherPageActivity.play(this) }, content = content
+                onBack = { finish() }, onPlay = { LauncherPageActivity.play(this) }, content = content,
+                valueHint = false
             )
         )
 

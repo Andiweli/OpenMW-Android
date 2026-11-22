@@ -306,7 +306,8 @@ tasks.register('verifyOpenMwPayload') {
                 'pref_shadersDir_entries',
                 'pref_mouse_mode_entries',
                 'gs_shadow_quality_entries',
-                'gs_shadow_distance_entries'
+                'gs_shadow_distance_entries',
+                'pref_right_look_entries'
         ]
         def extractArrayItemCounts = { String xml ->
             def counts = [:]

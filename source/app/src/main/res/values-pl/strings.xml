@@ -220,8 +220,6 @@
     <string name="user_data_dir_error_title">Folder zapisów nie został zmieniony</string>
     <string name="user_data_dir_error_message">OpenMW nie może zapisywać w tym folderze:\n%1$s\n(%2$s)\n\nNadal używany jest poprzedni folder zapisów.</string>
     <string name="user_data_dir_unavailable">Folder zapisów jest niedostępny lub nie można w nim zapisywać:\n%1$s\n\nWłóż nośnik, sprawdź uprawnienie do pamięci lub wybierz inny folder w launcherze.</string>
-    <string name="pref_swipe_to_look_title">Przesuń, aby się rozglądać</string>
-    <string name="pref_swipe_to_look_summary">Przesuwaj palcem po wolnej części ekranu, aby się rozglądać.</string>
     <string name="pref_cheats_enabled_title">Włącz kody</string>
     <string name="pref_cheats_enabled_summary">Strona w grze Opcje &gt; Skrypty &gt; Kody, by dostać złoto.</string>
 
@@ -237,7 +235,6 @@
     <string name="launcher_status_not_chosen">Nie wybrano</string>
     <string name="launcher_game_data_not_chosen">Wybierz folder zawierający Data Files i Morrowind.ini.</string>
     <string name="launcher_choose_folder">Wybierz folder</string>
-    <string name="launcher_language">Język</string>
     <string name="launcher_tile_game_settings_summary">Rozgrywka, silnik, zaawansowane</string>
     <string name="launcher_tile_graphics">Grafika i wydajność</string>
     <string name="launcher_tile_graphics_summary">Rozdzielczość, shadery, liczba klatek</string>
@@ -254,8 +251,8 @@
     <string name="launcher_help_github">Projekt na GitHubie</string>
     <string name="launcher_back">‹ Wstecz</string>
     <string name="launcher_hint_back_play">B: wstecz · START: graj</string>
-    <string name="launcher_on">WŁ.</string>
-    <string name="launcher_off">WYŁ.</string>
+    <string name="launcher_on">Wł.</string>
+    <string name="launcher_off">Wył.</string>
     <string name="launcher_section_onscreen">Układ przycisków ekranowych</string>
     <string name="launcher_section_areas">Obszary</string>
     <string name="launcher_gs_game_mechanics_summary">Walka, towarzysze, zapisy</string>
@@ -265,4 +262,18 @@
     <string name="launcher_gs_interface_summary">Czcionki, podpowiedzi, mapa</string>
     <string name="launcher_gs_engine_summary">Roślinność, navmesh, wątki</string>
     <string name="launcher_gs_advanced_summary">Folder zapisów, kody, opcje startu</string>
+    <string name="launcher_auto_search">Automatycznie</string>
+    <string name="launcher_auto_search_summary">Przeszukaj wszystkie dyski</string>
+    <string name="launcher_auto_searching">Szukanie danych gry na wszystkich dyskach…</string>
+    <string name="launcher_auto_none_title">Nie znaleziono danych gry</string>
+    <string name="launcher_auto_none_message">Na żadnym dysku nie znaleziono folderu Morrowind (z Morrowind.ini i folderem „Data Files”). Skopiuj dane gry na urządzenie albo wybierz folder przyciskiem „Wybierz folder”.</string>
+    <string name="launcher_auto_pick">Których danych gry użyć?</string>
+    <string name="launcher_encoding_summary">Zestaw znaków twojej wersji Morrowind: środkowo- i wschodnioeuropejski dla polskiego, łaciński dla angielskiego, niemieckiego i innych, cyrylica dla rosyjskiego.</string>
+    <string name="pref_right_look_title">Rozglądanie się</string>
+    <string name="pref_right_look_summary">Prawy drążek: drążek na ekranie. Obszar przesuwania: bez drążka, przesuń palcem po wolnym miejscu.</string>
+    <string name="launcher_hint_values">L1/R1: zmień wartość</string>
+    <string-array name="pref_right_look_entries">
+        <item>Prawy drążek</item>
+        <item>Obszar przesuwania</item>
+    </string-array>
 </resources>

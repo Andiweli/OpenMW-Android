@@ -220,8 +220,6 @@
     <string name="user_data_dir_error_title">Папка сохранений не изменена</string>
     <string name="user_data_dir_error_message">OpenMW не может записывать в эту папку:\n%1$s\n(%2$s)\n\nПо-прежнему используется прежняя папка сохранений.</string>
     <string name="user_data_dir_unavailable">Папка сохранений недоступна или защищена от записи:\n%1$s\n\nВставьте носитель, проверьте разрешение на доступ к памяти или выберите другую папку в лаунчере.</string>
-    <string name="pref_swipe_to_look_title">Обзор свайпом</string>
-    <string name="pref_swipe_to_look_summary">Проводите по свободной части экрана, чтобы осматриваться.</string>
     <string name="pref_cheats_enabled_title">Включить читы</string>
     <string name="pref_cheats_enabled_summary">Страница «Читы» в игре (Параметры &gt; Скрипты) для получения золота.</string>
 
@@ -237,7 +235,6 @@
     <string name="launcher_status_not_chosen">Не выбрано</string>
     <string name="launcher_game_data_not_chosen">Выберите папку, в которой есть Data Files и Morrowind.ini.</string>
     <string name="launcher_choose_folder">Выбрать папку</string>
-    <string name="launcher_language">Язык</string>
     <string name="launcher_tile_game_settings_summary">Геймплей, движок, дополнительно</string>
     <string name="launcher_tile_graphics">Графика и производительность</string>
     <string name="launcher_tile_graphics_summary">Разрешение, шейдеры, частота кадров</string>
@@ -254,8 +251,8 @@
     <string name="launcher_help_github">Проект на GitHub</string>
     <string name="launcher_back">‹ Назад</string>
     <string name="launcher_hint_back_play">B: назад · START: играть</string>
-    <string name="launcher_on">ВКЛ</string>
-    <string name="launcher_off">ВЫКЛ</string>
+    <string name="launcher_on">Вкл</string>
+    <string name="launcher_off">Выкл</string>
     <string name="launcher_section_onscreen">Расположение экранных кнопок</string>
     <string name="launcher_section_areas">Разделы</string>
     <string name="launcher_gs_game_mechanics_summary">Бой, спутники, сохранения</string>
@@ -265,4 +262,18 @@
     <string name="launcher_gs_interface_summary">Шрифты, подсказки, карта</string>
     <string name="launcher_gs_engine_summary">Растительность, навмеш, потоки</string>
     <string name="launcher_gs_advanced_summary">Папка сохранений, читы, запуск</string>
+    <string name="launcher_auto_search">Автоматически</string>
+    <string name="launcher_auto_search_summary">Искать на всех дисках</string>
+    <string name="launcher_auto_searching">Поиск данных игры на всех дисках…</string>
+    <string name="launcher_auto_none_title">Данные игры не найдены</string>
+    <string name="launcher_auto_none_message">Папка Morrowind (с Morrowind.ini и папкой «Data Files») не найдена ни на одном диске. Скопируйте данные игры на устройство или выберите папку кнопкой «Выбрать папку».</string>
+    <string name="launcher_auto_pick">Какие данные игры использовать?</string>
+    <string name="launcher_encoding_summary">Кодировка вашего издания Morrowind: кириллица для русского, латиница для английского, немецкого и других, центрально- и восточноевропейская для польского.</string>
+    <string name="pref_right_look_title">Обзор</string>
+    <string name="pref_right_look_summary">Правый стик: стик на экране. Область свайпа: без стика, проведите по свободному месту.</string>
+    <string name="launcher_hint_values">L1/R1: изменить</string>
+    <string-array name="pref_right_look_entries">
+        <item>Правый стик</item>
+        <item>Область свайпа</item>
+    </string-array>
 </resources>

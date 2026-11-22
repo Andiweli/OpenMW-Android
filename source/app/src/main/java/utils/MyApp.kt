@@ -50,6 +50,7 @@ class MyApp : Application() {
         super.onCreate()
 
         setupPaths()
+        ui.controls.RightLook.migrate(PreferenceManager.getDefaultSharedPreferences(this))
 
         // Enable Bugsnag only when an API key is provided and we have user consent.
         // Also don't enable Bugsnag in debug builds.

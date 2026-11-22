@@ -33,8 +33,9 @@ import file.UserDataLocation
 import java.io.File
 
 /**
- * Game settings > Advanced: the saves folder, the in-game cheats switch and the
- * start options (skip the launcher, extra command line and environment).
+ * Game settings > Advanced: the saves folder, the game language, the in-game
+ * cheats switch and the start options (skip the launcher, extra command line
+ * and environment).
  */
 class FragmentAdvancedSettings : PreferenceFragment(), OnSharedPreferenceChangeListener {
 
@@ -45,6 +46,10 @@ class FragmentAdvancedSettings : PreferenceFragment(), OnSharedPreferenceChangeL
         container: android.view.ViewGroup?,
         savedInstanceState: Bundle?
     ): android.view.View {
+        // "Lateinisch (win1252)" reads "Lateinisch"; the code means nothing to players.
+        (findPreference("pref_encoding") as? android.preference.ListPreference)?.let { language ->
+            language.entries = language.entries.map { it.toString().substringBefore(" (").trim() }.toTypedArray()
+        }
         val view = ui.launcher.PreferencePageView(
             activity, preferenceScreen,
             notes = mapOf("pref_user_data_dir" to getString(R.string.user_data_dir_hint))

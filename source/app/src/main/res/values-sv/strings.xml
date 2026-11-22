@@ -220,8 +220,6 @@
     <string name="user_data_dir_error_title">Mappen för sparfiler ändrades inte</string>
     <string name="user_data_dir_error_message">OpenMW kan inte skriva till den här mappen:\n%1$s\n(%2$s)\n\nDen tidigare mappen för sparfiler används fortfarande.</string>
     <string name="user_data_dir_unavailable">Mappen för sparfiler är inte tillgänglig eller skrivskyddad:\n%1$s\n\nSätt i lagringsmediet, kontrollera lagringsbehörigheten eller välj en annan mapp i startprogrammet.</string>
-    <string name="pref_swipe_to_look_title">Svep för att titta</string>
-    <string name="pref_swipe_to_look_summary">Svep på fri skärmyta för att se dig omkring.</string>
     <string name="pref_cheats_enabled_title">Aktivera fusk</string>
     <string name="pref_cheats_enabled_summary">Sidan Alternativ &gt; Skript &gt; Fusk i spelet ger guld.</string>
 
@@ -237,7 +235,6 @@
     <string name="launcher_status_not_chosen">Inte vald</string>
     <string name="launcher_game_data_not_chosen">Välj mappen som innehåller Data Files och Morrowind.ini.</string>
     <string name="launcher_choose_folder">Välj mapp</string>
-    <string name="launcher_language">Språk</string>
     <string name="launcher_tile_game_settings_summary">Spelmekanik, motor, avancerat</string>
     <string name="launcher_tile_graphics">Grafik och prestanda</string>
     <string name="launcher_tile_graphics_summary">Upplösning, shaders, bildfrekvens</string>
@@ -254,8 +251,8 @@
     <string name="launcher_help_github">Projektet på GitHub</string>
     <string name="launcher_back">‹ Tillbaka</string>
     <string name="launcher_hint_back_play">B: tillbaka · START: spela</string>
-    <string name="launcher_on">PÅ</string>
-    <string name="launcher_off">AV</string>
+    <string name="launcher_on">På</string>
+    <string name="launcher_off">Av</string>
     <string name="launcher_section_onscreen">Ordna skärmknappar</string>
     <string name="launcher_section_areas">Områden</string>
     <string name="launcher_gs_game_mechanics_summary">Strid, följeslagare, sparfiler</string>
@@ -265,4 +262,18 @@
     <string name="launcher_gs_interface_summary">Typsnitt, verktygstips, karta</string>
     <string name="launcher_gs_engine_summary">Markväxtlighet, navmesh, trådar</string>
     <string name="launcher_gs_advanced_summary">Sparmapp, fusk, startalternativ</string>
+    <string name="launcher_auto_search">Automatiskt</string>
+    <string name="launcher_auto_search_summary">Sök på alla enheter</string>
+    <string name="launcher_auto_searching">Söker speldata på alla enheter…</string>
+    <string name="launcher_auto_none_title">Ingen speldata hittades</string>
+    <string name="launcher_auto_none_message">Ingen Morrowind-mapp hittades på någon enhet (med Morrowind.ini och mappen ”Data Files”). Kopiera speldatan till enheten eller välj mappen med ”Välj mapp”.</string>
+    <string name="launcher_auto_pick">Vilken speldata ska användas?</string>
+    <string name="launcher_encoding_summary">Teckenuppsättning för din Morrowind-utgåva: latinsk för svenska, engelska, tyska m.fl., kyrillisk för ryska, central- och östeuropeisk för polska.</string>
+    <string name="pref_right_look_title">Se dig om med</string>
+    <string name="pref_right_look_summary">Höger spak: en spak på skärmen. Svepyta: ingen spak, svep på en fri del av skärmen.</string>
+    <string name="launcher_hint_values">L1/R1: ändra värde</string>
+    <string-array name="pref_right_look_entries">
+        <item>Höger spak</item>
+        <item>Svepyta</item>
+    </string-array>
 </resources>
