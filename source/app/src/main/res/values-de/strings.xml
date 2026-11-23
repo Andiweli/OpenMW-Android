@@ -39,7 +39,7 @@
     <string name="user_config_was_reset">Benutzerkonfiguration wurde auf Standardwerte zurückgesetzt</string>
     <string name="user_resources_was_reset">Benutzerressourcen wurden auf Standardwerte zurückgesetzt</string>
     <string name="pref_lang">Spracheinstellungen</string>
-    <string name="pref_encoding">Spielsprache</string>
+    <string name="pref_encoding">Zeichenkodierung</string>
     <string name="pref_encoding_default">win1252</string>
     <string name="btn_opacityPlus">Alpha+</string>
     <string name="btn_opacityMinus">Alpha-</string>
@@ -134,7 +134,7 @@
     <string-array name="pref_encoding_entries">
         <item>Mittel- und Osteuropäisch (win1250)</item>
         <item>Kyrillisch (win1251)</item>
-        <item>Lateinisch (win1252)</item>
+        <item>Latein (win1252)</item>
     </string-array>
     <string-array name="gs_factor_strength_into_hand_to_hand_combat_entries">
         <item>Aus</item>
@@ -261,14 +261,14 @@
     <string name="launcher_gs_animations_summary">Bewegung und mehr</string>
     <string name="launcher_gs_interface_summary">Schrift, Tooltips, Karte</string>
     <string name="launcher_gs_engine_summary">Bodenbewuchs, NavMesh, Threads</string>
-    <string name="launcher_gs_advanced_summary">Spielstände, Spielsprache, Cheats, Startoptionen</string>
+    <string name="launcher_gs_advanced_summary">Spielstände, Zeichenkodierung, Cheats, Startoptionen</string>
     <string name="launcher_auto_search">Automatisch</string>
     <string name="launcher_auto_search_summary">Alles durchsuchen…</string>
     <string name="launcher_auto_searching">Spieldaten werden auf allen Laufwerken gesucht…</string>
     <string name="launcher_auto_none_title">Keine Spieldaten gefunden</string>
     <string name="launcher_auto_none_message">Auf keinem Laufwerk wurde ein Morrowind-Ordner gefunden (mit Morrowind.ini und dem Ordner „Data Files“). Kopiere die Spieldaten auf das Gerät oder wähle den Ordner mit „Ordner wählen“.</string>
     <string name="launcher_auto_pick">Welche Spieldaten verwenden?</string>
-    <string name="launcher_encoding_summary">Zeichensatz deiner Morrowind-Ausgabe: Lateinisch für Deutsch, Englisch, Französisch u. a., Kyrillisch für Russisch, Mittel- und Osteuropäisch für Polnisch.</string>
+    <string name="launcher_encoding_summary">Zeichensatz deiner Morrowind-Ausgabe: Latein für Deutsch, Englisch, Französisch u. a., Kyrillisch für Russisch, Mittel- und Osteuropäisch für Polnisch.</string>
     <string name="pref_right_look_title">Umsehen mit</string>
     <string name="pref_right_look_summary">Rechter Stick: ein Stick auf dem Bildschirm. Wischfläche: kein Stick, auf freier Fläche wischen.</string>
     <string name="launcher_hint_values">L1/R1: Wert ändern</string>
@@ -311,7 +311,7 @@
     <string name="launcher_group_onscreen">On-Screen Layout</string>
     <string name="launcher_group_sound">Ton-Optionen</string>
     <string name="launcher_group_saves">Spielstände</string>
-    <string name="launcher_group_language">Sprache</string>
+    <string name="launcher_group_language">Kodierung</string>
     <string name="launcher_group_cheats">Cheats</string>
     <string name="launcher_group_start">Start</string>
     <string name="pref_left_move_title">Bewegen mit</string>
