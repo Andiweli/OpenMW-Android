@@ -8,8 +8,8 @@ apply plugin: 'kotlin-android'
  * calibrated OMWFX chain together behind one build-time verification gate.
  */
 
-def openMwVersionCode = 5117
-def openMwAndroidVersionName = '0.51.0-17'
+def openMwVersionCode = 5118
+def openMwAndroidVersionName = '0.51.0-18'
 def versionFile = new File(
         project.rootDir,
         'app/src/main/assets/libopenmw/resources/version'
@@ -146,9 +146,9 @@ tasks.register('verifyOpenMwPayload') {
             )
         }
 
-        if (openMwVersionCode != 5117 || calculateVersion() != '0.51.0-17') {
+        if (openMwVersionCode != 5118 || calculateVersion() != '0.51.0-18') {
             throw new GradleException(
-                    'OpenMW Android final release identity must be versionName 0.51.0-17 and versionCode 5117.'
+                    'OpenMW Android final release identity must be versionName 0.51.0-18 and versionCode 5118.'
             )
         }
 
