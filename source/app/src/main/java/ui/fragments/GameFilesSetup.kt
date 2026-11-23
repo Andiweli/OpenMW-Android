@@ -31,9 +31,11 @@ import com.codekidlabs.storagechooser.utils.StorageVolumeUtil
 import com.libopenmw.openmw.BuildConfig
 import com.libopenmw.openmw.R
 import file.GameDataCheck
+import file.GameDataSearch
 import file.GameFilesLocation
 import file.GameInstaller
 import java.io.File
+import permission.PermissionHelper
 
 /**
  * Choosing and checking the Morrowind game folder, used by the launcher's home
@@ -46,6 +48,60 @@ class GameFilesSetup(private val activity: Activity, private val onChanged: () -
     /** Opens the folder chooser and checks the chosen folder. */
     fun choose() {
         FolderChooser.show(activity, activity.fragmentManager) { path -> setup(path) }
+    }
+
+    /**
+     * Searches every drive (internal storage, SD cards, USB) for a Morrowind
+     * folder and sets it up: one hit is taken directly, several are offered in a
+     * list, none is explained.
+     */
+    fun autoDetect() {
+        if (!PermissionHelper.canOpenLegacyStorageChooser(activity)) {
+            showMessage(activity.getString(R.string.permissions_error_title),
+                activity.getString(R.string.permissions_error_message))
+            return
+        }
+
+        val progress = AlertDialog.Builder(activity)
+            .setMessage(R.string.launcher_auto_searching)
+            .setCancelable(false)
+            .show()
+        val mainHandler = Handler(Looper.getMainLooper())
+
+        Thread({
+            val roots = ArrayList<File>()
+            try {
+                StorageVolumeUtil.getStorages(activity, "")
+                    .mapNotNullTo(roots) { it.storagePath?.let(::File) }
+            } catch (e: Exception) {
+                Log.w(TAG, "Could not list the storage volumes", e)
+            }
+            if (roots.isEmpty())
+                roots += android.os.Environment.getExternalStorageDirectory()
+            // The app's own media folders, where an AAOS install keeps the game.
+            activity.externalMediaDirs.filterNotNullTo(roots)
+
+            val found = GameDataSearch.find(roots)
+            Log.i(TAG, "Game folder search in $roots found $found")
+
+            mainHandler.post {
+                progress.dismiss()
+                if (activity.isFinishing || activity.isDestroyed)
+                    return@post
+                when (found.size) {
+                    0 -> showMessage(activity.getString(R.string.launcher_auto_none_title),
+                        activity.getString(R.string.launcher_auto_none_message), "https://omw.xyz.is/game.html")
+                    1 -> setup(found[0].absolutePath)
+                    else -> AlertDialog.Builder(activity)
+                        .setTitle(R.string.launcher_auto_pick)
+                        .setItems(found.map { it.absolutePath }.toTypedArray()) { _, which ->
+                            setup(found[which].absolutePath)
+                        }
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .show()
+                }
+            }
+        }, "OpenMW-game-files-search").start()
     }
 
     /**

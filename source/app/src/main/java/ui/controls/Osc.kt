@@ -446,7 +446,12 @@ class Osc {
         val showFn = prefs.getBoolean("pref_show_fn", false)
         val alwaysShowTop = prefs.getBoolean("pref_always_show_top_bar", false)
 
+        val swipeLook = RightLook.isSwipe(prefs)
+
         for (element in elements) {
+            // Swiping on the free screen replaces the right stick.
+            if (swipeLook && element == joystickRight)
+                continue
             if (!showQp && (element == qp || quickButtons.contains(element)))
                 continue
             if (!showFn && (element == fn || fnButtons.contains(element)))

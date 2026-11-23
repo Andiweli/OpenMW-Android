@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <Preference android:key="pref_user_data_dir" android:title="@string/user_data_dir_title" />
+    <ListPreference android:key="pref_encoding" android:title="@string/pref_encoding" android:dialogTitle="@string/pref_encoding" android:entries="@array/pref_encoding_entries" android:entryValues="@array/pref_encoding_values" android:defaultValue="win1252" android:summary="@string/launcher_encoding_summary" />
     <CheckBoxPreference android:key="pref_cheats_enabled" android:title="@string/pref_cheats_enabled_title" android:summary="@string/pref_cheats_enabled_summary" android:defaultValue="false" />
     <CheckBoxPreference android:key="pref_skip_gui" android:title="@string/pref_skip_gui_title" android:summary="@string/pref_skip_gui_summary" android:defaultValue="false" />
     <EditTextPreference android:key="commandLine" android:title="@string/pref_commandLine" />

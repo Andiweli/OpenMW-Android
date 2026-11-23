@@ -39,7 +39,7 @@ class LauncherHomeView(context: Context, private val actions: Actions) : LinearL
     interface Actions {
         fun play()
         fun chooseGameFolder()
-        fun chooseLanguage()
+        fun findGameFolder()
         fun openGameSettings()
         fun openGraphics()
         fun openControls()
@@ -72,7 +72,10 @@ class LauncherHomeView(context: Context, private val actions: Actions) : LinearL
     private val gameDataDetail = LauncherStyle.text(context, "", 14f, false).apply {
         setPadding(0, dp(3), 0, 0)
     }
-    private val languageButton: TextView = LauncherStyle.button(context, "") { actions.chooseLanguage() }
+    private val autoButton: TextView = LauncherStyle.button(context, "") { actions.findGameFolder() }.apply {
+        LauncherStyle.setTwoLines(this, context.getString(R.string.launcher_auto_search),
+            context.getString(R.string.launcher_auto_search_summary))
+    }
 
     init {
         orientation = VERTICAL
@@ -181,7 +184,7 @@ class LauncherHomeView(context: Context, private val actions: Actions) : LinearL
         }
         val buttons = EqualGrid(context, maxColumns = 2, minCellWidthDp = 140).apply {
             addView(LauncherStyle.button(context, s(R.string.launcher_choose_folder)) { actions.chooseGameFolder() })
-            addView(languageButton)
+            addView(autoButton)
         }
 
         return LinearLayout(context).apply {
@@ -248,9 +251,5 @@ class LauncherHomeView(context: Context, private val actions: Actions) : LinearL
             }
         }
         gameDataDetail.text = detail
-    }
-
-    fun setLanguage(name: String) {
-        LauncherStyle.setTwoLines(languageButton, s(R.string.launcher_language), name)
     }
 }

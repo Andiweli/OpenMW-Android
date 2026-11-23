@@ -20,15 +20,21 @@ package ui.launcher
 import android.app.AlertDialog
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Typeface
+import android.graphics.drawable.GradientDrawable
 import android.preference.EditTextPreference
 import android.preference.ListPreference
 import android.preference.Preference
 import android.preference.PreferenceCategory
 import android.preference.PreferenceGroup
 import android.preference.TwoStatePreference
+import android.text.SpannableStringBuilder
+import android.text.Spanned
 import android.text.TextUtils
-import android.util.TypedValue
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.view.Gravity
+import android.view.KeyEvent
 import android.view.View
 import android.widget.EditText
 import android.widget.FrameLayout
@@ -46,14 +52,19 @@ import kotlin.math.roundToInt
  * from the XML stay the model (keys, stored values, dependencies and dialogs are
  * unchanged); only their presentation is new:
  *
- * - a category becomes a section label,
- * - switches become full-width ON/OFF tiles; a short explanation is a small
- *   second line inside the tile, which keeps the common height,
- * - a choice list with short labels becomes a row of option buttons; any other
- *   list becomes one button that steps through the choices,
- * - a value (resolution, a longer list, text) becomes a row with a value button,
- * - a [SliderSpec] key becomes an inline slider,
+ * - a category becomes a section label with a line,
+ * - every setting becomes a cell in a two-column grid: its name small on top,
+ *   its value large below,
+ *   - a switch shows On/Off and is gold while on,
+ *   - a choice list has ‹ and › fields to step through the choices, and dots
+ *     for the position,
+ *   - a [SliderSpec] key has the ‹ and › fields and a slider,
+ *   - a value (folder, resolution, text) opens its dialog,
+ * - the explanations of the cells follow the grid as short paragraphs,
  * - entries that open another screen become tiles, up to three side by side.
+ *
+ * On a controller the D-pad moves between cells, A changes or opens a cell, and
+ * L1/R1 (Q/E on a keyboard) step a value back and forth.
  *
  * Call [refresh] after a preference changed; the controls update in place, so
  * the controller focus stays where it is.
@@ -63,11 +74,11 @@ class PreferencePageView(
     private val screen: PreferenceGroup,
     private val sliders: Map<String, SliderSpec> = emptyMap(),
     private val navigationKeys: Set<String> = emptySet(),
-    /** A short explanation under the title of a value button, by preference key. */
+    /** An explanation for a value cell, by preference key. */
     private val notes: Map<String, CharSequence> = emptyMap()
 ) : FrameLayout(context) {
 
-    /** An inline slider for a preference stored as a decimal string ("" = [autoValue]). */
+    /** An inline slider for a preference stored as a decimal string ("" = automatic). */
     class SliderSpec(
         val minimum: Float,
         val maximum: Float,
@@ -75,9 +86,9 @@ class PreferencePageView(
         val defaultValue: Float,
         /** Decimal places stored and shown; 0 stores whole numbers ("4", not "4.0"). */
         val decimals: Int = 1,
-        /** When set, an "Auto" button stores "" and the label shows this text. */
+        /** When set, the first slider position stores "" and the value shows this text. */
         val autoLabel: (() -> String)? = null,
-        /** Show the preference's summary (its explanation) below the slider. */
+        /** Show the preference's summary (its explanation) below the grid. */
         val summaryAsNote: Boolean = false
     )
 
@@ -111,105 +122,323 @@ class PreferencePageView(
     private fun children(group: PreferenceGroup): List<Preference> =
         (0 until group.preferenceCount).map { group.getPreference(it) }
 
+    /** A row of the page: a label at the left, its settings below each other at the right. */
+    private inner class Group(val label: CharSequence?) {
+        val cells = ArrayList<View>()
+        val notes = ArrayList<View>()
+    }
+
     private fun buildGroup(parent: LinearLayout, group: PreferenceGroup) {
-        val pendingToggles = ArrayList<TwoStatePreference>()
+        var current: Group? = null
         val pendingTiles = ArrayList<Preference>()
 
+        fun fullWidth() = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+
+        // Screens that only open other screens (the game settings areas) keep their tile grid.
         fun flushTiles() {
             if (pendingTiles.isEmpty())
                 return
             val grid = EqualGrid(context, maxColumns = 3, minCellWidthDp = 220)
             pendingTiles.forEach { grid.addView(navigationTile(it)) }
-            parent.addView(grid, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+            parent.addView(grid, fullWidth().apply {
                 topMargin = dp(4)
                 bottomMargin = dp(4)
             })
             pendingTiles.clear()
         }
 
-        // One switch per row, so its title is never cut off; its explanation right below.
-        fun flushToggles() {
-            pendingToggles.forEach { preference ->
-                parent.addView(toggle(preference), LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(LauncherStyle.CONTROL_HEIGHT)).apply {
-                    topMargin = dp(4)
-                    bottomMargin = dp(4)
-                })
-            }
-            pendingToggles.clear()
+        fun flushGroup() {
+            val done = current ?: return
+            current = null
+            if (done.cells.isNotEmpty())
+                parent.addView(groupRow(done), fullWidth().apply { topMargin = dp(4) })
         }
 
-        // Lists in one section look alike: if one needs the step button, all of them use it.
-        val listsAsButtons = children(group)
-            .filter { it is ListPreference && it.key !in sliders && (it.entries?.size ?: 0) >= 2 }
-            .all { fitsAsButtons(it as ListPreference) }
-
         for (preference in children(group)) {
-            if (preference is TwoStatePreference) {
+            if (preference is PreferenceCategory) {
+                flushGroup()
                 flushTiles()
-                pendingToggles += preference
+                parent.addView(LauncherStyle.sectionLabel(context, preference.title ?: ""))
+                buildGroup(parent, preference)
                 continue
             }
-            flushToggles()
-            if (preference.key in navigationKeys) {
+
+            val label = GROUPS[preference.key]
+            if (preference.key in navigationKeys && label == null && current?.label == null) {
+                flushGroup()
                 pendingTiles += preference
                 continue
             }
             flushTiles()
-            when {
-                preference is PreferenceCategory -> {
-                    parent.addView(LauncherStyle.sectionLabel(context, preference.title ?: ""))
-                    buildGroup(parent, preference)
-                }
-                preference.key in sliders -> {
-                    val spec = sliders.getValue(preference.key)
-                    parent.addView(sliderRow(preference, spec, if (spec.summaryAsNote) preference.summary else null))
-                }
-                preference is ListPreference && (preference.entries?.size ?: 0) >= 2 -> {
-                    val explanation = descriptiveSummary(preference)
-                    parent.addView(if (listsAsButtons) optionRow(preference, explanation) else cycleRow(preference, explanation))
-                }
-                else -> parent.addView(valueRow(preference))
+            if (label != null || current == null) {
+                flushGroup()
+                current = Group(label?.let { context.getString(it) })
             }
+            val row = current!!
+            if (preference.key in navigationKeys) {
+                row.cells += navigationTile(preference)
+                continue
+            }
+            val (cell, note) = when {
+                preference.key in sliders -> sliderCell(preference, sliders.getValue(preference.key))
+                preference is TwoStatePreference -> toggleCell(preference)
+                preference is ListPreference && (preference.entries?.size ?: 0) >= 2 -> choiceCell(preference)
+                else -> valueCell(preference)
+            }
+            row.cells += cell
+            note?.let { row.notes += it }
         }
-        flushToggles()
+        flushGroup()
         flushTiles()
     }
 
     /**
-     * Short labels (numbers, Low/Medium/High) fit side by side; longer ones would be
-     * cut off, so they get a single button that steps through the choices.
+     * The label column at the left and the settings at the right, as in the
+     * CubeEvil4 menu; on narrow screens the label goes above the settings.
      */
-    private fun fitsAsButtons(preference: ListPreference): Boolean {
-        val labels = preference.entries.map { it.toString() }
-        return labels.size <= 4 && labels.maxOf { it.length } <= 8 && labels.sumOf { it.length } <= 28
+    private fun groupRow(group: Group): View {
+        val wide = context.resources.configuration.screenWidthDp >= 600
+        val column = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            group.cells.forEachIndexed { index, cell ->
+                val height = if (cell.tag == CELL) dp(LauncherStyle.CONTROL_HEIGHT) else LinearLayout.LayoutParams.WRAP_CONTENT
+                addView(cell, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, height).apply {
+                    if (index > 0) topMargin = dp(LauncherStyle.GAP)
+                })
+            }
+            group.notes.forEach { note ->
+                addView(note, LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply { topMargin = dp(8) })
+            }
+        }
+        val label = LauncherStyle.text(context, group.label ?: "", 16f, true).apply {
+            maxLines = 2
+            ellipsize = TextUtils.TruncateAt.END
+        }
+        return LinearLayout(context).apply {
+            setPadding(0, dp(4), 0, dp(6))
+            if (wide) {
+                orientation = LinearLayout.HORIZONTAL
+                // The label sits level with the first setting.
+                addView(label, LinearLayout.LayoutParams(dp(LABEL_WIDTH), dp(LauncherStyle.CONTROL_HEIGHT)).apply {
+                    marginEnd = dp(16)
+                })
+                label.gravity = Gravity.CENTER_VERTICAL
+                addView(column, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+            } else {
+                orientation = LinearLayout.VERTICAL
+                if (!group.label.isNullOrEmpty())
+                    addView(label, LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply { bottomMargin = dp(6) })
+                addView(column, LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
+                ))
+            }
+        }
     }
 
-    /** One button showing the current choice; tap or right goes to the next, left back. */
-    private fun cycleRow(preference: ListPreference, explanation: CharSequence?): View {
-        val values = preference.entryValues
-        fun step(by: Int) {
-            val count = values.size
-            val current = preference.findIndexOfValue(preference.value).coerceAtLeast(0)
-            preference.value = values[((current + by) % count + count) % count].toString()
+    /**
+     * One grid cell: the setting's name small on top, its value large below, and
+     * for steppable values a ‹ and a › field at the sides.
+     */
+    private inner class Cell(title: CharSequence, arrows: Boolean) {
+        val titleView: TextView = LauncherStyle.text(context, title, 14f, true).apply {
+            gravity = Gravity.CENTER
+            maxLines = 1
+            ellipsize = TextUtils.TruncateAt.END
         }
-        val button = LauncherStyle.button(context, "") { step(1) }.apply {
+        val valueView: TextView = LauncherStyle.text(context, "", 18f, true).apply {
+            gravity = Gravity.CENTER
+            maxLines = 1
+            ellipsize = TextUtils.TruncateAt.END
+        }
+        val center = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.CENTER
+            setPadding(dp(8), dp(6), dp(8), dp(6))
+            addView(titleView, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
+            addView(valueView, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
+        }
+        private val arrowViews = ArrayList<TextView>()
+        private val dividers = ArrayList<View>()
+
+        /** Called with -1 or +1 by the arrow fields and L1/R1. */
+        var onStep: (Int) -> Unit = {}
+        /** Called by a tap on the middle or the A button. */
+        var onActivate: () -> Unit = {}
+        /** The preference the cell belongs to; nothing changes while it is disabled. */
+        var preference: Preference? = null
+
+        val root: LinearLayout = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            minimumHeight = dp(LauncherStyle.CONTROL_HEIGHT)
+            isClickable = true
+            isFocusable = true
+            tag = CELL
+            setOnClickListener { if (enabled()) changed(onActivate) }
             setOnKeyListener { _, keyCode, event ->
                 val by = when (keyCode) {
-                    android.view.KeyEvent.KEYCODE_DPAD_RIGHT -> 1
-                    android.view.KeyEvent.KEYCODE_DPAD_LEFT -> -1
+                    KeyEvent.KEYCODE_BUTTON_L1, KeyEvent.KEYCODE_Q -> -1
+                    KeyEvent.KEYCODE_BUTTON_R1, KeyEvent.KEYCODE_E -> 1
                     else -> 0
                 }
-                if (by != 0 && event.action == android.view.KeyEvent.ACTION_DOWN)
-                    step(by)
+                if (by != 0 && event.action == KeyEvent.ACTION_DOWN && enabled())
+                    changed { onStep(by) }
                 by != 0
             }
         }
-        updaters += {
-            button.text = "\u2039   ${preference.entry ?: ""}   \u203a"
+
+        init {
+            if (arrows)
+                addSide("‹", -1, atStart = true)
+            root.addView(center, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+            if (arrows)
+                addSide("›", 1, atStart = false)
         }
-        val view = row(preference.title ?: "", button, explanation)
-        bindEnabled(view, preference)
+
+        private fun enabled() = preference?.isEnabled != false
+
+        /**
+         * Runs [change] and then redraws the page. A switch stores its value
+         * (which already redraws through the settings listener) before Android
+         * updates the settings depending on it, so without this redraw those
+         * would show the previous state.
+         */
+        private fun changed(change: () -> Unit) {
+            change()
+            refresh()
+        }
+
+        private fun addSide(label: String, by: Int, atStart: Boolean) {
+            val arrow = LauncherStyle.text(context, label, 22f, true).apply {
+                gravity = Gravity.CENTER
+                // Tappable, but the focus stays on the whole cell.
+                isClickable = true
+                isFocusable = false
+                setOnClickListener { if (enabled()) changed { onStep(by) } }
+            }
+            val divider = View(context)
+            arrowViews += arrow
+            dividers += divider
+            val arrowParams = LinearLayout.LayoutParams(dp(44), LinearLayout.LayoutParams.MATCH_PARENT)
+            val dividerParams = LinearLayout.LayoutParams(dp(1), LinearLayout.LayoutParams.MATCH_PARENT).apply {
+                topMargin = dp(10)
+                bottomMargin = dp(10)
+            }
+            if (atStart) {
+                root.addView(arrow, arrowParams)
+                root.addView(divider, dividerParams)
+            } else {
+                root.addView(divider, dividerParams)
+                root.addView(arrow, arrowParams)
+            }
+        }
+
+        /** Gold for a switch that is on or a choice away from its first entry. */
+        fun setActive(active: Boolean) {
+            root.background = if (active)
+                LauncherStyle.background(context, LauncherStyle.ACTIVE, LauncherStyle.GOLD, pressed = 0xff5a4729.toInt())
+            else
+                LauncherStyle.background(context, LauncherStyle.SURFACE, LauncherStyle.BORDER)
+            val ink = if (active) LauncherStyle.GOLD else LauncherStyle.INK
+            titleView.setTextColor(ink)
+            valueView.setTextColor(ink)
+            arrowViews.forEach { it.setTextColor(ink) }
+            dividers.forEach { it.setBackgroundColor(if (active) 0xff7a6440.toInt() else LauncherStyle.BORDER) }
+        }
+    }
+
+    /** The paragraph below the grid: "Name: explanation". */
+    private fun noteView(title: CharSequence, explanation: CharSequence): TextView {
+        val text = SpannableStringBuilder().apply {
+            append(title)
+            setSpan(StyleSpan(Typeface.BOLD), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(ForegroundColorSpan(LauncherStyle.INK), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            append(": ")
+            append(explanation)
+        }
+        return LauncherStyle.text(context, text, 14f, false).apply {
+            setLineSpacing(0f, 1.1f)
+        }
+    }
+
+    private fun note(preference: Preference, explanation: CharSequence?): View? {
+        if (explanation.isNullOrBlank())
+            return null
+        val view = noteView(preference.title ?: "", explanation)
+        updaters += { view.alpha = if (preference.isEnabled) 1f else 0.4f }
         return view
+    }
+
+    private fun bindEnabled(cell: Cell, preference: Preference) {
+        cell.preference = preference
+        updaters += {
+            val enabled = preference.isEnabled
+            cell.root.alpha = if (enabled) 1f else 0.4f
+            cell.root.isEnabled = enabled
+            cell.root.isFocusable = enabled
+        }
+    }
+
+    private fun toggleCell(preference: TwoStatePreference): Pair<View, View?> {
+        val cell = Cell(preference.title ?: "", arrows = false)
+        cell.onActivate = { preference.isChecked = !preference.isChecked }
+        cell.onStep = { by -> preference.isChecked = by > 0 }
+        updaters += {
+            val on = preference.isChecked
+            cell.valueView.text = context.getString(if (on) R.string.launcher_on else R.string.launcher_off)
+            cell.setActive(on)
+        }
+        bindEnabled(cell, preference)
+        return cell.root to note(preference, preference.summary)
+    }
+
+    private fun choiceCell(preference: ListPreference): Pair<View, View?> {
+        val values = preference.entryValues
+        val count = values.size
+        val cell = Cell(preference.title ?: "", arrows = true)
+        fun index() = preference.findIndexOfValue(preference.value).coerceAtLeast(0)
+        fun step(by: Int) {
+            preference.value = values[((index() + by) % count + count) % count].toString()
+        }
+        cell.onStep = { by -> step(by) }
+        cell.onActivate = { step(1) }
+
+        // Dots for the position, as in CubeEvil4; only for short lists.
+        val dots = if (count in 2..8) LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER
+            setPadding(0, dp(3), 0, 0)
+            repeat(count) {
+                addView(View(context), LinearLayout.LayoutParams(dp(5), dp(5)).apply {
+                    marginStart = dp(2)
+                    marginEnd = dp(2)
+                })
+            }
+        } else null
+        dots?.let { cell.center.addView(it) }
+
+        updaters += {
+            val current = index()
+            cell.valueView.text = preference.entry ?: ""
+            cell.setActive(current > 0)
+            dots?.let {
+                val on = if (current > 0) LauncherStyle.GOLD else LauncherStyle.INK
+                for (i in 0 until it.childCount) {
+                    it.getChildAt(i).background = GradientDrawable().apply {
+                        shape = GradientDrawable.OVAL
+                        setColor(if (i == current) on else LauncherStyle.BORDER)
+                    }
+                }
+            }
+        }
+        bindEnabled(cell, preference)
+        return cell.root to note(preference, descriptiveSummary(preference))
     }
 
     /** A list summary that explains the setting instead of repeating the chosen entry. */
@@ -220,150 +449,31 @@ class PreferencePageView(
         return summary
     }
 
-    private fun bindEnabled(view: View, preference: Preference) {
-        updaters += {
-            val enabled = preference.isEnabled
-            view.alpha = if (enabled) 1f else 0.4f
-            setEnabledDeep(view, enabled)
-        }
-    }
-
-    private fun setEnabledDeep(view: View, enabled: Boolean) {
-        view.isEnabled = enabled
-        if (view.isClickable || view.isFocusable)
-            view.isFocusable = enabled
-        if (view is android.view.ViewGroup)
-            for (i in 0 until view.childCount) setEnabledDeep(view.getChildAt(i), enabled)
-    }
-
-    /**
-     * Label on the left, the control on the right; stacked on narrow screens. A short
-     * [explanation] is a small second line under the label, the control keeps its height.
-     */
-    private companion object {
-        /** Width of the label column next to a control, in dp. */
-        const val LABEL_WIDTH = 260
-    }
-
-    private fun row(title: CharSequence, control: View, explanation: CharSequence? = null, halves: Boolean = false): LinearLayout {
-        val wide = context.resources.configuration.screenWidthDp >= 600
-        return LinearLayout(context).apply {
-            setPadding(0, dp(4), 0, dp(4))
-            val titleView = LauncherStyle.text(context, title, 18f, true)
-            val label = LinearLayout(context).apply {
-                orientation = LinearLayout.VERTICAL
-                gravity = Gravity.CENTER_VERTICAL
-                addView(titleView)
-                if (!explanation.isNullOrBlank())
-                    addView(LauncherStyle.text(context, explanation, 14f, false).apply {
-                        maxLines = 2
-                        ellipsize = TextUtils.TruncateAt.END
-                        setPadding(0, dp(1), 0, 0)
-                    })
-            }
-            if (wide) {
-                orientation = LinearLayout.HORIZONTAL
-                gravity = Gravity.CENTER_VERTICAL
-                // Sliders, and titles too long for the label column, get half the row.
-                val equal = halves || titleView.paint.measureText(title.toString()) > dp(LABEL_WIDTH)
-                addView(label, (if (equal) LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
-                    else LinearLayout.LayoutParams(dp(LABEL_WIDTH), LinearLayout.LayoutParams.WRAP_CONTENT)).apply { marginEnd = dp(12) })
-                addView(control, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-            } else {
-                orientation = LinearLayout.VERTICAL
-                addView(label)
-                addView(control, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(6) })
-            }
-        }
-    }
-
-    private fun toggle(preference: TwoStatePreference): View {
-        // Title and, if there is one, the explanation as a small second line.
-        val texts = LinearLayout(context).apply {
-            orientation = LinearLayout.VERTICAL
-            gravity = Gravity.CENTER_VERTICAL
-            addView(LauncherStyle.text(context, preference.title ?: "", 18f, true).apply {
-                maxLines = 1
-                ellipsize = TextUtils.TruncateAt.END
-            })
-            if (!preference.summary.isNullOrBlank())
-                addView(LauncherStyle.text(context, preference.summary, 14f, false).apply {
-                    maxLines = 1
-                    ellipsize = TextUtils.TruncateAt.END
-                })
-        }
-        val state = LauncherStyle.text(context, "", 14f, true).apply { letterSpacing = 0.08f }
-        val view = LinearLayout(context).apply {
-            orientation = LinearLayout.HORIZONTAL
-            gravity = Gravity.CENTER_VERTICAL
-            minimumHeight = dp(LauncherStyle.CONTROL_HEIGHT)
-            setPadding(dp(12), 0, dp(12), 0)
-            isClickable = true
-            isFocusable = true
-            addView(texts, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { marginEnd = dp(10) })
-            addView(state)
-            setOnClickListener { preference.isChecked = !preference.isChecked }
-        }
-        updaters += {
-            val on = preference.isChecked
-            state.text = context.getString(if (on) R.string.launcher_on else R.string.launcher_off)
-            state.setTextColor(if (on) LauncherStyle.GOLD else LauncherStyle.MUTED)
-            view.background = if (on)
-                LauncherStyle.background(context, LauncherStyle.ACTIVE, LauncherStyle.GOLD, pressed = 0xff5a4729.toInt())
-            else
-                LauncherStyle.background(context, LauncherStyle.SURFACE, LauncherStyle.BORDER)
-        }
-        bindEnabled(view, preference)
-        return view
-    }
-
-    private fun optionRow(preference: ListPreference, explanation: CharSequence?): View {
-        val entries = preference.entries
-        val values = preference.entryValues
-        val grid = EqualGrid(context, maxColumns = entries.size, minCellWidthDp = 120)
-        val buttons = entries.indices.map { index ->
-            LauncherStyle.button(context, entries[index]) {
-                val value = values[index].toString()
-                if (preference.value != value)
-                    preference.value = value
-            }.apply { setPadding(dp(8), 0, dp(8), 0) }
-        }
-        buttons.forEach { grid.addView(it) }
-        updaters += {
-            buttons.forEachIndexed { index, button ->
-                val selected = values[index].toString() == preference.value
-                button.setTextColor(if (selected) LauncherStyle.GOLD else LauncherStyle.INK)
-                button.background = if (selected)
-                    LauncherStyle.background(context, LauncherStyle.ACTIVE, LauncherStyle.GOLD, pressed = 0xff5a4729.toInt())
-                else
-                    LauncherStyle.background(context, LauncherStyle.SURFACE, LauncherStyle.BORDER)
-            }
-        }
-        val view = row(preference.title ?: "", grid, explanation)
-        bindEnabled(view, preference)
-        return view
-    }
-
-    private fun valueRow(preference: Preference): View {
-        val button = LauncherStyle.button(context, "") { openValue(preference) }.apply {
-            gravity = Gravity.CENTER_VERTICAL or Gravity.START
-        }
+    private fun valueCell(preference: Preference): Pair<View, View?> {
+        val cell = Cell(preference.title ?: "", arrows = false)
+        cell.valueView.ellipsize = TextUtils.TruncateAt.MIDDLE
+        cell.onActivate = { openValue(preference) }
         updaters += {
             val value = when (preference) {
                 is ListPreference -> preference.entry
                 is EditTextPreference -> preference.text
                 else -> preference.summary
             }
-            button.text = if (value.isNullOrBlank()) "…" else "$value  ›"
+            cell.valueView.text = if (value.isNullOrBlank()) "…  ›" else "$value  ›"
+            cell.setActive(false)
         }
-        val view = row(preference.title ?: "", button, notes[preference.key])
-        bindEnabled(view, preference)
-        return view
+        bindEnabled(cell, preference)
+        return cell.root to note(preference, notes[preference.key])
     }
 
     private fun navigationTile(preference: Preference): View {
         val tile = LauncherStyle.tile(context, preference.title ?: "", preference.summary ?: "") { openValue(preference) }
-        bindEnabled(tile, preference)
+        updaters += {
+            val enabled = preference.isEnabled
+            tile.alpha = if (enabled) 1f else 0.4f
+            tile.isEnabled = enabled
+            tile.isFocusable = enabled
+        }
         return tile
     }
 
@@ -400,65 +510,134 @@ class PreferencePageView(
         }
     }
 
-    private fun sliderRow(preference: Preference, spec: SliderSpec, explanation: CharSequence?): View {
+    private fun sliderCell(preference: Preference, spec: SliderSpec): Pair<View, View?> {
         val prefs = preference.sharedPreferences
         val key = preference.key
-        val steps = ((spec.maximum - spec.minimum) / spec.step).roundToInt()
-        val valueLabel = LauncherStyle.text(context, "", 18f, true, LauncherStyle.GOLD).apply {
-            minWidth = dp(72)
-            gravity = Gravity.END
-        }
-        fun valueFor(progress: Int) = (spec.minimum + progress * spec.step).coerceIn(spec.minimum, spec.maximum)
+        // With an automatic value, the first slider position is "Auto".
+        val autoOffset = if (spec.autoLabel != null) 1 else 0
+        val steps = ((spec.maximum - spec.minimum) / spec.step).roundToInt() + autoOffset
+
+        fun valueFor(position: Int) =
+            (spec.minimum + (position - autoOffset) * spec.step).coerceIn(spec.minimum, spec.maximum)
         fun format(value: Float) =
             if (spec.decimals == 0) value.roundToInt().toString()
             else String.format(Locale.ROOT, "%.${spec.decimals}f", value)
+        fun label(position: Int) =
+            if (position < autoOffset) spec.autoLabel?.invoke().orEmpty() else format(valueFor(position))
+        fun store(position: Int) =
+            prefs.edit().putString(key, if (position < autoOffset) "" else format(valueFor(position))).apply()
+        fun position(): Int {
+            val value = prefs.getString(key, "").orEmpty().toFloatOrNull()
+                ?: return if (autoOffset == 1) 0
+                    else ((spec.defaultValue.coerceIn(spec.minimum, spec.maximum) - spec.minimum) / spec.step).roundToInt()
+            return ((value.coerceIn(spec.minimum, spec.maximum) - spec.minimum) / spec.step).roundToInt() + autoOffset
+        }
 
+        val cell = Cell(preference.title ?: "", arrows = true)
         val seekBar = SeekBar(context).apply {
             max = steps
+            // Dragged with a finger; the controller uses the cell's L1/R1 and arrows.
+            isFocusable = false
+            setPadding(dp(10), 0, dp(10), 0)
             progressTintList = ColorStateList.valueOf(LauncherStyle.GOLD)
             thumbTintList = ColorStateList.valueOf(LauncherStyle.GOLD)
             progressBackgroundTintList = ColorStateList.valueOf(LauncherStyle.BORDER)
             setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(bar: SeekBar, progress: Int, fromUser: Boolean) {
                     if (fromUser)
-                        valueLabel.text = format(valueFor(progress))
+                        cell.valueView.text = label(progress)
                 }
                 override fun onStartTrackingTouch(bar: SeekBar) = Unit
                 override fun onStopTrackingTouch(bar: SeekBar) {
-                    prefs.edit().putString(key, format(valueFor(bar.progress))).apply()
+                    store(bar.progress)
+                    refresh()
                 }
             })
-            // Controller left/right moves the slider; store at once there too.
-            setOnKeyListener { bar, keyCode, event ->
-                if (event.action == android.view.KeyEvent.ACTION_UP &&
-                    (keyCode == android.view.KeyEvent.KEYCODE_DPAD_LEFT || keyCode == android.view.KeyEvent.KEYCODE_DPAD_RIGHT))
-                    prefs.edit().putString(key, format(valueFor((bar as SeekBar).progress))).apply()
-                false
-            }
         }
-
-        val control = LinearLayout(context).apply {
-            orientation = LinearLayout.HORIZONTAL
-            gravity = Gravity.CENTER_VERTICAL
-            minimumHeight = dp(LauncherStyle.CONTROL_HEIGHT)
-            addView(seekBar, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-            addView(valueLabel, LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { marginStart = dp(10) })
-            if (spec.autoLabel != null) {
-                addView(LauncherStyle.button(context, context.getString(R.string.slider_auto)) {
-                    prefs.edit().putString(key, "").apply()
-                }, LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { marginStart = dp(10) })
-            }
-        }
+        // Name above the slider, the value at the right, centred over the full
+        // height of the cell; so the cell keeps the common height.
+        cell.center.removeAllViews()
+        cell.center.orientation = LinearLayout.HORIZONTAL
+        cell.valueView.gravity = Gravity.CENTER_VERTICAL or Gravity.END
+        cell.center.addView(LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.CENTER
+            addView(cell.titleView, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
+            addView(seekBar, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(28)))
+        }, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+        cell.center.addView(cell.valueView, LinearLayout.LayoutParams(dp(110), LinearLayout.LayoutParams.MATCH_PARENT))
+        cell.onStep = { by -> store((position() + by).coerceIn(0, steps)) }
+        cell.onActivate = { store((position() + 1).coerceIn(0, steps)) }
 
         updaters += {
-            val stored = prefs.getString(key, "").orEmpty()
-            val value = stored.toFloatOrNull()?.coerceIn(spec.minimum, spec.maximum)
-            val shown = value ?: spec.defaultValue.coerceIn(spec.minimum, spec.maximum)
-            seekBar.progress = ((shown - spec.minimum) / spec.step).roundToInt().coerceIn(0, steps)
-            valueLabel.text = if (value == null && spec.autoLabel != null) spec.autoLabel.invoke() else format(shown)
+            val current = position().coerceIn(0, steps)
+            seekBar.progress = current
+            seekBar.isEnabled = preference.isEnabled
+            cell.valueView.text = label(current)
+            cell.setActive(false)
         }
-        val view = row(preference.title ?: "", control, explanation, halves = true)
-        bindEnabled(view, preference)
-        return view
+        bindEnabled(cell, preference)
+        return cell.root to note(preference, if (spec.summaryAsNote) preference.summary else null)
+    }
+
+    private companion object {
+        /** Marks the setting cells, which all have the common height. */
+        const val CELL = "launcher-cell"
+        const val LABEL_WIDTH = 190
+
+        /**
+         * The label in the left column, by the key of the first setting it covers;
+         * it covers the following settings up to the next label or section.
+         */
+        val GROUPS: Map<String, Int> = mapOf(
+            // Game settings > Gameplay
+            "gs_soulgem_values_rebalance" to R.string.launcher_group_balance,
+            "gs_toggle_sneak" to R.string.launcher_group_movement,
+            "gs_uncapped_damage_fatigue" to R.string.launcher_group_combat,
+            "gs_followers_defend_immediately" to R.string.launcher_group_followers,
+            "gs_permanent_barter_disposition_changes" to R.string.launcher_group_merchants,
+            "gs_npc_avoid_collision" to R.string.launcher_group_npcs,
+            "gs_racial_variation_in_speed_fix" to R.string.launcher_group_gameplay,
+            "gs_maximum_quicksaves" to R.string.launcher_group_quicksave,
+            // Game settings > Graphics
+            "gs_object_paging_min_size" to R.string.launcher_group_paging,
+            "pref_physicsFPS2" to R.string.launcher_group_physics,
+            "gs_auto_use_object_normal_maps" to R.string.launcher_group_shader_options,
+            "gs_radial_fog" to R.string.launcher_group_fog,
+            "gs_soft_particles" to R.string.launcher_group_processing,
+            // Game settings > Shadows
+            "gs_enable_shadows" to R.string.launcher_group_shadows,
+            "gs_player_shadows" to R.string.launcher_group_shadow_types,
+            "gs_shadow_quality" to R.string.launcher_group_shadow_options,
+            // Game settings > Animations
+            "gs_use_magic_item_animation" to R.string.launcher_group_animation_types,
+            "gs_smooth_movement" to R.string.launcher_group_transitions,
+            // Game settings > Interface
+            "pref_truetype_fonts" to R.string.launcher_group_font,
+            "gs_show_owned" to R.string.launcher_group_owned,
+            "gs_show_effect_duration" to R.string.launcher_group_info,
+            "gs_change_dialogue_topic_color" to R.string.launcher_group_design,
+            "gs_can_zoom_on_maps" to R.string.launcher_group_zoom,
+            // Game settings > Engine
+            "gs_groundcover_enabled" to R.string.launcher_group_groundcover,
+            "gs_build_navmesh" to R.string.launcher_group_meshes,
+            "gs_navmesh_threads" to R.string.launcher_group_threads,
+            // Game settings > Advanced
+            "pref_user_data_dir" to R.string.launcher_group_saves,
+            "pref_encoding" to R.string.launcher_group_language,
+            "pref_cheats_enabled" to R.string.launcher_group_cheats,
+            "pref_skip_gui" to R.string.launcher_group_start,
+            // Graphics & performance
+            "gs_framerate_limit" to R.string.launcher_group_framerate,
+            "pref_customResolution" to R.string.launcher_group_resolution,
+            "pref_display_cutout_area" to R.string.launcher_group_display,
+            "pref_shadersDir_v2" to R.string.launcher_group_shader,
+            // Controls
+            "pref_uiScaling" to R.string.launcher_group_interface,
+            "pref_omw051_controller_trigger_thresholds" to R.string.launcher_group_controls,
+            "pref_controls" to R.string.launcher_group_onscreen,
+            // Audio
+            "pref_omw050_doppler" to R.string.launcher_group_sound
+        )
     }
 }

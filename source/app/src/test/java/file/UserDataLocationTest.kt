@@ -46,25 +46,33 @@ class UserDataLocationTest {
     }
 
     @Test
-    fun applyToReplacesTheBaseLine() {
-        val lines = listOf("resources=x", "user-data=\"?userdata?\"", "data=y")
+    fun applyToReplacesTheBaseLines() {
+        val lines = listOf("resources=x", "user-data=\"?userdata?\"", "config=\"?userconfig?\"", "data=y")
         val result = UserDataLocation.applyTo(lines, File("/storage/emulated/0/Documents/OpenMW"))
         assertEquals(
-            listOf("resources=x", "user-data=\"/storage/emulated/0/Documents/OpenMW\"", "data=y"),
+            listOf(
+                "resources=x",
+                "user-data=\"/storage/emulated/0/Documents/OpenMW\"",
+                "config=\"/storage/emulated/0/Documents/OpenMW/config\"",
+                "data=y"
+            ),
             result
         )
     }
 
     @Test
     fun applyToKeepsASingleLine() {
-        val lines = listOf("user-data=\"a\"", "user-data=\"b\"")
+        val lines = listOf("user-data=\"a\"", "user-data=\"b\"", "config=\"c\"", "config=\"d\"")
         val result = UserDataLocation.applyTo(lines, File("/sync"))
-        assertEquals(listOf("user-data=\"/sync\""), result)
+        assertEquals(listOf("user-data=\"/sync\"", "config=\"/sync/config\""), result)
     }
 
     @Test
     fun applyToAppendsWhenMissingAndIgnoresNull() {
-        assertEquals(listOf("data=y", "user-data=\"/sync\""), UserDataLocation.applyTo(listOf("data=y"), File("/sync")))
+        assertEquals(
+            listOf("data=y", "user-data=\"/sync\"", "config=\"/sync/config\""),
+            UserDataLocation.applyTo(listOf("data=y"), File("/sync"))
+        )
         assertEquals(listOf("data=y"), UserDataLocation.applyTo(listOf("data=y"), null))
     }
 
@@ -93,6 +101,23 @@ class UserDataLocationTest {
 
         write(from, "saves/a.omwsave", "x")
         assertEquals(0, UserDataLocation.copySaves(from, from))
+    }
+
+    @Test
+    fun copyConfigKeepsExistingFilesAndLeavesLogsBehind() {
+        val from = temp.newFolder("app")
+        val to = temp.newFolder("sync")
+        write(from, "config/settings.cfg", "phone")
+        write(from, "config/input_v3.xml", "keys")
+        write(from, "config/openmw.log", "log")
+        write(to, "config/settings.cfg", "pc")
+
+        val copied = UserDataLocation.copyConfig(from, to)
+
+        assertEquals(1, copied)
+        assertEquals("pc", File(to, "config/settings.cfg").readText())
+        assertEquals("keys", File(to, "config/input_v3.xml").readText())
+        assertFalse(File(to, "config/openmw.log").exists())
     }
 
     @Test

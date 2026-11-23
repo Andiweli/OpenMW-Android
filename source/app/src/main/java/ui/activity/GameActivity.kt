@@ -241,8 +241,7 @@ class GameActivity : SDLActivity() {
         // Before SDL starts, so the first controller event already sees it.
         SDLActivity.sHandheldMode = PreferenceManager.getDefaultSharedPreferences(this)
             .getBoolean(Constants.HANDHELD_MODE, false)
-        SDLActivity.sSwipeToLook = PreferenceManager.getDefaultSharedPreferences(this)
-            .getBoolean("pref_swipe_to_look", false)
+        SDLActivity.sSwipeToLook = ui.controls.RightLook.isSwipe(PreferenceManager.getDefaultSharedPreferences(this))
         super.onCreate(savedInstanceState)
 
         // The Android keyboard overlays the game. Resizing the surface for the

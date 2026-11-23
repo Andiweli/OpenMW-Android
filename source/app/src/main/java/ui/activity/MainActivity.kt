@@ -230,7 +230,7 @@ class MainActivity : AppCompatActivity() {
         val view = ui.launcher.LauncherHomeView(this, object : ui.launcher.LauncherHomeView.Actions {
             override fun play() = checkStartGame()
             override fun chooseGameFolder() { gameFilesSetup?.choose() }
-            override fun chooseLanguage() = showLanguageDialog()
+            override fun findGameFolder() { gameFilesSetup?.autoDetect() }
             override fun openGameSettings() = startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
             override fun openGraphics() = startActivity(
                 LauncherPageActivity.intent(this@MainActivity, getString(R.string.launcher_tile_graphics), "cat_graphics", "cat_performance")
@@ -257,7 +257,7 @@ class MainActivity : AppCompatActivity() {
         view.playButton.requestFocus()
     }
 
-    /** Game data status and language on the home screen. */
+    /** Game data status on the home screen. */
     private fun refreshHome() {
         val view = homeView ?: return
         val path = prefs.getString(GameFilesLocation.PREF_GAME_FILES, "").orEmpty()
@@ -269,28 +269,6 @@ class MainActivity : AppCompatActivity() {
             GameInstaller(path).check() -> view.setGameData(ui.launcher.LauncherHomeView.GameDataStatus.FOUND, path)
             else -> view.setGameData(ui.launcher.LauncherHomeView.GameDataStatus.MISSING, path)
         }
-
-        val values = resources.getStringArray(R.array.pref_encoding_values)
-        val entries = resources.getStringArray(R.array.pref_encoding_entries)
-        val current = prefs.getString("pref_encoding", GameInstaller.DEFAULT_CHARSET_PREF)
-        val entry = entries.getOrNull(values.indexOf(current)) ?: current.orEmpty()
-        // "Lateinisch (win1252)" on the button reads "Lateinisch".
-        view.setLanguage(entry.substringBefore(" (").trim())
-    }
-
-    private fun showLanguageDialog() {
-        val values = resources.getStringArray(R.array.pref_encoding_values)
-        val entries = resources.getStringArray(R.array.pref_encoding_entries)
-        val current = values.indexOf(prefs.getString("pref_encoding", GameInstaller.DEFAULT_CHARSET_PREF))
-        AlertDialog.Builder(this)
-            .setTitle(R.string.pref_encoding)
-            .setSingleChoiceItems(entries, current) { dialog, which ->
-                prefs.edit().putString("pref_encoding", values[which]).apply()
-                dialog.dismiss()
-                refreshHome()
-            }
-            .setNegativeButton(android.R.string.cancel, null)
-            .show()
     }
 
     /** Opens the mod list, or explains why the game files are not usable yet. */

@@ -64,8 +64,8 @@ object LauncherStyle {
     const val WARN_FILL = 0xff4e1f1c.toInt()
     const val WARN_TEXT = 0xffe2c7c2.toInt()
 
-    /** Height of every button, toggle and option, in dp: the height of the home screen tiles. */
-    const val CONTROL_HEIGHT = 60
+    /** Height of every button, tile and setting cell, in dp. */
+    const val CONTROL_HEIGHT = 64
     /** Gap between controls and around rows, in dp. */
     const val GAP = 8
     const val BUTTON_RADIUS = 6
@@ -96,11 +96,17 @@ object LauncherStyle {
             if (bold) typeface = Typeface.DEFAULT_BOLD
         }
 
-    /** A section label in small capitals, as above each group in CubeEvil4. */
-    fun sectionLabel(context: Context, label: CharSequence): TextView =
-        text(context, label.toString().uppercase(), 13f, true, MUTED).apply {
-            letterSpacing = 0.14f
-            setPadding(0, dp(context, 14), 0, dp(context, 6))
+    /** A section label in small capitals with a line to the right, as in CubeEvil4. */
+    fun sectionLabel(context: Context, label: CharSequence): LinearLayout =
+        LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(0, dp(context, 16), 0, dp(context, 6))
+            addView(text(context, label.toString().uppercase(), 13f, true, MUTED).apply {
+                letterSpacing = 0.14f
+            })
+            addView(View(context).apply { setBackgroundColor(BORDER) },
+                LinearLayout.LayoutParams(0, dp(context, 1), 1f).apply { marginStart = dp(context, 14) })
         }
 
     /** A plain button of the common height. */
@@ -144,7 +150,14 @@ object LauncherStyle {
      * The frame of a launcher sub-page, as in CubeEvil4: "‹ Back", the title and
      * "Play" on top, [content] in the middle, the controller hints below.
      */
-    fun pageFrame(context: Context, title: CharSequence, onBack: () -> Unit, onPlay: () -> Unit, content: View): LinearLayout {
+    fun pageFrame(
+        context: Context,
+        title: CharSequence,
+        onBack: () -> Unit,
+        onPlay: () -> Unit,
+        content: View,
+        valueHint: Boolean = true
+    ): LinearLayout {
         fun d(v: Int) = dp(context, v)
         val header = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
@@ -163,7 +176,9 @@ object LauncherStyle {
         val footer = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
             setPadding(d(22), d(8), d(22), d(10))
-            addView(text(context, context.getString(com.libopenmw.openmw.R.string.launcher_hint_navigate), 13f, false).apply {
+            val navigate = context.getString(com.libopenmw.openmw.R.string.launcher_hint_navigate) +
+                if (valueHint) " \u00b7 " + context.getString(com.libopenmw.openmw.R.string.launcher_hint_values) else ""
+            addView(text(context, navigate, 13f, false).apply {
                 maxLines = 1
                 ellipsize = TextUtils.TruncateAt.END
             }, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
@@ -189,7 +204,7 @@ object LauncherStyle {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
             setPadding(dp(context, 12), dp(context, 10), dp(context, 12), dp(context, 10))
-            minimumHeight = dp(context, 60)
+            minimumHeight = dp(context, CONTROL_HEIGHT)
             background = background(context, SURFACE, BORDER)
             isClickable = true
             isFocusable = true

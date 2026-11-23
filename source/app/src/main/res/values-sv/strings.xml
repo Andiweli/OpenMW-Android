@@ -212,16 +212,14 @@
     <!-- Saves folder and swipe to look -->
     <string name="user_data_dir_title">Mapp för sparfiler</string>
     <string name="user_data_dir_default_summary">Standard (appens lagring)</string>
-    <string name="user_data_dir_hint">Välj en mapp, t.ex. för Syncthing.</string>
+    <string name="user_data_dir_hint">Sparfiler och settings.cfg, t.ex. för Syncthing.</string>
     <string name="user_data_dir_choose">Välj mapp…</string>
     <string name="user_data_dir_use_default">Använd appens standardmapp</string>
-    <string name="user_data_dir_copying">Kopierar sparfiler…</string>
-    <string name="user_data_dir_changed_message">Sparfiler och skärmdumpar lagras nu i:\n%1$s\n\nFiler kopierade från den tidigare mappen: %2$d. Befintliga sparfiler ersattes inte och den tidigare mappen lämnades oförändrad.\n\nTips: undanta navmesh.db från synkroniseringen, det är en stor cachefil.</string>
+    <string name="user_data_dir_copying">Kopierar sparfiler och inställningar…</string>
+    <string name="user_data_dir_changed_message">Sparfiler, skärmdumpar och inställningar (mappen config med settings.cfg) lagras nu i:\n%1$s\n\nFiler kopierade från den tidigare mappen: %2$d. Befintliga filer ersattes inte och den tidigare mappen lämnades oförändrad.\n\nTips: undanta navmesh.db från synkroniseringen, det är en stor cachefil.</string>
     <string name="user_data_dir_error_title">Mappen för sparfiler ändrades inte</string>
     <string name="user_data_dir_error_message">OpenMW kan inte skriva till den här mappen:\n%1$s\n(%2$s)\n\nDen tidigare mappen för sparfiler används fortfarande.</string>
     <string name="user_data_dir_unavailable">Mappen för sparfiler är inte tillgänglig eller skrivskyddad:\n%1$s\n\nSätt i lagringsmediet, kontrollera lagringsbehörigheten eller välj en annan mapp i startprogrammet.</string>
-    <string name="pref_swipe_to_look_title">Svep för att titta</string>
-    <string name="pref_swipe_to_look_summary">Svep på fri skärmyta för att se dig omkring.</string>
     <string name="pref_cheats_enabled_title">Aktivera fusk</string>
     <string name="pref_cheats_enabled_summary">Sidan Alternativ &gt; Skript &gt; Fusk i spelet ger guld.</string>
 
@@ -237,7 +235,6 @@
     <string name="launcher_status_not_chosen">Inte vald</string>
     <string name="launcher_game_data_not_chosen">Välj mappen som innehåller Data Files och Morrowind.ini.</string>
     <string name="launcher_choose_folder">Välj mapp</string>
-    <string name="launcher_language">Språk</string>
     <string name="launcher_tile_game_settings_summary">Spelmekanik, motor, avancerat</string>
     <string name="launcher_tile_graphics">Grafik och prestanda</string>
     <string name="launcher_tile_graphics_summary">Upplösning, shaders, bildfrekvens</string>
@@ -254,8 +251,8 @@
     <string name="launcher_help_github">Projektet på GitHub</string>
     <string name="launcher_back">‹ Tillbaka</string>
     <string name="launcher_hint_back_play">B: tillbaka · START: spela</string>
-    <string name="launcher_on">PÅ</string>
-    <string name="launcher_off">AV</string>
+    <string name="launcher_on">På</string>
+    <string name="launcher_off">Av</string>
     <string name="launcher_section_onscreen">Ordna skärmknappar</string>
     <string name="launcher_section_areas">Områden</string>
     <string name="launcher_gs_game_mechanics_summary">Strid, följeslagare, sparfiler</string>
@@ -264,5 +261,57 @@
     <string name="launcher_gs_animations_summary">Rörelse med mera</string>
     <string name="launcher_gs_interface_summary">Typsnitt, verktygstips, karta</string>
     <string name="launcher_gs_engine_summary">Markväxtlighet, navmesh, trådar</string>
-    <string name="launcher_gs_advanced_summary">Sparmapp, fusk, startalternativ</string>
+    <string name="launcher_gs_advanced_summary">Sparmapp, språk, fusk, start</string>
+    <string name="launcher_auto_search">Automatiskt</string>
+    <string name="launcher_auto_search_summary">Sök överallt…</string>
+    <string name="launcher_auto_searching">Söker speldata på alla enheter…</string>
+    <string name="launcher_auto_none_title">Ingen speldata hittades</string>
+    <string name="launcher_auto_none_message">Ingen Morrowind-mapp hittades på någon enhet (med Morrowind.ini och mappen ”Data Files”). Kopiera speldatan till enheten eller välj mappen med ”Välj mapp”.</string>
+    <string name="launcher_auto_pick">Vilken speldata ska användas?</string>
+    <string name="launcher_encoding_summary">Teckenuppsättning för din Morrowind-utgåva: latinsk för svenska, engelska, tyska m.fl., kyrillisk för ryska, central- och östeuropeisk för polska.</string>
+    <string name="pref_right_look_title">Se dig om med</string>
+    <string name="pref_right_look_summary">Höger spak: en spak på skärmen. Svepyta: ingen spak, svep på en fri del av skärmen.</string>
+    <string name="launcher_hint_values">L1/R1: ändra värde</string>
+    <string-array name="pref_right_look_entries">
+        <item>Höger spak</item>
+        <item>Svepyta</item>
+    </string-array>
+    <string name="launcher_group_balance">Balans</string>
+    <string name="launcher_group_movement">Rörelse</string>
+    <string name="launcher_group_combat">Strid</string>
+    <string name="launcher_group_followers">Följeslagare</string>
+    <string name="launcher_group_merchants">Handlare</string>
+    <string name="launcher_group_npcs">NPC:er</string>
+    <string name="launcher_group_gameplay">Spelmekanik</string>
+    <string name="launcher_group_quicksave">Snabbsparningar</string>
+    <string name="launcher_group_paging">Paging</string>
+    <string name="launcher_group_physics">Fysik</string>
+    <string name="launcher_group_shader_options">Shaderval</string>
+    <string name="launcher_group_fog">Dimval</string>
+    <string name="launcher_group_processing">Efterbehandling</string>
+    <string name="launcher_group_shadows">Skuggor</string>
+    <string name="launcher_group_shadow_types">Skuggtyper</string>
+    <string name="launcher_group_shadow_options">Skuggval</string>
+    <string name="launcher_group_animation_types">Animationstyper</string>
+    <string name="launcher_group_transitions">Övergångar</string>
+    <string name="launcher_group_font">Typsnitt</string>
+    <string name="launcher_group_owned">Ägande</string>
+    <string name="launcher_group_info">Information</string>
+    <string name="launcher_group_design">Utseende</string>
+    <string name="launcher_group_zoom">Zoom</string>
+    <string name="launcher_group_groundcover">Markvegetation</string>
+    <string name="launcher_group_meshes">Nät</string>
+    <string name="launcher_group_threads">Trådar</string>
+    <string name="launcher_group_framerate">Bildfrekvens</string>
+    <string name="launcher_group_resolution">Upplösning</string>
+    <string name="launcher_group_display">Visningsval</string>
+    <string name="launcher_group_shader">Shaders</string>
+    <string name="launcher_group_interface">Gränssnitt</string>
+    <string name="launcher_group_controls">Styrning</string>
+    <string name="launcher_group_onscreen">Skärmlayout</string>
+    <string name="launcher_group_sound">Ljudval</string>
+    <string name="launcher_group_saves">Sparfiler</string>
+    <string name="launcher_group_language">Språk</string>
+    <string name="launcher_group_cheats">Fusk</string>
+    <string name="launcher_group_start">Start</string>
 </resources>

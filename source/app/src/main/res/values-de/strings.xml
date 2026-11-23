@@ -212,16 +212,14 @@
     <!-- Saves folder and swipe to look -->
     <string name="user_data_dir_title">Ordner für Spielstände</string>
     <string name="user_data_dir_default_summary">Standard (App-Speicher)</string>
-    <string name="user_data_dir_hint">Wähle einen Ordner, z. B. für Syncthing.</string>
+    <string name="user_data_dir_hint">Spielstände und settings.cfg, z. B. für Syncthing.</string>
     <string name="user_data_dir_choose">Ordner wählen…</string>
     <string name="user_data_dir_use_default">Standard-App-Ordner verwenden</string>
-    <string name="user_data_dir_copying">Spielstände werden kopiert…</string>
-    <string name="user_data_dir_changed_message">Spielstände und Screenshots werden jetzt hier gespeichert:\n%1$s\n\nAus dem bisherigen Ordner kopierte Dateien: %2$d. Vorhandene Spielstände wurden nicht ersetzt, der bisherige Ordner blieb unverändert.\n\nTipp: navmesh.db von der Synchronisierung ausnehmen, das ist eine große Cache-Datei.</string>
+    <string name="user_data_dir_copying">Spielstände und Einstellungen werden kopiert…</string>
+    <string name="user_data_dir_changed_message">Spielstände, Screenshots und Einstellungen (Ordner config mit settings.cfg) werden jetzt hier gespeichert:\n%1$s\n\nAus dem bisherigen Ordner kopierte Dateien: %2$d. Vorhandene Dateien wurden nicht ersetzt, der bisherige Ordner blieb unverändert.\n\nTipp: navmesh.db von der Synchronisierung ausnehmen, das ist eine große Cache-Datei.</string>
     <string name="user_data_dir_error_title">Ordner für Spielstände nicht geändert</string>
     <string name="user_data_dir_error_message">OpenMW kann nicht in diesen Ordner schreiben:\n%1$s\n(%2$s)\n\nEs wird weiterhin der bisherige Ordner verwendet.</string>
     <string name="user_data_dir_unavailable">Der Ordner für Spielstände ist nicht verfügbar oder nicht beschreibbar:\n%1$s\n\nSetze den Speicher ein, prüfe die Speicherberechtigung oder wähle im Launcher einen anderen Ordner.</string>
-    <string name="pref_swipe_to_look_title">Wischen zum Umsehen</string>
-    <string name="pref_swipe_to_look_summary">Auf freier Fläche wischen, um dich umzusehen.</string>
     <string name="pref_cheats_enabled_title">Cheats aktivieren</string>
     <string name="pref_cheats_enabled_summary">Seite im Spiel unter Optionen &gt; Skripte &gt; Cheats für Gold.</string>
 
@@ -237,7 +235,6 @@
     <string name="launcher_status_not_chosen">Nicht gewählt</string>
     <string name="launcher_game_data_not_chosen">Wähle den Ordner mit „Data Files“ und Morrowind.ini.</string>
     <string name="launcher_choose_folder">Ordner wählen</string>
-    <string name="launcher_language">Zeichenkodierung</string>
     <string name="launcher_tile_game_settings_summary">Gameplay, Engine, Erweitert</string>
     <string name="launcher_tile_graphics">Grafik &amp; Leistung</string>
     <string name="launcher_tile_graphics_summary">Auflösung, Shader, Bildrate</string>
@@ -254,8 +251,8 @@
     <string name="launcher_help_github">Projekt auf GitHub</string>
     <string name="launcher_back">‹ Zurück</string>
     <string name="launcher_hint_back_play">B: zurück · START: spielen</string>
-    <string name="launcher_on">AN</string>
-    <string name="launcher_off">AUS</string>
+    <string name="launcher_on">An</string>
+    <string name="launcher_off">Aus</string>
     <string name="launcher_section_onscreen">Bildschirmtasten anordnen</string>
     <string name="launcher_section_areas">Bereiche</string>
     <string name="launcher_gs_game_mechanics_summary">Kampf, Begleiter, Spielstände</string>
@@ -264,5 +261,57 @@
     <string name="launcher_gs_animations_summary">Bewegung und mehr</string>
     <string name="launcher_gs_interface_summary">Schrift, Tooltips, Karte</string>
     <string name="launcher_gs_engine_summary">Bodenbewuchs, NavMesh, Threads</string>
-    <string name="launcher_gs_advanced_summary">Ordner für Spielstände, Cheats, Startoptionen</string>
+    <string name="launcher_gs_advanced_summary">Spielstände, Zeichenkodierung, Cheats, Startoptionen</string>
+    <string name="launcher_auto_search">Automatisch</string>
+    <string name="launcher_auto_search_summary">Alles durchsuchen…</string>
+    <string name="launcher_auto_searching">Spieldaten werden auf allen Laufwerken gesucht…</string>
+    <string name="launcher_auto_none_title">Keine Spieldaten gefunden</string>
+    <string name="launcher_auto_none_message">Auf keinem Laufwerk wurde ein Morrowind-Ordner gefunden (mit Morrowind.ini und dem Ordner „Data Files“). Kopiere die Spieldaten auf das Gerät oder wähle den Ordner mit „Ordner wählen“.</string>
+    <string name="launcher_auto_pick">Welche Spieldaten verwenden?</string>
+    <string name="launcher_encoding_summary">Zeichensatz deiner Morrowind-Ausgabe: Latein für Deutsch, Englisch, Französisch u. a., Kyrillisch für Russisch, Mittel- und Osteuropäisch für Polnisch.</string>
+    <string name="pref_right_look_title">Umsehen mit</string>
+    <string name="pref_right_look_summary">Rechter Stick: ein Stick auf dem Bildschirm. Wischfläche: kein Stick, auf freier Fläche wischen.</string>
+    <string name="launcher_hint_values">L1/R1: Wert ändern</string>
+    <string-array name="pref_right_look_entries">
+        <item>Rechter Stick</item>
+        <item>Wischfläche</item>
+    </string-array>
+    <string name="launcher_group_balance">Balance</string>
+    <string name="launcher_group_movement">Bewegung</string>
+    <string name="launcher_group_combat">Kampf</string>
+    <string name="launcher_group_followers">Begleiter</string>
+    <string name="launcher_group_merchants">Händler</string>
+    <string name="launcher_group_npcs">NPCs</string>
+    <string name="launcher_group_gameplay">Gameplay</string>
+    <string name="launcher_group_quicksave">Schnellspeichern</string>
+    <string name="launcher_group_paging">Paging</string>
+    <string name="launcher_group_physics">Spielphysik</string>
+    <string name="launcher_group_shader_options">Shaderoptionen</string>
+    <string name="launcher_group_fog">Nebeloptionen</string>
+    <string name="launcher_group_processing">Processing-Optionen</string>
+    <string name="launcher_group_shadows">Schatten</string>
+    <string name="launcher_group_shadow_types">Schattentypen</string>
+    <string name="launcher_group_shadow_options">Schattenoptionen</string>
+    <string name="launcher_group_animation_types">Animationstypen</string>
+    <string name="launcher_group_transitions">Übergänge</string>
+    <string name="launcher_group_font">Schrift</string>
+    <string name="launcher_group_owned">Besitz</string>
+    <string name="launcher_group_info">Informationsanzeige</string>
+    <string name="launcher_group_design">Design</string>
+    <string name="launcher_group_zoom">Zoom</string>
+    <string name="launcher_group_groundcover">Groundcover</string>
+    <string name="launcher_group_meshes">Meshes</string>
+    <string name="launcher_group_threads">Threadpriorität</string>
+    <string name="launcher_group_framerate">Framerate</string>
+    <string name="launcher_group_resolution">Auflösung</string>
+    <string name="launcher_group_display">Anzeigeoptionen</string>
+    <string name="launcher_group_shader">Shader</string>
+    <string name="launcher_group_interface">Interface</string>
+    <string name="launcher_group_controls">Steuerung</string>
+    <string name="launcher_group_onscreen">On-Screen Layout</string>
+    <string name="launcher_group_sound">Ton-Optionen</string>
+    <string name="launcher_group_saves">Spielstände</string>
+    <string name="launcher_group_language">Kodierung</string>
+    <string name="launcher_group_cheats">Cheats</string>
+    <string name="launcher_group_start">Start</string>
 </resources>

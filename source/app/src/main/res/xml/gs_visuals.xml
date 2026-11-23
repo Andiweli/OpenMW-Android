@@ -2,8 +2,8 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="@string/l10n_gs_visuals_terrain_title">
         <Preference android:key="gs_object_paging_min_size" android:title="@string/gs_object_paging_min_size_title" android:summary="@string/gs_object_paging_min_size_summary" />
-        <CheckBoxPreference android:key="gs_distant_land" android:title="@string/gs_distant_land_title" android:summary="@string/gs_distant_land_summary" />
         <CheckBoxPreference android:key="gs_active_grid_object_paging" android:title="@string/gs_active_grid_object_paging_title" android:defaultValue="true" android:summary="@string/gs_active_grid_object_paging_summary" />
+        <CheckBoxPreference android:key="gs_distant_land" android:title="@string/gs_distant_land_title" android:summary="@string/gs_distant_land_summary" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/l10n_gs_visuals_graphics_title">
         <ListPreference android:key="pref_physicsFPS2" android:title="@string/pref_physicsFPS2" android:dialogTitle="@string/pref_physicsFPS2" android:entries="@array/pref_physicsFPS2_entries" android:entryValues="@array/pref_physicsFPS2_entries" android:defaultValue="@string/pref_physicsFPS2_default" android:summary="@string/pref_physicsfps2_summary" />

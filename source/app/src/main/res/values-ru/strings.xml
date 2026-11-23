@@ -212,16 +212,14 @@
     <!-- Saves folder and swipe to look -->
     <string name="user_data_dir_title">Папка сохранений</string>
     <string name="user_data_dir_default_summary">По умолчанию (память приложения)</string>
-    <string name="user_data_dir_hint">Выберите папку, например для Syncthing.</string>
+    <string name="user_data_dir_hint">Сохранения и settings.cfg, например для Syncthing.</string>
     <string name="user_data_dir_choose">Выбрать папку…</string>
     <string name="user_data_dir_use_default">Использовать папку приложения</string>
-    <string name="user_data_dir_copying">Копирование сохранений…</string>
-    <string name="user_data_dir_changed_message">Сохранения и скриншоты теперь хранятся здесь:\n%1$s\n\nСкопировано файлов из прежней папки: %2$d. Существующие сохранения не заменены, прежняя папка не изменена.\n\nСовет: исключите navmesh.db из синхронизации, это большой файл кэша.</string>
+    <string name="user_data_dir_copying">Копирование сохранений и настроек…</string>
+    <string name="user_data_dir_changed_message">Сохранения, скриншоты и настройки (папка config с settings.cfg) теперь хранятся здесь:\n%1$s\n\nСкопировано файлов из прежней папки: %2$d. Существующие файлы не заменены, прежняя папка не изменена.\n\nСовет: исключите navmesh.db из синхронизации, это большой файл кэша.</string>
     <string name="user_data_dir_error_title">Папка сохранений не изменена</string>
     <string name="user_data_dir_error_message">OpenMW не может записывать в эту папку:\n%1$s\n(%2$s)\n\nПо-прежнему используется прежняя папка сохранений.</string>
     <string name="user_data_dir_unavailable">Папка сохранений недоступна или защищена от записи:\n%1$s\n\nВставьте носитель, проверьте разрешение на доступ к памяти или выберите другую папку в лаунчере.</string>
-    <string name="pref_swipe_to_look_title">Обзор свайпом</string>
-    <string name="pref_swipe_to_look_summary">Проводите по свободной части экрана, чтобы осматриваться.</string>
     <string name="pref_cheats_enabled_title">Включить читы</string>
     <string name="pref_cheats_enabled_summary">Страница «Читы» в игре (Параметры &gt; Скрипты) для получения золота.</string>
 
@@ -237,7 +235,6 @@
     <string name="launcher_status_not_chosen">Не выбрано</string>
     <string name="launcher_game_data_not_chosen">Выберите папку, в которой есть Data Files и Morrowind.ini.</string>
     <string name="launcher_choose_folder">Выбрать папку</string>
-    <string name="launcher_language">Язык</string>
     <string name="launcher_tile_game_settings_summary">Геймплей, движок, дополнительно</string>
     <string name="launcher_tile_graphics">Графика и производительность</string>
     <string name="launcher_tile_graphics_summary">Разрешение, шейдеры, частота кадров</string>
@@ -254,8 +251,8 @@
     <string name="launcher_help_github">Проект на GitHub</string>
     <string name="launcher_back">‹ Назад</string>
     <string name="launcher_hint_back_play">B: назад · START: играть</string>
-    <string name="launcher_on">ВКЛ</string>
-    <string name="launcher_off">ВЫКЛ</string>
+    <string name="launcher_on">Вкл</string>
+    <string name="launcher_off">Выкл</string>
     <string name="launcher_section_onscreen">Расположение экранных кнопок</string>
     <string name="launcher_section_areas">Разделы</string>
     <string name="launcher_gs_game_mechanics_summary">Бой, спутники, сохранения</string>
@@ -264,5 +261,57 @@
     <string name="launcher_gs_animations_summary">Движение и не только</string>
     <string name="launcher_gs_interface_summary">Шрифты, подсказки, карта</string>
     <string name="launcher_gs_engine_summary">Растительность, навмеш, потоки</string>
-    <string name="launcher_gs_advanced_summary">Папка сохранений, читы, запуск</string>
+    <string name="launcher_gs_advanced_summary">Сохранения, язык, читы, запуск</string>
+    <string name="launcher_auto_search">Автоматически</string>
+    <string name="launcher_auto_search_summary">Искать везде…</string>
+    <string name="launcher_auto_searching">Поиск данных игры на всех дисках…</string>
+    <string name="launcher_auto_none_title">Данные игры не найдены</string>
+    <string name="launcher_auto_none_message">Папка Morrowind (с Morrowind.ini и папкой «Data Files») не найдена ни на одном диске. Скопируйте данные игры на устройство или выберите папку кнопкой «Выбрать папку».</string>
+    <string name="launcher_auto_pick">Какие данные игры использовать?</string>
+    <string name="launcher_encoding_summary">Кодировка вашего издания Morrowind: кириллица для русского, латиница для английского, немецкого и других, центрально- и восточноевропейская для польского.</string>
+    <string name="pref_right_look_title">Обзор</string>
+    <string name="pref_right_look_summary">Правый стик: стик на экране. Область свайпа: без стика, проведите по свободному месту.</string>
+    <string name="launcher_hint_values">L1/R1: изменить</string>
+    <string-array name="pref_right_look_entries">
+        <item>Правый стик</item>
+        <item>Область свайпа</item>
+    </string-array>
+    <string name="launcher_group_balance">Баланс</string>
+    <string name="launcher_group_movement">Движение</string>
+    <string name="launcher_group_combat">Бой</string>
+    <string name="launcher_group_followers">Спутники</string>
+    <string name="launcher_group_merchants">Торговцы</string>
+    <string name="launcher_group_npcs">NPC</string>
+    <string name="launcher_group_gameplay">Геймплей</string>
+    <string name="launcher_group_quicksave">Быстрые сохранения</string>
+    <string name="launcher_group_paging">Подгрузка</string>
+    <string name="launcher_group_physics">Физика</string>
+    <string name="launcher_group_shader_options">Шейдеры</string>
+    <string name="launcher_group_fog">Туман</string>
+    <string name="launcher_group_processing">Постобработка</string>
+    <string name="launcher_group_shadows">Тени</string>
+    <string name="launcher_group_shadow_types">Типы теней</string>
+    <string name="launcher_group_shadow_options">Настройки теней</string>
+    <string name="launcher_group_animation_types">Типы анимаций</string>
+    <string name="launcher_group_transitions">Переходы</string>
+    <string name="launcher_group_font">Шрифт</string>
+    <string name="launcher_group_owned">Владение</string>
+    <string name="launcher_group_info">Информация</string>
+    <string name="launcher_group_design">Оформление</string>
+    <string name="launcher_group_zoom">Масштаб</string>
+    <string name="launcher_group_groundcover">Растительность</string>
+    <string name="launcher_group_meshes">Сетки</string>
+    <string name="launcher_group_threads">Потоки</string>
+    <string name="launcher_group_framerate">Частота кадров</string>
+    <string name="launcher_group_resolution">Разрешение</string>
+    <string name="launcher_group_display">Экран</string>
+    <string name="launcher_group_shader">Шейдеры</string>
+    <string name="launcher_group_interface">Интерфейс</string>
+    <string name="launcher_group_controls">Управление</string>
+    <string name="launcher_group_onscreen">Экранные кнопки</string>
+    <string name="launcher_group_sound">Звук</string>
+    <string name="launcher_group_saves">Сохранения</string>
+    <string name="launcher_group_language">Язык</string>
+    <string name="launcher_group_cheats">Читы</string>
+    <string name="launcher_group_start">Запуск</string>
 </resources>

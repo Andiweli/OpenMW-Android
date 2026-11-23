@@ -212,16 +212,14 @@
     <!-- Saves folder and swipe to look -->
     <string name="user_data_dir_title">Dossier des sauvegardes</string>
     <string name="user_data_dir_default_summary">Par défaut (stockage de l\'application)</string>
-    <string name="user_data_dir_hint">Choisissez un dossier, par ex. pour Syncthing.</string>
+    <string name="user_data_dir_hint">Sauvegardes et settings.cfg, par ex. pour Syncthing.</string>
     <string name="user_data_dir_choose">Choisir un dossier…</string>
     <string name="user_data_dir_use_default">Utiliser le dossier de l\'application</string>
-    <string name="user_data_dir_copying">Copie des sauvegardes…</string>
-    <string name="user_data_dir_changed_message">Les sauvegardes et captures d\'écran sont maintenant enregistrées dans :\n%1$s\n\nFichiers copiés depuis l\'ancien dossier : %2$d. Les sauvegardes existantes n\'ont pas été remplacées et l\'ancien dossier n\'a pas été modifié.\n\nAstuce : excluez navmesh.db de la synchronisation, c\'est un gros fichier de cache.</string>
+    <string name="user_data_dir_copying">Copie des sauvegardes et des réglages…</string>
+    <string name="user_data_dir_changed_message">Les sauvegardes, captures d\'écran et réglages (dossier config avec settings.cfg) sont maintenant enregistrés dans :\n%1$s\n\nFichiers copiés depuis l\'ancien dossier : %2$d. Les fichiers existants n\'ont pas été remplacés et l\'ancien dossier n\'a pas été modifié.\n\nAstuce : excluez navmesh.db de la synchronisation, c\'est un gros fichier de cache.</string>
     <string name="user_data_dir_error_title">Dossier des sauvegardes inchangé</string>
     <string name="user_data_dir_error_message">OpenMW ne peut pas écrire dans ce dossier :\n%1$s\n(%2$s)\n\nL\'ancien dossier des sauvegardes reste utilisé.</string>
     <string name="user_data_dir_unavailable">Le dossier des sauvegardes est indisponible ou non accessible en écriture :\n%1$s\n\nInsérez le stockage, vérifiez l\'autorisation de stockage ou choisissez un autre dossier dans le lanceur.</string>
-    <string name="pref_swipe_to_look_title">Balayer pour regarder</string>
-    <string name="pref_swipe_to_look_summary">Balayer une zone libre de l\'écran pour regarder autour de soi.</string>
     <string name="pref_cheats_enabled_title">Activer les triches</string>
     <string name="pref_cheats_enabled_summary">Page en jeu Options &gt; Scripts &gt; Triches pour obtenir de l\'or.</string>
 
@@ -237,7 +235,6 @@
     <string name="launcher_status_not_chosen">Non choisi</string>
     <string name="launcher_game_data_not_chosen">Choisissez le dossier qui contient Data Files et Morrowind.ini.</string>
     <string name="launcher_choose_folder">Choisir le dossier</string>
-    <string name="launcher_language">Langue</string>
     <string name="launcher_tile_game_settings_summary">Gameplay, moteur, avancé</string>
     <string name="launcher_tile_graphics">Graphismes et performances</string>
     <string name="launcher_tile_graphics_summary">Résolution, shaders, fréquence d\'images</string>
@@ -254,8 +251,8 @@
     <string name="launcher_help_github">Projet sur GitHub</string>
     <string name="launcher_back">‹ Retour</string>
     <string name="launcher_hint_back_play">B : retour · START : jouer</string>
-    <string name="launcher_on">OUI</string>
-    <string name="launcher_off">NON</string>
+    <string name="launcher_on">Oui</string>
+    <string name="launcher_off">Non</string>
     <string name="launcher_section_onscreen">Disposer les boutons à l\'écran</string>
     <string name="launcher_section_areas">Catégories</string>
     <string name="launcher_gs_game_mechanics_summary">Combat, compagnons, sauvegardes</string>
@@ -264,5 +261,57 @@
     <string name="launcher_gs_animations_summary">Mouvement et plus</string>
     <string name="launcher_gs_interface_summary">Polices, infobulles, carte</string>
     <string name="launcher_gs_engine_summary">Végétation, navmesh, threads</string>
-    <string name="launcher_gs_advanced_summary">Dossier des sauvegardes, triches, démarrage</string>
+    <string name="launcher_gs_advanced_summary">Sauvegardes, langue, triches, démarrage</string>
+    <string name="launcher_auto_search">Automatique</string>
+    <string name="launcher_auto_search_summary">Tout rechercher…</string>
+    <string name="launcher_auto_searching">Recherche des données du jeu sur tous les lecteurs…</string>
+    <string name="launcher_auto_none_title">Aucune donnée de jeu trouvée</string>
+    <string name="launcher_auto_none_message">Aucun dossier Morrowind n\'a été trouvé (avec Morrowind.ini et un dossier « Data Files »). Copiez les données du jeu sur l\'appareil ou choisissez le dossier avec « Choisir un dossier ».</string>
+    <string name="launcher_auto_pick">Quelles données de jeu utiliser ?</string>
+    <string name="launcher_encoding_summary">Jeu de caractères de votre édition de Morrowind : latin pour le français, l\'anglais, l\'allemand et d\'autres, cyrillique pour le russe, Europe centrale et orientale pour le polonais.</string>
+    <string name="pref_right_look_title">Regarder avec</string>
+    <string name="pref_right_look_summary">Stick droit : un stick à l\'écran. Zone de glissement : pas de stick, glissez sur une zone libre.</string>
+    <string name="launcher_hint_values">L1/R1 : changer la valeur</string>
+    <string-array name="pref_right_look_entries">
+        <item>Stick droit</item>
+        <item>Zone de glissement</item>
+    </string-array>
+    <string name="launcher_group_balance">Équilibre</string>
+    <string name="launcher_group_movement">Déplacement</string>
+    <string name="launcher_group_combat">Combat</string>
+    <string name="launcher_group_followers">Compagnons</string>
+    <string name="launcher_group_merchants">Marchands</string>
+    <string name="launcher_group_npcs">PNJ</string>
+    <string name="launcher_group_gameplay">Gameplay</string>
+    <string name="launcher_group_quicksave">Sauvegardes rapides</string>
+    <string name="launcher_group_paging">Paging</string>
+    <string name="launcher_group_physics">Physique</string>
+    <string name="launcher_group_shader_options">Options de shader</string>
+    <string name="launcher_group_fog">Options de brouillard</string>
+    <string name="launcher_group_processing">Post-traitement</string>
+    <string name="launcher_group_shadows">Ombres</string>
+    <string name="launcher_group_shadow_types">Types d\'ombres</string>
+    <string name="launcher_group_shadow_options">Options d\'ombres</string>
+    <string name="launcher_group_animation_types">Types d\'animation</string>
+    <string name="launcher_group_transitions">Transitions</string>
+    <string name="launcher_group_font">Police</string>
+    <string name="launcher_group_owned">Propriété</string>
+    <string name="launcher_group_info">Informations</string>
+    <string name="launcher_group_design">Apparence</string>
+    <string name="launcher_group_zoom">Zoom</string>
+    <string name="launcher_group_groundcover">Végétation</string>
+    <string name="launcher_group_meshes">Maillages</string>
+    <string name="launcher_group_threads">Threads</string>
+    <string name="launcher_group_framerate">Images/s</string>
+    <string name="launcher_group_resolution">Résolution</string>
+    <string name="launcher_group_display">Affichage</string>
+    <string name="launcher_group_shader">Shaders</string>
+    <string name="launcher_group_interface">Interface</string>
+    <string name="launcher_group_controls">Commandes</string>
+    <string name="launcher_group_onscreen">Disposition à l\'écran</string>
+    <string name="launcher_group_sound">Options sonores</string>
+    <string name="launcher_group_saves">Sauvegardes</string>
+    <string name="launcher_group_language">Langue</string>
+    <string name="launcher_group_cheats">Triches</string>
+    <string name="launcher_group_start">Démarrage</string>
 </resources>
