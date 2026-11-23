@@ -314,4 +314,11 @@
     <string name="launcher_group_language">Språk</string>
     <string name="launcher_group_cheats">Fusk</string>
     <string name="launcher_group_start">Start</string>
+    <string name="pref_left_move_title">Rör dig med</string>
+    <string name="pref_left_move_summary">Vänster spak: mitten hamnar där fingret landar i dess fält. Fri: sätt ner fingret var som helst på vänstra halvan av skärmen. Fast: mitten stannar alltid mitt i fältet.</string>
+    <string-array name="pref_left_move_entries">
+        <item>Vänster spak</item>
+        <item>Vänster spak (fri)</item>
+        <item>Vänster spak (fast)</item>
+    </string-array>
 </resources>

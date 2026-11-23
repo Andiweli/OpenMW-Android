@@ -314,4 +314,11 @@
     <string name="launcher_group_language">Sprache</string>
     <string name="launcher_group_cheats">Cheats</string>
     <string name="launcher_group_start">Start</string>
+    <string name="pref_left_move_title">Bewegen mit</string>
+    <string name="pref_left_move_summary">Linker Stick: die Mitte ist dort, wo der Finger im Feld aufsetzt. Frei: überall in der linken Bildschirmhälfte aufsetzen. Fest: die Mitte bleibt immer in der Mitte des Felds.</string>
+    <string-array name="pref_left_move_entries">
+        <item>Linker Stick</item>
+        <item>Linker Stick (frei)</item>
+        <item>Linker Stick (fest)</item>
+    </string-array>
 </resources>

@@ -314,4 +314,11 @@
     <string name="launcher_group_language">Język</string>
     <string name="launcher_group_cheats">Kody</string>
     <string name="launcher_group_start">Start</string>
+    <string name="pref_left_move_title">Poruszanie</string>
+    <string name="pref_left_move_summary">Lewy drążek: środek tam, gdzie palec dotknie jego pola. Swobodny: dotknij w dowolnym miejscu lewej połowy ekranu. Stały: środek zawsze pozostaje na środku pola.</string>
+    <string-array name="pref_left_move_entries">
+        <item>Lewy drążek</item>
+        <item>Lewy drążek (swobodny)</item>
+        <item>Lewy drążek (stały)</item>
+    </string-array>
 </resources>

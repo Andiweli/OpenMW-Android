@@ -314,4 +314,11 @@
     <string name="launcher_group_language">Язык</string>
     <string name="launcher_group_cheats">Читы</string>
     <string name="launcher_group_start">Запуск</string>
+    <string name="pref_left_move_title">Движение</string>
+    <string name="pref_left_move_summary">Левый стик: центр там, где палец коснулся его области. Свободный: касайтесь в любом месте левой половины экрана. Фиксированный: центр всегда в середине области.</string>
+    <string-array name="pref_left_move_entries">
+        <item>Левый стик</item>
+        <item>Левый стик (свободный)</item>
+        <item>Левый стик (фиксированный)</item>
+    </string-array>
 </resources>

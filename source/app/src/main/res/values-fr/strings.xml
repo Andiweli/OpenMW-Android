@@ -314,4 +314,11 @@
     <string name="launcher_group_language">Langue</string>
     <string name="launcher_group_cheats">Triches</string>
     <string name="launcher_group_start">Démarrage</string>
+    <string name="pref_left_move_title">Se déplacer avec</string>
+    <string name="pref_left_move_summary">Stick gauche : centré là où le doigt touche sa zone. Libre : posez le doigt n\'importe où dans la moitié gauche de l\'écran. Fixe : le centre reste toujours au milieu de la zone.</string>
+    <string-array name="pref_left_move_entries">
+        <item>Stick gauche</item>
+        <item>Stick gauche (libre)</item>
+        <item>Stick gauche (fixe)</item>
+    </string-array>
 </resources>

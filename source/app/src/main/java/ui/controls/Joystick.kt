@@ -48,6 +48,15 @@ open class Joystick : View {
     // width of a stroke to draw stick circles
     private var strokeWidth = 0
 
+    /** Size of the stick in pixels; 0 means the size of the view. */
+    var stickSize = 0
+    /** The stick's centre stays in the middle of the view instead of following the touch-down point. */
+    var fixedCenter = false
+    /** Draws the outline while the stick is not touched (off for the free stick). */
+    var showIdle = true
+
+    protected fun size(): Int = if (stickSize > 0) stickSize else width
+
     private val paint = Paint()
 
     constructor(context: Context) : super(context) {
@@ -77,16 +86,23 @@ open class Joystick : View {
         paint.strokeWidth = strokeWidth.toFloat()
         paint.color = Color.GRAY
 
+        val size = size()
         if (down) {
-            // Draw initial touch
-            canvas.drawCircle(initialX, initialY, width / 10f, paint)
+            if (fixedCenter) {
+                // The fixed stick keeps its outline; the knob follows the finger
+                canvas.drawCircle(initialX, initialY, size / 2f - strokeWidth, paint)
+            } else {
+                // Draw initial touch
+                canvas.drawCircle(initialX, initialY, size / 10f, paint)
+            }
 
             // Draw current stick position
-            canvas.drawCircle(currentX, currentY, width / 5f, paint)
-        } else {
+            canvas.drawCircle(currentX, currentY, size / 5f, paint)
+        } else if (showIdle) {
             // Draw the outline
-            canvas.drawCircle(width / 2f, height / 2f,
-                width / 2f - strokeWidth, paint)
+            canvas.drawCircle(width / 2f, height / 2f, size / 2f - strokeWidth, paint)
+            if (fixedCenter)
+                canvas.drawCircle(width / 2f, height / 2f, size / 5f, paint)
         }
     }
 
@@ -98,10 +114,15 @@ open class Joystick : View {
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
-                initialX = event.x
-                initialY = event.y
-                currentX = initialX
-                currentY = initialY
+                if (fixedCenter) {
+                    initialX = width / 2f
+                    initialY = height / 2f
+                } else {
+                    initialX = event.x
+                    initialY = event.y
+                }
+                currentX = event.x
+                currentY = event.y
                 down = true
             }
             MotionEvent.ACTION_MOVE -> {

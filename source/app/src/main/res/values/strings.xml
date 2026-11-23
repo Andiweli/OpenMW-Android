@@ -417,4 +417,16 @@ OpenMW by the OpenMW Team since 2008</string>
     <string name="launcher_group_language">Language</string>
     <string name="launcher_group_cheats">Cheats</string>
     <string name="launcher_group_start">Start</string>
+    <string name="pref_left_move_title">Move with</string>
+    <string name="pref_left_move_summary">Left stick: centred where your finger lands in its field. Free: put your finger down anywhere in the left half of the screen. Fixed: the centre always stays in the middle of the field.</string>
+    <string-array name="pref_left_move_entries">
+        <item>Left stick</item>
+        <item>Left stick (free)</item>
+        <item>Left stick (fixed)</item>
+    </string-array>
+    <string-array name="pref_left_move_values" translatable="false">
+        <item>stick</item>
+        <item>free</item>
+        <item>fixed</item>
+    </string-array>
 </resources>

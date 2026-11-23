@@ -72,6 +72,9 @@ open class OscElement(
 
     var view: View? = null
 
+    /** True while the element is shown in the layout editor. */
+    protected var configuring = false
+
     /**
      * Creates a View object for this element.
      * The object should have a custom OnTouchListener which performs the desired action.
@@ -99,6 +102,7 @@ open class OscElement(
     }
 
     fun placeConfigurable(target: RelativeLayout, listener: View.OnTouchListener) {
+        configuring = true
         place(target)
         view?.setOnTouchListener(listener)
         view?.visibility = View.VISIBLE
@@ -120,7 +124,7 @@ open class OscElement(
         savePrefs()
     }
 
-    fun updateView() {
+    open fun updateView() {
         val v = view ?: return
 
         val realScreenWidth = (v.parent as View).width
@@ -249,12 +253,32 @@ class OscJoystickLeft(
     private val stick: Int
 ) : OscElement(uniqueId, "", visibility, defaultX, defaultY, defaultSize) {
 
+    private var mode = LeftMove.STICK
+
     override fun makeView(ctx: Context) {
+        mode = LeftMove.mode(PreferenceManager.getDefaultSharedPreferences(ctx))
         val v = JoystickLeft(ctx)
         v.setStick(stick)
         v.tag = this
+        v.fixedCenter = mode == LeftMove.FIXED
 
         view = v
+    }
+
+    /**
+     * The free stick takes the whole left half of the screen and appears where the
+     * finger lands; it keeps the size set in the layout editor. The editor itself
+     * shows the usual field, so size and opacity stay adjustable.
+     */
+    override fun updateView() {
+        super.updateView()
+        val v = view as? JoystickLeft ?: return
+        if (mode != LeftMove.FREE || configuring)
+            return
+        val parent = v.parent as? View ?: return
+        v.stickSize = v.layoutParams.width
+        v.showIdle = false
+        v.layoutParams = RelativeLayout.LayoutParams(parent.width / 2, parent.height)
     }
 
 }
