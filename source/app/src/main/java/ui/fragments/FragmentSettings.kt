@@ -95,7 +95,6 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
 
         prepareControllerTriggerPreference()
         updateGammaState()
-        updateHandheldState()
 
         // Make launcher entries that open another screen visually distinct.
         listOf("pref_controls").forEach { key ->
@@ -412,19 +411,13 @@ class FragmentSettings : PreferenceFragment(), OnSharedPreferenceChangeListener 
         updateGammaState()
         if (key == Constants.HANDHELD_MODE) {
             // The handheld controls rely on controller menus; they can still be turned off.
+            // The touch buttons start hidden, but can be shown again (e.g. for Pause).
             if (sharedPreferences.getBoolean(key, false)) {
                 (findPreference("pref_omw050_controller_menus") as? CheckBoxPreference)?.isChecked = true
+                (findPreference(Constants.HIDE_CONTROLS) as? CheckBoxPreference)?.isChecked = true
             }
-            updateHandheldState()
         }
         page?.refresh()
-    }
-
-    /** Handheld mode never shows the touch overlay, so its options do not apply. */
-    private fun updateHandheldState() {
-        val handheld = preferenceScreen.sharedPreferences.getBoolean(Constants.HANDHELD_MODE, false)
-        listOf("pref_controls", Constants.HIDE_CONTROLS, "pref_always_show_top_bar", "pref_show_qp", "pref_show_fn")
-            .forEach { findPreference(it)?.isEnabled = !handheld }
     }
 
     private fun updatePreference(preference: Preference?, key: String) {

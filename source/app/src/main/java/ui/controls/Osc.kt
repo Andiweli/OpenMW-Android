@@ -380,6 +380,10 @@ class Osc {
     private val btnTopToggle = OscCustomButton("toggle", "toggle.png", OscVisibility.NULL,
         R.drawable.toggle, 0, 0) { toggleTopControls() }
 
+    // Escape: opens the menu and, pressed again, closes it.
+    private val pauseButton = OscImageButton("pause", "pause.png", OscVisibility.ESSENTIAL,
+        R.drawable.pause, 940, 0, KeyEvent.KEYCODE_ESCAPE)
+
     private val joystickLeft = OscJoystickLeft("joystickLeft", OscVisibility.NORMAL,
         JOYSTICK_OFFSET, 400, JOYSTICK_SIZE, 0)
     private val joystickRight = OscJoystickRight("joystickRight", OscVisibility.ESSENTIAL,
@@ -395,8 +399,7 @@ class Osc {
             R.drawable.inventory, 940, 95, 3, true),
         OscImageButton("crouch", "sneak.png", OscVisibility.NORMAL,
                 R.drawable.sneak, 940 - TOP_BAR_SPACING, 0, 113),
-        OscImageButton("pause", "pause.png", OscVisibility.ESSENTIAL,
-            R.drawable.pause, 940, 0, KeyEvent.KEYCODE_ESCAPE),
+        pauseButton,
         OscImageButton("magic", "toggle_magic.png", OscVisibility.NORMAL,
             R.drawable.toggle_magic, 940, 450, KeyEvent.KEYCODE_R),
         OscImageButton("weapon", "toggle_weapon.png", OscVisibility.NORMAL,
@@ -530,6 +533,10 @@ class Osc {
         // If keyboard or mouse-mode or both, then hide everything
         if (keyboardVisible || mouseVisible) {
             setVisibility(OscVisibility.NULL.v)
+            // In mouse mode (also the "Touch" mouse mode while a menu is open) the
+            // pause button stays, so the menu can be closed again with it.
+            if (!keyboardVisible)
+                pauseButton.view?.visibility = View.VISIBLE
         } else {
             if (SDLActivity.isMouseShown() == 0)
                 setVisibility(OscVisibility.ESSENTIAL.v or OscVisibility.NORMAL.v)

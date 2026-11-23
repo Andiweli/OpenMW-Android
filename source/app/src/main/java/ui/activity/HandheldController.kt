@@ -14,6 +14,22 @@ import java.io.IOException
  * off, so toggling the mode does not change the content list saves remember.
  */
 object HandheldController {
+    private const val PREF_OSC_MIGRATED = "pref_handheld_osc_migrated"
+
+    /**
+     * Handheld mode used to hide the touch buttons on its own. Now the "hide on-screen
+     * buttons" switch decides; set it once for players who already use handheld mode,
+     * so their screen stays as it was.
+     */
+    fun migrate(prefs: android.content.SharedPreferences) {
+        if (prefs.getBoolean(PREF_OSC_MIGRATED, false))
+            return
+        val editor = prefs.edit().putBoolean(PREF_OSC_MIGRATED, true)
+        if (prefs.getBoolean(Constants.HANDHELD_MODE, false))
+            editor.putBoolean(Constants.HIDE_CONTROLS, true)
+        editor.apply()
+    }
+
     private const val TAG = "HandheldController"
     const val CONTENT_FILE = "handheld.omwscripts"
     private const val ASSET_ROOT = "handheld"

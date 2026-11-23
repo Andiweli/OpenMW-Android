@@ -449,8 +449,9 @@ class GameActivity : SDLActivity() {
         // while ChromeOS keeps the overlay hidden for mouse/keyboard operation.
         val hasTouchscreen = packageManager.hasSystemFeature(PackageManager.FEATURE_TOUCHSCREEN)
         val defaultHideControls = !hasTouchscreen || SDLActivity.isChromebook()
-        val pref_hide_controls = SDLActivity.sHandheldMode
-            || prefs.getBoolean(Constants.HIDE_CONTROLS, defaultHideControls)
+        // Handheld mode starts with the touch buttons hidden; they can be shown again.
+        val pref_hide_controls =
+            prefs.getBoolean(Constants.HIDE_CONTROLS, defaultHideControls || SDLActivity.sHandheldMode)
 
         var osc: Osc? = null
         if (!pref_hide_controls) {

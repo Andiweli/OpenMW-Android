@@ -96,8 +96,25 @@ open class Joystick : View {
                 canvas.drawCircle(initialX, initialY, size / 10f, paint)
             }
 
-            // Draw current stick position
-            canvas.drawCircle(currentX, currentY, size / 5f, paint)
+            // Draw current stick position; the knob stays inside the fixed stick's
+            // outline (or inside the view), so it is never cut off at the edge
+            var knobX = currentX
+            var knobY = currentY
+            val knob = size / 5f
+            if (fixedCenter) {
+                val reach = size / 2f - knob - strokeWidth
+                val dx = knobX - initialX
+                val dy = knobY - initialY
+                val distance = Math.hypot(dx.toDouble(), dy.toDouble()).toFloat()
+                if (distance > reach && distance > 0f) {
+                    knobX = initialX + dx * reach / distance
+                    knobY = initialY + dy * reach / distance
+                }
+            } else {
+                knobX = knobX.coerceIn(knob, (width - knob).coerceAtLeast(knob))
+                knobY = knobY.coerceIn(knob, (height - knob).coerceAtLeast(knob))
+            }
+            canvas.drawCircle(knobX, knobY, knob, paint)
         } else if (showIdle) {
             // Draw the outline
             canvas.drawCircle(width / 2f, height / 2f, size / 2f - strokeWidth, paint)
